@@ -2,7 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
-// libGDX ships its Android native libraries (.so) inside per-ABI jars; they are extracted
+// libGDX (and gdx-freetype) ship their Android native libraries (.so) inside per-ABI jars; they are extracted
 // into build/gdx-natives/<abi>/ and packaged as jniLibs.
 val gdxNativeAbis = listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
 val gdxNativesDir = layout.buildDirectory.dir("gdx-natives")
@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.gdx.backend.android)
     gdxNativeConfigurations.forEach { (abi, configuration) ->
         add(configuration.name, variantOf(libs.gdx.platform) { classifier("natives-$abi") })
+        add(configuration.name, variantOf(libs.gdx.freetype.platform) { classifier("natives-$abi") })
     }
     testImplementation(libs.junit)
 }

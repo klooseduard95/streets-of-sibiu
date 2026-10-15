@@ -1,0 +1,13 @@
+{
+  "black_alpha": 0.0,
+  "camera_center": [
+    996.0,
+    544.5
+  ],
+  "godot_version": "4.6.1-stable (official)",
+  "level_rooms": 7,
+  "player_position": [
+    996.0,
+    545.0
+  ]
+}

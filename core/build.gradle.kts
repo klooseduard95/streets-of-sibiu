@@ -19,6 +19,7 @@ kotlin {
 dependencies {
     api(project(":logic"))
     api(libs.gdx)
+    api(libs.gdx.freetype)
     testImplementation(libs.junit)
 }
 

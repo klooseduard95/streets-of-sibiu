@@ -1,0 +1,69 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+Metal 4.0 - Forward+ - Using Device #0: Apple - Apple M2 Pro (Apple8)
+
+SCRIPT ERROR: Parse Error: Unindent doesn't match the previous indentation level.
+          at: GDScript::reload (res://death_screen.gd:27)
+          GDScript backtrace (most recent call first):
+              [0] _initialize (res://probes/v11_ui_screens.gd:33)
+              [1] frames (res://probes/probe_base.gd:24)
+ERROR: Failed to load script "res://death_screen.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://probes/v11_ui_screens.gd:33)
+       [1] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Parse Error: Unindent doesn't match the previous indentation level.
+          at: GDScript::reload (res://pause_menu.gd:46)
+          GDScript backtrace (most recent call first):
+              [0] _initialize (res://probes/v11_ui_screens.gd:33)
+              [1] frames (res://probes/probe_base.gd:24)
+ERROR: Failed to load script "res://pause_menu.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://probes/v11_ui_screens.gd:33)
+       [1] frames (res://probes/probe_base.gd:24)
+PROBE v11_ui_screens saved to /Users/kloos/AndroidStudioProjects/StreetsofSibiu/tools/godot-reference/results
+ERROR: 24 RID allocations of type '10NavAgent2D' were leaked at exit.
+ERROR: 59 RID allocations of type 'P11GodotBody2D' were leaked at exit.
+ERROR: 68 RID allocations of type 'P11GodotArea2D' were leaked at exit.
+ERROR: 423 RID allocations of type 'P12GodotShape2D' were leaked at exit.
+WARNING: 523 RIDs of type "CanvasItem" were leaked.
+     at: _free_rids (servers/rendering/renderer_canvas_cull.cpp:2692)
+ERROR: 38 RID allocations of type 'N10RendererRD14TextureStorage7TextureE' were leaked at exit.
+ERROR: 20 RID allocations of type 'N10RendererRD14TextureStorage13CanvasTextureE' were leaked at exit.
+
+================================================================
+handle_crash: Program crashed with signal 11
+Engine version: Godot Engine v4.6.1.stable.official (14d19694e0c88a3f9e82d899a0400f27a24c176e)
+Dumping the backtrace. Please include this when reporting the bug on: https://github.com/godotengine/godot/issues
+[1] 1   libsystem_platform.dylib            0x00000001916f8144 _sigtramp + 56
+[2] RendererCanvasRenderRD::_canvas_texture_invalidation_callback(bool, void*)
+[3] RendererRD::TextureStorage::render_target_get_vrs_texture(RID) const
+[4] RendererRD::TextureStorage::~TextureStorage() (in Godot) + 724
+[5] RendererCompositorRD::finalize() (in Godot) + 260
+[6] RenderingServerDefault::_finish() (in Godot) + 88
+[7] Main::cleanup(bool) (in Godot) + 1204
+[8] OS_MacOS_NSApp::cleanup() (in Godot) + 64
+[9] DefaultAllocator::alloc(unsigned long)
+[10] 10  CoreFoundation                      0x00000001917a31a0 __CFNOTIFICATIONCENTER_IS_CALLING_OUT_TO_AN_OBSERVER__ + 148
+[11] 11  CoreFoundation                      0x0000000191832394 ___CFXRegistrationPost_block_invoke + 92
+[12] 12  CoreFoundation                      0x00000001918322d8 _CFXRegistrationPost + 440
+[13] 13  CoreFoundation                      0x000000019176f3d0 _CFXNotificationPost + 688
+[14] 14  Foundation                          0x0000000192e6038c -[NSNotificationCenter postNotificationName:object:userInfo:] + 88
+[15] 15  AppKit                              0x0000000195f69864 -[NSApplication terminate:] + 1592
+[16] OS_MacOS_NSApp::start_main()
+[17] 17  CoreFoundation                      0x00000001917adcc4 __CFRUNLOOP_IS_CALLING_OUT_TO_AN_OBSERVER_CALLBACK_FUNCTION__ + 36
+[18] 18  CoreFoundation                      0x00000001917adbbc __CFRunLoopDoObservers + 648
+[19] 19  CoreFoundation                      0x00000001917ad22c __CFRunLoopRun + 908
+[20] 20  CoreFoundation                      0x000000019188782c _CFRunLoopRunSpecificWithOptions + 536
+[21] 21  HIToolbox                           0x000000019ebe0590 RunCurrentEventLoopInMode + 320
+[22] 22  HIToolbox                           0x000000019ebe391c ReceiveNextEventCommon + 492
+[23] 23  HIToolbox                           0x000000019ed66380 _BlockUntilNextEventMatchingListInMode + 48
+[24] 24  AppKit                              0x00000001960a729c _DPSBlockUntilNextEventMatchingListInMode + 292
+[25] 25  AppKit                              0x0000000195d644fc _DPSNextEvent + 580
+[26] 26  AppKit                              0x00000001965dc748 -[NSApplication(NSEventRouting) _nextEventMatchingEventMask:untilDate:inMode:dequeue:] + 780
+[27] 27  AppKit                              0x00000001965dc26c -[NSApplication(NSEventRouting) nextEventMatchingMask:untilDate:inMode:dequeue:] + 292
+[28] 28  AppKit                              0x0000000195d5790c -[NSApplication run] + 396
+[29] main (in Godot) + 924
+[30] 30  dyld                                0x0000000191317e80 start + 6688
+-- END OF C++ BACKTRACE --
+================================================================
