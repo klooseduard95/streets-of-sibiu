@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://cdykwvukdygtb"]
+
+[ext_resource type="Script" uid="uid://brpsl5hawgh6o" path="res://enemy/SpawnerEnemy.gd" id="1_b6bue"]
+[ext_resource type="Texture2D" uid="uid://b0r614rxfgvxj" path="res://icon.svg" id="2_aiiai"]
+[ext_resource type="PackedScene" uid="uid://4ywibunex2t1" path="res://enemy/EnemyHitbox.tscn" id="2_ouxmd"]
+[ext_resource type="AudioStream" uid="uid://c4erhvx8jcwfj" path="res://Music/EnemySpawner.mp3" id="3_4wj05"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_kyxip"]
+radius = 33.38165
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_07m2b"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p7bwv"]
+bg_color = Color(1, 0, 0, 1)
+
+[node name="SpawnerEnemy" type="CharacterBody2D" unique_id=1805298299]
+scale = Vector2(5.2431707, 5.2431707)
+script = ExtResource("1_b6bue")
+
+[node name="EnemyHitbox" parent="." unique_id=1256153223 instance=ExtResource("2_ouxmd")]
+scale = Vector2(1.0000001, 1.0000001)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHitbox" unique_id=932405571]
+shape = SubResource("CircleShape2D_kyxip")
+
+[node name="EnemySprite" type="Sprite2D" parent="." unique_id=417089585]
+scale = Vector2(0.4657585, 0.4657585)
+texture = ExtResource("2_aiiai")
+
+[node name="Tick" type="Timer" parent="." unique_id=1699784334]
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=876871233]
+modulate = Color(1, 1, 1, 0)
+offset_left = -30.0
+offset_top = 35.0
+offset_right = -12.0
+offset_bottom = 37.0
+scale = Vector2(3.2244675, 3.2244675)
+theme_override_styles/background = SubResource("StyleBoxEmpty_07m2b")
+theme_override_styles/fill = SubResource("StyleBoxFlat_p7bwv")
+show_percentage = false
+
+[node name="SpawnSound" type="AudioStreamPlayer2D" parent="." unique_id=130766958]
+stream = ExtResource("3_4wj05")
+bus = &"SFX"
+
+[connection signal="timeout" from="Tick" to="." method="_on_tick_timeout"]

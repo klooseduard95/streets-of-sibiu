@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://dw2xm6241ktvk"]
+
+[ext_resource type="Texture2D" uid="uid://dn6qionk1moqp" path="res://item/item_assets/item icons/knife.png" id="1_4e767"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_7spl1"]
+[ext_resource type="PackedScene" uid="uid://byfauq1njhmde" path="res://player/bullet_melee.tscn" id="1_oqu5r"]
+[ext_resource type="AudioStream" uid="uid://e1pv6x5hep7m" path="res://Music/Slash.mp3" id="4_4e767"]
+
+[resource]
+script = ExtResource("1_7spl1")
+projectile_scene = ExtResource("1_oqu5r")
+dmg = 5.0
+current_ammo = -1
+ammo_capacity = -1
+fire_rate = 2.5
+maxRange = 150.0
+bullet_speed = 800.0
+weapon_sound = ExtResource("4_4e767")
+name = "Knife"
+description = "5 Damage
+0.5s Cooldown
+1 Tile Range"
+icon = ExtResource("1_4e767")
+type = 1
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

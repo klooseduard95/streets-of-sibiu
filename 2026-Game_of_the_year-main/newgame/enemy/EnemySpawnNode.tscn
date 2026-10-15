@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dwdxs6pt3d6xp"]
+
+[ext_resource type="Script" uid="uid://ctlfabhl13ako" path="res://enemy/EnemySpawnNode.gd" id="1_mt74q"]
+
+[node name="EnemySpawnNode" type="Node2D" unique_id=1763780296]
+script = ExtResource("1_mt74q")
+spawnRadius = null

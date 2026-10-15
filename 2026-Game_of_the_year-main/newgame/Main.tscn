@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dha8o8nlj1p6g"]
+
+[ext_resource type="PackedScene" uid="uid://dej4pis250fc1" path="res://pause_menu.tscn" id="1_glv2v"]
+[ext_resource type="PackedScene" uid="uid://cqs77xbwblgla" path="res://player/Player_Placeholder.tscn" id="2_uu6xs"]
+[ext_resource type="PackedScene" uid="uid://bpgvmty6awyv6" path="res://upgradestings/upgrade window.tscn" id="4_cm0pq"]
+
+[node name="Main" type="Node2D" unique_id=249544506]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1048329837]
+
+[node name="UpgradeWindow" parent="." unique_id=691736283 instance=ExtResource("4_cm0pq")]
+
+[node name="PauseMenu" parent="." unique_id=1935334283 node_paths=PackedStringArray("player") instance=ExtResource("1_glv2v")]
+player = NodePath("../Player")
+
+[node name="Player" parent="." unique_id=331261060 instance=ExtResource("2_uu6xs")]
+selected_dash = 3

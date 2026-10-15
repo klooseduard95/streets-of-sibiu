@@ -1,0 +1,93 @@
+[gd_scene format=3 uid="uid://dej4pis250fc1"]
+
+[ext_resource type="Script" uid="uid://ktgfjrvvheve" path="res://pause_menu.gd" id="1_hdmo1"]
+[ext_resource type="PackedScene" uid="uid://cay8yri5o60gf" path="res://scenes/Settings.tscn" id="2_nwcfo"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_hdmo1"]
+
+[sub_resource type="SystemFont" id="SystemFont_hdmo1"]
+font_names = PackedStringArray("JetBrains Mono NL")
+subpixel_positioning = 0
+
+[sub_resource type="LabelSettings" id="LabelSettings_hdmo1"]
+line_spacing = 4.0
+font = SubResource("SystemFont_hdmo1")
+font_size = 28
+outline_size = 3
+outline_color = Color(1, 0.85882354, 0, 1)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nwcfo"]
+
+[node name="PauseMenu" type="CanvasLayer" unique_id=1935334283]
+process_mode = 3
+script = ExtResource("1_hdmo1")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=62222652]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -350.0
+offset_top = -315.0
+offset_right = 350.0
+offset_bottom = 315.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer" unique_id=1907407459]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="PanelContainer/HBoxContainer" unique_id=155129254]
+layout_mode = 2
+theme_override_constants/separation = 15
+theme_override_styles/separator = SubResource("StyleBoxEmpty_hdmo1")
+
+[node name="ButtonsContainer" type="VBoxContainer" parent="PanelContainer/HBoxContainer" unique_id=1681654173]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 80
+
+[node name="Resume" type="Button" parent="PanelContainer/HBoxContainer/ButtonsContainer" unique_id=1456181704]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Resume"
+
+[node name="Settings" type="Button" parent="PanelContainer/HBoxContainer/ButtonsContainer" unique_id=728702512]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Settings"
+
+[node name="Main Menu" type="Button" parent="PanelContainer/HBoxContainer/ButtonsContainer" unique_id=459207075]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Main Menu"
+
+[node name="VSeparator2" type="VSeparator" parent="PanelContainer/HBoxContainer" unique_id=436485086]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="StatsContainer" type="PanelContainer" parent="PanelContainer/HBoxContainer" unique_id=1201644233]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+
+[node name="Label" type="Label" parent="PanelContainer/HBoxContainer/StatsContainer" unique_id=612682396]
+unique_name_in_owner = true
+layout_mode = 2
+label_settings = SubResource("LabelSettings_hdmo1")
+
+[node name="VSeparator3" type="VSeparator" parent="PanelContainer/HBoxContainer" unique_id=1413422800]
+custom_minimum_size = Vector2(20, 0)
+layout_mode = 2
+theme_override_constants/separation = 15
+theme_override_styles/separator = SubResource("StyleBoxEmpty_nwcfo")
+
+[node name="Settings" parent="." unique_id=1294732504 instance=ExtResource("2_nwcfo")]
+visible = false
+
+[connection signal="pressed" from="PanelContainer/HBoxContainer/ButtonsContainer/Resume" to="." method="_on_resume_pressed"]
+[connection signal="pressed" from="PanelContainer/HBoxContainer/ButtonsContainer/Settings" to="." method="_on_settings_pressed"]
+[connection signal="pressed" from="PanelContainer/HBoxContainer/ButtonsContainer/Main Menu" to="." method="_on_main_menu_pressed"]

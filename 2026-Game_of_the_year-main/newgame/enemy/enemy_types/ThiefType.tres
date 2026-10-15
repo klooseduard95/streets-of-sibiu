@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://c2jtcvwkwx1ev"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_852pj"]
+
+[resource]
+script = ExtResource("1_852pj")
+type = "thief"
+hp = 30
+walkSpeed = 300.0
+reach = 300.0
+hitCooldown = 0.9
+sizeModifier = 1.25
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

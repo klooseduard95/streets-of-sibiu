@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://dy4ru8imgcead"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_k08lj"]
+
+[resource]
+script = ExtResource("1_k08lj")
+type = "ghost"
+visionRange = 0
+hp = 30
+dmg = 0
+walkSpeed = 0.0
+reach = 300.0
+hitCooldown = 0.0
+hitWindup = 0.0
+sizeModifier = 1.5
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

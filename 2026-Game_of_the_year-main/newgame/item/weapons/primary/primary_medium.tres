@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://dxlql5xh48nml"]
+
+[ext_resource type="PackedScene" uid="uid://bvslsjj0cno8f" path="res://player/bullet.tscn" id="1_4dial"]
+[ext_resource type="Texture2D" uid="uid://dbycm22xs3v3c" path="res://item/item_assets/item icons/rifle.png" id="1_cjc0f"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_f1qsc"]
+[ext_resource type="AudioStream" uid="uid://br8kpq7l718bg" path="res://Music/Gunshot.mp3" id="4_cjc0f"]
+
+[resource]
+script = ExtResource("1_f1qsc")
+projectile_scene = ExtResource("1_4dial")
+dmg = 4.0
+current_ammo = 15
+ammo_capacity = 15
+fire_rate = 3.0
+reloadTime = 0.75
+maxRange = 550.0
+weapon_sound = ExtResource("4_cjc0f")
+name = "Medium Rifle"
+description = "4 Damage / Bullet
+15 Ammo Capacity
+Normal Fire Speed
+0.75s Reload Time
+5 Tile Range"
+icon = ExtResource("1_cjc0f")
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

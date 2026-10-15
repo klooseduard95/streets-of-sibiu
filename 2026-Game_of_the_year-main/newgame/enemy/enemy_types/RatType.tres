@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://ccevkhcytyxpt"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_qsswa"]
+
+[resource]
+script = ExtResource("1_qsswa")
+type = "rat"
+hp = 10.0
+walkSpeed = 300.0
+hitCooldown = 0.7
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

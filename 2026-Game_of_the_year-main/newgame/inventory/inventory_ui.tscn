@@ -1,0 +1,78 @@
+[gd_scene format=3 uid="uid://f38afb7d2yit"]
+
+[ext_resource type="Script" uid="uid://dt7mfafyius36" path="res://inventory/inventory_ui.gd" id="1_2hut1"]
+[ext_resource type="Texture2D" uid="uid://7hurcww4aub6" path="res://item/item_assets/item icons/invslot.png" id="2_cedrj"]
+[ext_resource type="Script" uid="uid://dq4ocj6sw2d4q" path="res://inventory/inventory_slot.gd" id="3_cedrj"]
+
+[sub_resource type="SystemFont" id="SystemFont_2hut1"]
+font_names = PackedStringArray("JetBrains Mono")
+subpixel_positioning = 0
+
+[sub_resource type="Theme" id="Theme_cedrj"]
+default_font = SubResource("SystemFont_2hut1")
+
+[node name="InventoryHUD" type="CanvasLayer" unique_id=448217347]
+script = ExtResource("1_2hut1")
+empty_slot_texture = ExtResource("2_cedrj")
+
+[node name="Control" type="Control" parent="." unique_id=1695632840]
+layout_mode = 3
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+scale = Vector2(0.75, 0.75)
+theme = SubResource("Theme_cedrj")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=933441051]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 30.0
+offset_top = -290.0
+offset_right = 630.0
+offset_bottom = -30.0
+grow_vertical = 0
+
+[node name="WeaponContainer" type="HBoxContainer" parent="Control/HBoxContainer" unique_id=302462237]
+layout_mode = 2
+size_flags_vertical = 8
+
+[node name="Slot0" type="TextureRect" parent="Control/HBoxContainer/WeaponContainer" unique_id=909278315]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_cedrj")
+
+[node name="Slot1" type="TextureRect" parent="Control/HBoxContainer/WeaponContainer" unique_id=379556700]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_cedrj")
+
+[node name="Slot2" type="TextureRect" parent="Control/HBoxContainer/WeaponContainer" unique_id=1188326310]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+script = ExtResource("3_cedrj")
+
+[node name="VSeparator" type="VSeparator" parent="Control/HBoxContainer" unique_id=306610504]
+layout_mode = 2
+theme_override_constants/separation = 75
+
+[node name="ConsumableContainer" type="VBoxContainer" parent="Control/HBoxContainer" unique_id=1884713091]
+layout_mode = 2
+alignment = 2
+
+[node name="Slot3" type="TextureRect" parent="Control/HBoxContainer/ConsumableContainer" unique_id=1671770086]
+layout_mode = 2
+script = ExtResource("3_cedrj")
+
+[node name="Slot4" type="TextureRect" parent="Control/HBoxContainer/ConsumableContainer" unique_id=215602920]
+layout_mode = 2
+script = ExtResource("3_cedrj")

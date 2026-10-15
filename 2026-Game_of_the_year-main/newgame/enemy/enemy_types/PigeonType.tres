@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cl5n3o37houn8"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_55lf3"]
+
+[resource]
+script = ExtResource("1_55lf3")
+type = "pigeon"
+hp = 5.0
+dmg = 2.0
+walkSpeed = 400.0
+reach = 75.0
+hitCooldown = 0.4
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

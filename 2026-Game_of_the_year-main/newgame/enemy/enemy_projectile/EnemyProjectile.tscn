@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://cmf3wsgmuhpim"]
+
+[ext_resource type="Script" uid="uid://bstoxrbtwj6ma" path="res://enemy/enemy_projectile/enemy_projectile.gd" id="1_baan8"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ddx6v"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_baan8"]
+
+[node name="EnemyProjectile" type="Area2D" unique_id=1636743409]
+script = ExtResource("1_baan8")
+
+[node name="ProjectileHitbox" type="CollisionShape2D" parent="." unique_id=1973911922]
+shape = SubResource("RectangleShape2D_ddx6v")
+
+[node name="ProjectileSprite" type="Sprite2D" parent="." unique_id=776335931]
+texture = SubResource("CompressedTexture2D_baan8")
+
+[node name="DeathTimer" type="Timer" parent="." unique_id=1387530162]
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]

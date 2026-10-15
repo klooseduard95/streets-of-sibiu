@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://pw48k61n0kdr"]
+
+[ext_resource type="Texture2D" uid="uid://crbpm3rlxpebt" path="res://item/item_assets/item icons/newbottle3.png" id="1_2e5b6"]
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="2_7xubc"]
+
+[resource]
+script = ExtResource("2_7xubc")
+buffDuration = 20.0
+modifiers = {
+"speed": 1.0
+}
+name = "Speed Potion"
+description = "x2 Movement Speed
+Duration: 20s"
+icon = ExtResource("1_2e5b6")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

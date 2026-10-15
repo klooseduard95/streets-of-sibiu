@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://vvakasrgvs3x"]
+
+[ext_resource type="Script" uid="uid://wbupc23kjwch" path="res://background/FinisherSpecialNode.gd" id="1_7wwtx"]
+[ext_resource type="Texture2D" uid="uid://bkghk0vi2k0a4" path="res://player/player_assets/diagonals.png" id="2_okud3"]
+
+[node name="FinisherSpecialNode" type="Node2D" unique_id=706475502]
+script = ExtResource("1_7wwtx")
+
+[node name="Label" type="Label" parent="." unique_id=1655763177]
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="Diagonals" type="Sprite2D" parent="." unique_id=178827489]
+visible = false
+z_index = 746
+position = Vector2(-4, -2)
+texture = ExtResource("2_okud3")

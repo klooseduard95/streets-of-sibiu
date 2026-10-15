@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://bqang6d6llemh"]
+
+[ext_resource type="Script" uid="uid://dninpo6r5p1dg" path="res://background/Barricade.gd" id="1_rjg5n"]
+[ext_resource type="Texture2D" uid="uid://b6vd5fh3xbk3s" path="res://cone.png" id="1_u245y"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rjg5n"]
+texture = ExtResource("1_u245y")
+texture_region_size = Vector2i(100, 100)
+0:0/0 = 0
+0:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-50, -50, 50, -50, 50, 50, -50, 50)
+
+[sub_resource type="TileSet" id="TileSet_0biv2"]
+tile_size = Vector2i(100, 100)
+physics_layer_0/collision_layer = 1
+sources/0 = SubResource("TileSetAtlasSource_rjg5n")
+
+[node name="Barricade" type="Node2D" unique_id=1433800534]
+script = ExtResource("1_rjg5n")
+
+[node name="BarricadeTileMap" type="TileMapLayer" parent="." unique_id=1999472228]
+tile_set = SubResource("TileSet_0biv2")

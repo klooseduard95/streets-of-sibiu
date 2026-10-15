@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://dq4unpnbyyjpa"
+path="res://.godot/imported/001. Overworld Night.mp3-052749b3f57108af3e7054414aa71ff9.mp3str"
+
+[deps]
+
+source_file="res://main_menu/001. Overworld Night.mp3"
+dest_files=["res://.godot/imported/001. Overworld Night.mp3-052749b3f57108af3e7054414aa71ff9.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

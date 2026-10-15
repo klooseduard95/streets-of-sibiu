@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://b7lb6neey7bci"]
+
+[ext_resource type="Script" uid="uid://bdclrld2daipo" path="res://background/finishers/ExitFinisher.gd" id="1_eh1ak"]
+[ext_resource type="Texture2D" uid="uid://des7oa4c3sibl" path="res://background/background_assets/manhole_portal.png" id="2_dq6bj"]
+[ext_resource type="PackedScene" uid="uid://7n7ad5hw26ai" path="res://interaction_system/interactable.tscn" id="2_r5g3f"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dq6bj"]
+size = Vector2(219, 310.5)
+
+[node name="ExitFinisher" type="Node2D" unique_id=2100188360]
+script = ExtResource("1_eh1ak")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=1643100488]
+texture = ExtResource("2_dq6bj")
+
+[node name="Interactable" parent="." unique_id=668787277 instance=ExtResource("2_r5g3f")]
+interact_name = "Exit Level"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactable" unique_id=166452548]
+shape = SubResource("RectangleShape2D_dq6bj")

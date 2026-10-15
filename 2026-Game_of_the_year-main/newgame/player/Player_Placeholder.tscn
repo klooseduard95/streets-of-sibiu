@@ -1,0 +1,183 @@
+[gd_scene format=3 uid="uid://cqs77xbwblgla"]
+
+[ext_resource type="Script" uid="uid://chladonw8l13o" path="res://player/player.gd" id="1_fa0me"]
+[ext_resource type="PackedScene" uid="uid://bwfoyx7migdtn" path="res://death_screen.tscn" id="2_15scd"]
+[ext_resource type="PackedScene" uid="uid://cncwjca40bnx5" path="res://player/ghost.tscn" id="2_bsbfi"]
+[ext_resource type="PackedScene" uid="uid://cqsxvyaqtjy6o" path="res://interaction_system/interacting_component.tscn" id="3_bsbfi"]
+[ext_resource type="Texture2D" uid="uid://i2edbjdn2i3s" path="res://player/player_assets/playerassets.png" id="3_oppv1"]
+[ext_resource type="Script" uid="uid://css4hembqw77" path="res://inventory/inventory_component.gd" id="4_oppv1"]
+[ext_resource type="AudioStream" uid="uid://dcypl8l748k38" path="res://Music/Dash.mp3" id="7_ycmpg"]
+[ext_resource type="AudioStream" uid="uid://b4hlpfsjb6eyx" path="res://Music/Parry.mp3" id="8_lkkf5"]
+[ext_resource type="AudioStream" uid="uid://br8kpq7l718bg" path="res://Music/Gunshot.mp3" id="9_ohgjv"]
+[ext_resource type="AudioStream" uid="uid://e1pv6x5hep7m" path="res://Music/Slash.mp3" id="10_ohgjv"]
+[ext_resource type="AudioStream" uid="uid://dkgi715wp3fon" path="res://Music/Chainsaw.mp3" id="11_oberk"]
+[ext_resource type="AudioStream" uid="uid://ctr28x43s01us" path="res://Music/PotionGulp.mp3" id="12_6eibi"]
+[ext_resource type="AudioStream" uid="uid://c0uotmuipar56" path="res://Music/PlayerDeath.mp3" id="13_se721"]
+
+[sub_resource type="Animation" id="Animation_15scd"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_oppv1"]
+resource_name = "walk_down"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [5, 4, 5, 3]
+}
+
+[sub_resource type="Animation" id="Animation_lkkf5"]
+resource_name = "walk_left"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [8, 6, 8, 7]
+}
+
+[sub_resource type="Animation" id="Animation_yu7ls"]
+resource_name = "walk_right"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [11, 10, 11, 9]
+}
+
+[sub_resource type="Animation" id="Animation_ycmpg"]
+resource_name = "walk_up"
+length = 0.4
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [2, 0, 2, 1]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_lkkf5"]
+_data = {
+&"RESET": SubResource("Animation_15scd"),
+&"walk_down": SubResource("Animation_oppv1"),
+&"walk_left": SubResource("Animation_lkkf5"),
+&"walk_right": SubResource("Animation_yu7ls"),
+&"walk_up": SubResource("Animation_ycmpg")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_15scd"]
+radius = 30.0
+height = 85.0
+
+[node name="Player" type="CharacterBody2D" unique_id=331261060]
+z_index = 174
+script = ExtResource("1_fa0me")
+death_screen_scene = ExtResource("2_15scd")
+selected_dash = 0
+selected_parry = 3
+ghost_node = ExtResource("2_bsbfi")
+
+[node name="PlayerSprite" type="Sprite2D" parent="." unique_id=1079047690]
+texture_filter = 1
+texture = ExtResource("3_oppv1")
+hframes = 3
+vframes = 4
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="PlayerSprite" unique_id=1904643156]
+libraries/ = SubResource("AnimationLibrary_lkkf5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1760017411]
+shape = SubResource("CapsuleShape2D_15scd")
+
+[node name="GhostTimer" type="Timer" parent="." unique_id=1573409548]
+wait_time = 0.15
+
+[node name="InteractingComponent" parent="." unique_id=1445027902 instance=ExtResource("3_bsbfi")]
+
+[node name="Inventory" type="Node2D" parent="." unique_id=1055036378]
+script = ExtResource("4_oppv1")
+
+[node name="DashTimer" type="Timer" parent="." unique_id=1817949612]
+one_shot = true
+
+[node name="SlownessTimer" type="Timer" parent="." unique_id=480626700]
+one_shot = true
+
+[node name="ParryTimer" type="Timer" parent="." unique_id=1025387338]
+one_shot = true
+
+[node name="DashSound" type="AudioStreamPlayer2D" parent="." unique_id=1193359340]
+stream = ExtResource("7_ycmpg")
+bus = &"SFX"
+
+[node name="ParrySound" type="AudioStreamPlayer2D" parent="." unique_id=1191513048]
+stream = ExtResource("8_lkkf5")
+bus = &"SFX"
+
+[node name="ShotSound" type="AudioStreamPlayer2D" parent="." unique_id=2120871014]
+stream = ExtResource("9_ohgjv")
+bus = &"SFX"
+
+[node name="SlashSound" type="AudioStreamPlayer2D" parent="." unique_id=910827933]
+stream = ExtResource("10_ohgjv")
+bus = &"SFX"
+
+[node name="ChainsawSound" type="AudioStreamPlayer2D" parent="." unique_id=1398812248]
+stream = ExtResource("11_oberk")
+bus = &"SFX"
+
+[node name="PotionGulp" type="AudioStreamPlayer2D" parent="." unique_id=1858566622]
+stream = ExtResource("12_6eibi")
+bus = &"SFX"
+
+[node name="PlayerDeathSound" type="AudioStreamPlayer2D" parent="." unique_id=1381703765]
+process_mode = 3
+stream = ExtResource("13_se721")
+
+[connection signal="timeout" from="GhostTimer" to="." method="_on_ghost_timer_timeout"]
+[connection signal="timeout" from="SlownessTimer" to="." method="_on_slowness_timer_timeout"]

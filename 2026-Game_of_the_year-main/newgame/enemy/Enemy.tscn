@@ -1,0 +1,102 @@
+[gd_scene format=3 uid="uid://du6hnr5wjit5g"]
+
+[ext_resource type="Script" uid="uid://cckemgp60q2j7" path="res://enemy/enemy.gd" id="1_7lgfl"]
+[ext_resource type="AudioStream" uid="uid://xp7kolt65yb8" path="res://Music/Rat.mp3" id="2_5p6bu"]
+[ext_resource type="PackedScene" uid="uid://4ywibunex2t1" path="res://enemy/EnemyHitbox.tscn" id="2_xgln8"]
+[ext_resource type="AudioStream" uid="uid://bq0y6o2644sp8" path="res://Music/Pigeon.mp3" id="3_80fio"]
+[ext_resource type="AudioStream" uid="uid://6hekl4pivvkh" path="res://Music/Grunt.mp3" id="4_55d7h"]
+[ext_resource type="AudioStream" uid="uid://b4u448rgn1luf" path="res://Music/CeTelefonAi.mp3" id="5_xgln8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_xgln8"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_55d7h"]
+radius = 27.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_5p6bu"]
+radius = 292.49445
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_80fio"]
+radius = 1.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7lgfl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7lgfl"]
+bg_color = Color(1, 0, 0, 1)
+
+[node name="Enemy" type="CharacterBody2D" unique_id=1635851413]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+floor_block_on_wall = false
+platform_on_leave = 2
+platform_floor_layers = 4294967294
+script = ExtResource("1_7lgfl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1091730061]
+shape = SubResource("CircleShape2D_xgln8")
+
+[node name="EnemyHitbox" parent="." unique_id=1256153223 instance=ExtResource("2_xgln8")]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHitbox" unique_id=1081429830]
+shape = SubResource("CircleShape2D_55d7h")
+
+[node name="EnemySprite" type="Sprite2D" parent="." unique_id=1239177421]
+region_rect = Rect2(0, 0, 81, 30)
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="." unique_id=988641325]
+navigation_layers = 2
+path_search_max_polygons = 512
+path_search_max_distance = 500.0
+radius = 49.3
+neighbor_distance = 936.68
+max_neighbors = 4
+max_speed = 1027.95
+avoidance_layers = 2
+avoidance_mask = 2
+
+[node name="Tick" type="Timer" parent="." unique_id=354625607]
+autostart = true
+
+[node name="LineOfSight" type="RayCast2D" parent="." unique_id=73906547]
+target_position = Vector2(43, 0)
+
+[node name="AgroRange" type="Area2D" parent="." unique_id=723410579]
+
+[node name="AgroShape" type="CollisionShape2D" parent="AgroRange" unique_id=716679033]
+shape = SubResource("CircleShape2D_5p6bu")
+debug_color = Color(0.88262665, 0.30708224, 0.25293016, 0)
+
+[node name="HitRange" type="Area2D" parent="." unique_id=1931288568]
+
+[node name="HitShape" type="CollisionShape2D" parent="HitRange" unique_id=1675677186]
+shape = SubResource("CircleShape2D_80fio")
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1444115961]
+modulate = Color(1, 1, 1, 0)
+offset_left = -38.0
+offset_top = 19.0
+offset_right = -20.0
+offset_bottom = 21.0
+scale = Vector2(4.2498126, 4.2498126)
+theme_override_styles/background = SubResource("StyleBoxEmpty_7lgfl")
+theme_override_styles/fill = SubResource("StyleBoxFlat_7lgfl")
+show_percentage = false
+
+[node name="RatSound" type="AudioStreamPlayer2D" parent="." unique_id=245207817]
+stream = ExtResource("2_5p6bu")
+bus = &"SFX"
+
+[node name="PigeonSound" type="AudioStreamPlayer2D" parent="." unique_id=114991457]
+stream = ExtResource("3_80fio")
+bus = &"SFX"
+
+[node name="GruntSound" type="AudioStreamPlayer2D" parent="." unique_id=679947193]
+stream = ExtResource("4_55d7h")
+bus = &"SFX"
+
+[node name="CeTelAiSound" type="AudioStreamPlayer2D" parent="." unique_id=1306335171]
+stream = ExtResource("5_xgln8")
+bus = &"SFX"
+
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]
+[connection signal="timeout" from="Tick" to="." method="_on_tick_timeout"]
+[connection signal="body_entered" from="HitRange" to="." method="_on_hit_range_body_entered"]

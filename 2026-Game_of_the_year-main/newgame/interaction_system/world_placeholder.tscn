@@ -1,0 +1,132 @@
+[gd_scene format=3 uid="uid://b56xk6rxlhpb5"]
+
+[ext_resource type="PackedScene" uid="uid://cqs77xbwblgla" path="res://player/Player_Placeholder.tscn" id="2_go8gb"]
+[ext_resource type="PackedScene" uid="uid://bgn82qt8g6pn8" path="res://interaction_system/item_placeholder.tscn" id="2_x6v0y"]
+[ext_resource type="Resource" uid="uid://dxlql5xh48nml" path="res://item/weapons/primary/primary_medium.tres" id="3_2qtjj"]
+[ext_resource type="Resource" uid="uid://epqjyqe33rcb" path="res://item/consumables/consumable_x2dmg.tres" id="3_go8gb"]
+[ext_resource type="Resource" uid="uid://d01i3os5csd5u" path="res://item/weapons/primary/primary_short.tres" id="4_eb2kw"]
+[ext_resource type="PackedScene" uid="uid://f38afb7d2yit" path="res://inventory/inventory_ui.tscn" id="4_usvka"]
+[ext_resource type="Resource" uid="uid://rt270q4wrbln" path="res://item/weapons/primary/primary_alternative.tres" id="5_wquni"]
+[ext_resource type="Resource" uid="uid://pw48k61n0kdr" path="res://item/consumables/consumable_speed.tres" id="6_otwkj"]
+[ext_resource type="Resource" uid="uid://d18ec0k50gdmh" path="res://item/weapons/primary/primary_sniper.tres" id="6_xulk6"]
+[ext_resource type="Resource" uid="uid://cvatxblc2mj27" path="res://item/consumables/consumable_ups_and_downs.tres" id="7_2qtjj"]
+[ext_resource type="Resource" uid="uid://dgbvlupjhvc68" path="res://item/weapons/secondary/secondary_punch.tres" id="7_i0c8g"]
+[ext_resource type="Resource" uid="uid://dw2xm6241ktvk" path="res://item/weapons/secondary/secondary_knife.tres" id="8_5i6dw"]
+[ext_resource type="Resource" uid="uid://f67ggobi4oei" path="res://item/weapons/secondary/secondary_bat.tres" id="9_ckc0q"]
+[ext_resource type="Resource" uid="uid://b4xh4nece2x41" path="res://item/weapons/secondary/secondary_chainsaw.tres" id="10_wh84f"]
+[ext_resource type="Resource" uid="uid://cg3eftrrsvogn" path="res://item/consumables/consumable_dmg_reduction.tres" id="11_yu8uk"]
+[ext_resource type="Resource" uid="uid://lewiy8hienta" path="res://item/consumables/consumable_enemy_stun.tres" id="13_ckc0q"]
+[ext_resource type="Resource" uid="uid://bs7n03dgd3nkx" path="res://item/consumables/consumable_ghost.tres" id="13_jj8gx"]
+[ext_resource type="Resource" uid="uid://cl7eychdwwck5" path="res://item/consumables/consumable_health.tres" id="14_vx088"]
+[ext_resource type="Resource" uid="uid://oapwx14bbsw5" path="res://item/consumables/consumable_shield.tres" id="15_6yco0"]
+[ext_resource type="PackedScene" uid="uid://cdykwvukdygtb" path="res://enemy/SpawnerEnemy.tscn" id="15_ckc0q"]
+[ext_resource type="Resource" uid="uid://cr50yue3txwln" path="res://enemy/enemy_types/MarshMallowType.tres" id="16_wh84f"]
+[ext_resource type="PackedScene" uid="uid://bpgvmty6awyv6" path="res://upgradestings/upgrade window.tscn" id="22_jj8gx"]
+[ext_resource type="PackedScene" uid="uid://67uy322yd1uk" path="res://inventory/information_ui.tscn" id="24_6yco0"]
+
+[sub_resource type="NavigationPolygon" id="NavigationPolygon_ckc0q"]
+vertices = PackedVector2Array(85.296875, -42.421875, 85.296875, 48.101563, -87.71875, 44.789063, -86.171875, -42.867188)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-95.99999, -52.899998, 95.299995, -52.399998, 95.299995, 58.299995, -97.899994, 54.6)])
+
+[node name="world_placeholder" type="Node2D" unique_id=1746545925]
+
+[node name="InventoryHUD" parent="." unique_id=448217347 node_paths=PackedStringArray("player") instance=ExtResource("4_usvka")]
+player = NodePath("../Player")
+
+[node name="primary_1" parent="." unique_id=1030518401 instance=ExtResource("2_x6v0y")]
+position = Vector2(-333, -535)
+item_data = ExtResource("3_2qtjj")
+
+[node name="primary_2" parent="." unique_id=1120558383 instance=ExtResource("2_x6v0y")]
+position = Vector2(-142, -535)
+item_data = ExtResource("4_eb2kw")
+
+[node name="primary_3" parent="." unique_id=2039091834 instance=ExtResource("2_x6v0y")]
+position = Vector2(51, -535)
+item_data = ExtResource("5_wquni")
+
+[node name="primary_4" parent="." unique_id=1156807313 instance=ExtResource("2_x6v0y")]
+position = Vector2(240, -535)
+item_data = ExtResource("6_xulk6")
+
+[node name="melee_1" parent="." unique_id=1506834229 instance=ExtResource("2_x6v0y")]
+position = Vector2(-373, 536)
+item_data = ExtResource("7_i0c8g")
+
+[node name="melee_2" parent="." unique_id=710740150 instance=ExtResource("2_x6v0y")]
+position = Vector2(-179, 536)
+item_data = ExtResource("8_5i6dw")
+
+[node name="melee_3" parent="." unique_id=1652748421 instance=ExtResource("2_x6v0y")]
+position = Vector2(20, 536)
+item_data = ExtResource("9_ckc0q")
+
+[node name="melee_4" parent="." unique_id=750843694 instance=ExtResource("2_x6v0y")]
+position = Vector2(221, 536)
+item_data = ExtResource("10_wh84f")
+
+[node name="consumable_1" parent="." unique_id=789811334 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, -663)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("11_yu8uk")
+
+[node name="consumable_2" parent="." unique_id=1255933609 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, -472)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("13_ckc0q")
+
+[node name="consumable_3" parent="." unique_id=1173652470 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, -281)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("13_jj8gx")
+
+[node name="consumable_4" parent="." unique_id=1786240182 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, -90)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("14_vx088")
+
+[node name="consumable_5" parent="." unique_id=1219299820 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, 102)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("15_6yco0")
+
+[node name="consumable_6" parent="." unique_id=955593999 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, 293)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("6_otwkj")
+
+[node name="consumable_7" parent="." unique_id=162032622 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, 486)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("7_2qtjj")
+
+[node name="consumable_8" parent="." unique_id=265124664 instance=ExtResource("2_x6v0y")]
+position = Vector2(812, 681)
+scale = Vector2(0.5, 0.5)
+item_data = ExtResource("3_go8gb")
+
+[node name="Player" parent="." unique_id=331261060 instance=ExtResource("2_go8gb")]
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1653590884]
+
+[node name="SpawnerEnemy" parent="." unique_id=1805298299 instance=ExtResource("15_ckc0q")]
+position = Vector2(-712, -140)
+stats = ExtResource("16_wh84f")
+
+[node name="SpawnerEnemy2" parent="." unique_id=929482020 instance=ExtResource("15_ckc0q")]
+position = Vector2(-712, 143)
+stats = ExtResource("16_wh84f")
+
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="." unique_id=975806455]
+visible = false
+scale = Vector2(10, 10)
+navigation_polygon = SubResource("NavigationPolygon_ckc0q")
+navigation_layers = 3
+
+[node name="UpgradeWindow" parent="." unique_id=691736283 node_paths=PackedStringArray("player") instance=ExtResource("22_jj8gx")]
+visible = false
+player = NodePath("../Player")
+
+[node name="information_ui" parent="." unique_id=714661159 node_paths=PackedStringArray("player") instance=ExtResource("24_6yco0")]
+player = NodePath("../Player")

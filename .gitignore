@@ -1,0 +1,22 @@
+*.iml
+.gradle
+/local.properties
+/.idea/caches
+/.idea/libraries
+/.idea/modules.xml
+/.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+.DS_Store
+build/
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+.kotlin/
+# Original archive: identical content is committed as 2026-Game_of_the_year-main/ (read-only reference)
+/2026-Game_of_the_year-main.zip
+# Godot reference tooling: engine binary, downloads and the working copy of the project are reproducible
+/tools/godot-reference/engine/
+/tools/godot-reference/downloads/
+/tools/godot-reference/project-copy/

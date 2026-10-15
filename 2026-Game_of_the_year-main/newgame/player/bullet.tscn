@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bvslsjj0cno8f"]
+
+[ext_resource type="Script" uid="uid://ugeyx5ohidqq" path="res://player/bullet.gd" id="1_4kpmy"]
+[ext_resource type="Texture2D" uid="uid://bkdjoa0rabr7c" path="res://item/item_assets/bullet_player.png" id="2_j40gx"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_j40gx"]
+radius = 11.0
+height = 32.0
+
+[node name="bullet" type="Area2D" unique_id=1192047651]
+z_index = 10
+collision_layer = 5
+collision_mask = 5
+script = ExtResource("1_4kpmy")
+speed = 1200.0
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1324422085]
+texture_filter = 1
+texture = ExtResource("2_j40gx")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=448175483]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_j40gx")

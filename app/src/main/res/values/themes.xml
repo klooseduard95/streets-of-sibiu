@@ -1,0 +1,6 @@
+<resources>
+    <!-- Fullscreen, no action bar: libGDX draws the whole window. -->
+    <style name="Theme.StreetsOfSibiu" parent="android:Theme.Material.NoActionBar.Fullscreen">
+        <item name="android:windowBackground">@android:color/black</item>
+    </style>
+</resources>

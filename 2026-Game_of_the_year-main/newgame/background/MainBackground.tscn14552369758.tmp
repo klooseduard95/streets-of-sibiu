@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://bu11lwfj4fi8p"]
+
+[ext_resource type="Script" uid="uid://bdioyk5j4twdr" path="res://background/main_background.gd" id="1_5aa5l"]
+[ext_resource type="PackedScene" uid="uid://bxgcpc4w5w0a3" path="res://background/DummyRoom.tscn" id="1_ol1x7"]
+[ext_resource type="PackedScene" uid="uid://du6hnr5wjit5g" path="res://enemy/Enemy.tscn" id="2_31jjw"]
+[ext_resource type="Texture2D" uid="uid://df4puvnt08cmb" path="res://placeholder.png" id="3_31jjw"]
+
+[sub_resource type="GDScript" id="GDScript_5aa5l"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_nhsak"]
+radius = 10.049875
+
+[node name="MainBackground" type="Node2D" unique_id=1098042321]
+script = ExtResource("1_5aa5l")
+
+[node name="DummyRoom" parent="." unique_id=1838834115 instance=ExtResource("1_ol1x7")]
+
+[node name="Enemy" parent="." unique_id=1635851413 instance=ExtResource("2_31jjw")]
+
+[node name="TEMP" type="Camera2D" parent="." unique_id=183123780]
+
+[node name="TempPlayer" type="CharacterBody2D" parent="." unique_id=1004310752]
+position = Vector2(-298, -175)
+script = SubResource("GDScript_5aa5l")
+
+[node name="Placeholder" type="Sprite2D" parent="TempPlayer" unique_id=962240001]
+position = Vector2(-3.0517578e-05, 0)
+scale = Vector2(0.3984375, 0.3984375)
+texture = ExtResource("3_31jjw")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="TempPlayer" unique_id=1945407264]
+shape = SubResource("CircleShape2D_nhsak")

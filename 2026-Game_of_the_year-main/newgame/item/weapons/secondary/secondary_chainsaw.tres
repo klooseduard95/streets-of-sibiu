@@ -1,0 +1,28 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://b4xh4nece2x41"]
+
+[ext_resource type="Texture2D" uid="uid://bf0amyp0glk2a" path="res://item/item_assets/item icons/chainsaw.png" id="1_56ycm"]
+[ext_resource type="PackedScene" uid="uid://byfauq1njhmde" path="res://player/bullet_melee.tscn" id="1_iun0m"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_r20gh"]
+[ext_resource type="AudioStream" uid="uid://dkgi715wp3fon" path="res://Music/Chainsaw.mp3" id="4_56ycm"]
+
+[resource]
+script = ExtResource("1_r20gh")
+projectile_scene = ExtResource("1_iun0m")
+dmg = 1.0
+current_ammo = -1
+ammo_capacity = -1
+fire_rate = 8.0
+maxRange = 150.0
+bullet_speed = 800.0
+weapon_sound = ExtResource("4_56ycm")
+is_ramping = true
+ramp_gain_per_hit = 0.4
+name = "Chainsaw"
+description = "1 Base Damage
++0.40 dmg per successful hit
+-1.5 dmg per 0.5s you are not hitting
+0.125/s Cooldown
+1 Tile Range"
+icon = ExtResource("1_56ycm")
+type = 1
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

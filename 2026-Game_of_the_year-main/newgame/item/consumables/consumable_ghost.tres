@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://bs7n03dgd3nkx"]
+
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="1_8wbay"]
+[ext_resource type="Texture2D" uid="uid://b5iqbnsc1p30t" path="res://item/item_assets/item icons/newbottle1.png" id="1_hj0mh"]
+
+[resource]
+script = ExtResource("1_8wbay")
+buffDuration = 5.0
+modifiers = {
+"invincible": 1.0
+}
+name = "Ghost"
+description = "Become Invincible
+Duration: 5s"
+icon = ExtResource("1_hj0mh")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

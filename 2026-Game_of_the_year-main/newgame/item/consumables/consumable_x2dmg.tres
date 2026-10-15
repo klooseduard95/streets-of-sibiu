@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://epqjyqe33rcb"]
+
+[ext_resource type="Texture2D" uid="uid://dnm81cojwn5kp" path="res://item/item_assets/item icons/newbottle2.png" id="1_432uu"]
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="2_8a68w"]
+
+[resource]
+script = ExtResource("2_8a68w")
+buffDuration = 10.0
+modifiers = {
+"damage_bonus": 100.0
+}
+name = "Rage Potion"
+description = "x2 Damage
+Duration: 10s"
+icon = ExtResource("1_432uu")
+type = 2
+metadata/_custom_type_script = "uid://d12ch7mi5i5sf"

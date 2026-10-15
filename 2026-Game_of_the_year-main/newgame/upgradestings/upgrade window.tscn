@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://bpgvmty6awyv6"]
+
+[ext_resource type="PackedScene" uid="uid://pko5heeedmvu" path="res://upgradestings/select_upgrade_scene.tscn" id="1_3nus3"]
+[ext_resource type="Script" uid="uid://bnxdfp8yrva3" path="res://upgradestings/upgrade_window.gd" id="1_nuy6r"]
+[ext_resource type="PackedScene" uid="uid://bgn82qt8g6pn8" path="res://interaction_system/item_placeholder.tscn" id="2_55kop"]
+
+[node name="UpgradeWindow" type="CanvasLayer" unique_id=691736283 node_paths=PackedStringArray("cards")]
+process_mode = 3
+script = ExtResource("1_nuy6r")
+cards = [NodePath("SelectUpgrade/HBoxContainer/Panel"), NodePath("SelectUpgrade/HBoxContainer/Panel2"), NodePath("SelectUpgrade/HBoxContainer/Panel3")]
+item_drop_scene = ExtResource("2_55kop")
+
+[node name="SelectUpgrade" parent="." unique_id=1810971510 instance=ExtResource("1_3nus3")]
+
+[editable path="SelectUpgrade"]

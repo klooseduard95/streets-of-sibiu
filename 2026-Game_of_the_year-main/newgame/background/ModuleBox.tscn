@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cftlw15mrfu64"]
+
+[ext_resource type="Script" uid="uid://0rr7k80ococd" path="res://background/module_box.gd" id="1_1bb2y"]
+
+[node name="ModuleBox" type="Area2D" unique_id=1021411611]
+script = ExtResource("1_1bb2y")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

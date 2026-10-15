@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://cg3eftrrsvogn"]
+
+[ext_resource type="Texture2D" uid="uid://cdk81ebjv1u3n" path="res://item/item_assets/item icons/newbottle4.png" id="1_no2ex"]
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="2_7ym8f"]
+
+[resource]
+script = ExtResource("2_7ym8f")
+buffDuration = 10.0
+modifiers = {
+"dmg_reduction_raw": 30.0
+}
+name = "Armor"
+description = "+30 Raw Damage Reduction
+Duration: 10s"
+icon = ExtResource("1_no2ex")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

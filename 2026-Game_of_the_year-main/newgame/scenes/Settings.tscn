@@ -1,0 +1,174 @@
+[gd_scene format=3 uid="uid://cay8yri5o60gf"]
+
+[ext_resource type="Script" uid="uid://burnhpd6x71mg" path="res://scenes/settings.gd" id="1_i47rn"]
+[ext_resource type="Texture2D" uid="uid://c10ua6xcdbmkm" path="res://menu.png" id="2_46duy"]
+[ext_resource type="Script" uid="uid://c05f52qj6gvl4" path="res://scenes/h_slider.gd" id="3_46duy"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_olpnp"]
+texture = ExtResource("2_46duy")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i47rn"]
+bg_color = Color(1, 1, 1, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_46duy"]
+bg_color = Color(0.54816455, 0.5481646, 0.5481646, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+shadow_color = Color(0, 0, 0, 0.8)
+shadow_size = 5
+shadow_offset = Vector2(0, 3)
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_i47rn"]
+color = Color(1, 1, 1, 1)
+thickness = 6
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_46duy"]
+color = Color(0.13997257, 0.16064858, 0.99999994, 1)
+thickness = 6
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_1dggd"]
+color = Color(0.14117648, 0.16078432, 1, 1)
+thickness = 6
+
+[node name="Settings" type="Control" unique_id=1294732504]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i47rn")
+
+[node name="Panel" type="Panel" parent="." unique_id=1794622261]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_olpnp")
+
+[node name="Button2" type="Button" parent="." unique_id=1191951366]
+layout_mode = 1
+offset_left = 83.0
+offset_top = 87.0
+offset_right = 409.0
+offset_bottom = 203.0
+size_flags_vertical = 3
+theme_override_colors/font_color = Color(0.0093103545, 0.0093103545, 0.0093103545, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_i47rn")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_46duy")
+theme_override_styles/hover = SubResource("StyleBoxFlat_46duy")
+text = " Go Back"
+
+[node name="Panel2" type="Panel" parent="." unique_id=785585010]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -301.5
+offset_top = -177.5
+offset_right = 301.5
+offset_bottom = 177.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel2" unique_id=153715314]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -264.5
+offset_top = -148.5
+offset_right = 264.5
+offset_bottom = 148.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="Panel2/VBoxContainer" unique_id=2106862854]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Optons"
+horizontal_alignment = 1
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="Panel2/VBoxContainer" unique_id=643852617]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel2/VBoxContainer/HBoxContainer3" unique_id=1789652609]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Master Volume"
+
+[node name="HSlider" type="HSlider" parent="Panel2/VBoxContainer/HBoxContainer3" unique_id=2021242209]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxLine_i47rn")
+theme_override_styles/grabber_area = SubResource("StyleBoxLine_46duy")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxLine_1dggd")
+max_value = 1.0
+step = 0.05
+value = 1.0
+script = ExtResource("3_46duy")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Panel2/VBoxContainer" unique_id=1539792416]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel2/VBoxContainer/HBoxContainer" unique_id=1166734320]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Music Volume  "
+
+[node name="HSlider" type="HSlider" parent="Panel2/VBoxContainer/HBoxContainer" unique_id=1268575535]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxLine_i47rn")
+theme_override_styles/grabber_area = SubResource("StyleBoxLine_46duy")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxLine_1dggd")
+max_value = 1.0
+step = 0.05
+value = 1.0
+script = ExtResource("3_46duy")
+bus_name = "Music"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Panel2/VBoxContainer" unique_id=935266267]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Panel2/VBoxContainer/HBoxContainer2" unique_id=1880072595]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "SFX Volume      "
+
+[node name="HSlider" type="HSlider" parent="Panel2/VBoxContainer/HBoxContainer2" unique_id=1116055094]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/slider = SubResource("StyleBoxLine_i47rn")
+theme_override_styles/grabber_area = SubResource("StyleBoxLine_46duy")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxLine_1dggd")
+max_value = 1.0
+step = 0.05
+value = 1.0
+script = ExtResource("3_46duy")
+bus_name = "SFX"
+
+[connection signal="pressed" from="Button2" to="." method="_on_goback_pressed"]

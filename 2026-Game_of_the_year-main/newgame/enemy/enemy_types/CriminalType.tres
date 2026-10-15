@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://yoqno764tlir"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_55akt"]
+
+[resource]
+script = ExtResource("1_55akt")
+type = "criminal"
+hp = 60.0
+dmg = 20.0
+walkSpeed = 250.0
+reach = 100.0
+hitCooldown = 1.5
+hitWindup = 0.4
+sizeModifier = 1.5
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

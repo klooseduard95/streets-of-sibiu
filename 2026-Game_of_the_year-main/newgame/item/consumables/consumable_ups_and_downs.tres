@@ -1,0 +1,25 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://cvatxblc2mj27"]
+
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="1_auujs"]
+[ext_resource type="Texture2D" uid="uid://dnm81cojwn5kp" path="res://item/item_assets/item icons/newbottle2.png" id="1_mwm3v"]
+
+[resource]
+script = ExtResource("1_auujs")
+buffDuration = 20.0
+modifiers = {
+"damage_bonus": 50.0
+}
+after_effect_duration = 10.0
+after_effect_modifiers = {
+"damage_bonus": -50.0
+}
+name = "Adrenaline"
+description = "x1.5 Damage
+Duration: 20s
+
+After Effect:
+x0.5 Damage
+Duration: 10s"
+icon = ExtResource("1_mwm3v")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

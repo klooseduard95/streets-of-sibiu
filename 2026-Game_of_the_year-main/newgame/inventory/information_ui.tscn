@@ -1,0 +1,79 @@
+[gd_scene format=3 uid="uid://67uy322yd1uk"]
+
+[ext_resource type="Script" uid="uid://daodnj3vl41fx" path="res://inventory/information_ui.gd" id="1_geq2e"]
+[ext_resource type="Texture2D" uid="uid://dak5wjeewxekj" path="res://item/item_assets/item icons/Shield.png" id="2_d5so0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3gjv"]
+bg_color = Color(0.2665752, 0.26657522, 0.26657507, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d5so0"]
+bg_color = Color(0.9582167, 0.180915, 0.21840319, 1)
+
+[node name="information_ui" type="CanvasLayer" unique_id=714661159]
+script = ExtResource("1_geq2e")
+
+[node name="Control" type="Control" parent="." unique_id=1747970865]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="ColorRect" type="ColorRect" parent="Control" unique_id=797898746]
+layout_mode = 0
+offset_right = 410.0
+offset_bottom = 115.0
+color = Color(0.5019608, 0.5019608, 0.5019608, 0.5019608)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control" unique_id=375032487]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 10.0
+offset_right = 405.0
+offset_bottom = 126.0
+
+[node name="HealthBar" type="ProgressBar" parent="Control/VBoxContainer" unique_id=1323815731]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_c3gjv")
+theme_override_styles/fill = SubResource("StyleBoxFlat_d5so0")
+show_percentage = false
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/HealthBar" unique_id=920955934]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -11.5
+offset_right = 50.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+vertical_alignment = 1
+
+[node name="HSeparator2" type="HSeparator" parent="Control/VBoxContainer" unique_id=1337599115]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer" unique_id=47843170]
+layout_mode = 2
+
+[node name="ShieldTexture" type="TextureRect" parent="Control/VBoxContainer/HBoxContainer" unique_id=1594209150]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+texture = ExtResource("2_d5so0")
+expand_mode = 1
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="Control/VBoxContainer/HBoxContainer" unique_id=482964933]
+layout_mode = 2
+vertical_alignment = 1
+
+[node name="VSeparator" type="VSeparator" parent="Control/VBoxContainer/HBoxContainer" unique_id=1213841039]
+layout_mode = 2
+
+[node name="AmmoLabel" type="Label" parent="Control/VBoxContainer/HBoxContainer" unique_id=1419046928]
+layout_mode = 2
+vertical_alignment = 1

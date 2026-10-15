@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://oapwx14bbsw5"]
+
+[ext_resource type="Texture2D" uid="uid://dak5wjeewxekj" path="res://item/item_assets/item icons/Shield.png" id="1_hgh3x"]
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="1_ojmxa"]
+
+[resource]
+script = ExtResource("1_ojmxa")
+shield = 150
+buffDuration = 10.0
+modifiers = {
+"speed": -0.33
+}
+name = "Shield"
+description = "+150 Shield
+-33% Movement Speed
+Duration: 10s"
+icon = ExtResource("1_hgh3x")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

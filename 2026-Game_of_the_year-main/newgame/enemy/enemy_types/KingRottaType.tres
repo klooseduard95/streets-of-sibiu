@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://0qfvn6w0fa6m"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_c171l"]
+
+[resource]
+script = ExtResource("1_c171l")
+type = "king_rotta"
+visionRange = 0.0
+hp = 2000.0
+dmg = 40.0
+walkSpeed = 0.0
+reach = 0.0
+hitCooldown = 10.0
+hitWindup = 0.0
+sizeModifier = 1.5
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

@@ -1,0 +1,16 @@
+[versions]
+agp = "9.4.1"
+kotlin = "2.4.21"
+gdx = "1.14.2"
+junit = "4.13.2"
+
+[libraries]
+gdx = { group = "com.badlogicgames.gdx", name = "gdx", version.ref = "gdx" }
+gdx-backend-android = { group = "com.badlogicgames.gdx", name = "gdx-backend-android", version.ref = "gdx" }
+gdx-backend-lwjgl3 = { group = "com.badlogicgames.gdx", name = "gdx-backend-lwjgl3", version.ref = "gdx" }
+gdx-platform = { group = "com.badlogicgames.gdx", name = "gdx-platform", version.ref = "gdx" }
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

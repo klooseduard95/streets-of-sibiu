@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://beo03qcvj2qwe"]
+
+[ext_resource type="Script" uid="uid://5c5eg8n168bl" path="res://background/finishers/ConsumableFinisher.gd" id="1_c4uka"]
+[ext_resource type="Texture2D" uid="uid://be6v3f3jlifpr" path="res://background/finishers/garbagebin.png" id="2_c4uka"]
+[ext_resource type="PackedScene" uid="uid://7n7ad5hw26ai" path="res://interaction_system/interactable.tscn" id="3_kwv8p"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8pvnj"]
+size = Vector2(132, 217)
+
+[node name="ConsumableFinisher" type="Node2D" unique_id=43808143]
+script = ExtResource("1_c4uka")
+
+[node name="Sprite" type="Sprite2D" parent="." unique_id=808422280]
+position = Vector2(-2.3841858e-07, 7.6293945e-06)
+texture = ExtResource("2_c4uka")
+
+[node name="Interactable" parent="." unique_id=668787277 instance=ExtResource("3_kwv8p")]
+position = Vector2(0, -1)
+interact_name = "Choose a consumable"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactable" unique_id=1964788511]
+shape = SubResource("RectangleShape2D_8pvnj")

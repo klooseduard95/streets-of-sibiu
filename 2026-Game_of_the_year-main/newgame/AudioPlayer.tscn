@@ -1,0 +1,26 @@
+[gd_scene format=3 uid="uid://cn2tbmtvmp62p"]
+
+[ext_resource type="AudioStream" uid="uid://dqsdqjc2a6ve2" path="res://bucurest_hroma.mp3" id="1_0ym5d"]
+[ext_resource type="Script" path="res://audio_player.gd" id="1_07y2e"]
+[ext_resource type="AudioStream" uid="uid://curq1wquxxi37" path="res://Music/Horse.mp3" id="2_1bvgg"]
+
+[node name="AudioPlayer" type="Node2D" unique_id=2044605446]
+script = ExtResource("1_07y2e")
+
+[node name="AudioStreamPlayer2D" type="AudioStreamPlayer2D" parent="." unique_id=33030727]
+process_mode = 3
+stream = ExtResource("1_0ym5d")
+autoplay = true
+max_distance = 1e+16
+bus = &"Music"
+
+[node name="HorsePlayer" type="AudioStreamPlayer2D" parent="." unique_id=169975535]
+stream = ExtResource("2_1bvgg")
+max_distance = 9.223372e+18
+bus = &"SFX"
+
+[node name="HorseTimer" type="Timer" parent="." unique_id=1959741766]
+autostart = true
+
+[connection signal="finished" from="AudioStreamPlayer2D" to="." method="_on_audio_stream_player_2d_finished"]
+[connection signal="timeout" from="HorseTimer" to="." method="_on_horse_timer_timeout"]

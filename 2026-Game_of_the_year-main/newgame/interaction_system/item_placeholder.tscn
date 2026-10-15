@@ -1,0 +1,25 @@
+[gd_scene format=3 uid="uid://bgn82qt8g6pn8"]
+
+[ext_resource type="Script" uid="uid://vsvqf1jvo61u" path="res://interaction_system/item_placeholder.gd" id="1_mgiyb"]
+[ext_resource type="PackedScene" uid="uid://7n7ad5hw26ai" path="res://interaction_system/interactable.tscn" id="3_tm4iq"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_vs5bg"]
+radius = 64.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_fiytb"]
+radius = 95.0
+
+[node name="Item_placeholder" type="Area2D" unique_id=1030518401]
+z_index = 13
+script = ExtResource("1_mgiyb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=923109596]
+shape = SubResource("CircleShape2D_vs5bg")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1712360678]
+
+[node name="Interactable" parent="." unique_id=668787277 instance=ExtResource("3_tm4iq")]
+interact_name = "Pick up"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Interactable" unique_id=311771646]
+shape = SubResource("CircleShape2D_fiytb")

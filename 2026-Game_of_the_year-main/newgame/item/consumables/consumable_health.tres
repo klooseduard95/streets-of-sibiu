@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://cl7eychdwwck5"]
+
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="1_2gvmo"]
+[ext_resource type="Texture2D" uid="uid://vq4yynuceye2" path="res://item/item_assets/item icons/heal bottle.png" id="1_cao5b"]
+
+[resource]
+script = ExtResource("1_2gvmo")
+hp = 40
+name = "Health Potion"
+description = "+40 HP"
+icon = ExtResource("1_cao5b")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

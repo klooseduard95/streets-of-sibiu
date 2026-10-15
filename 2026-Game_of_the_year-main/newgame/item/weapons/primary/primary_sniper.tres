@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://d18ec0k50gdmh"]
+
+[ext_resource type="Texture2D" uid="uid://7dq1viuj8g2x" path="res://item/item_assets/item icons/sniper.png" id="1_6vk2s"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_qt0hn"]
+[ext_resource type="PackedScene" uid="uid://bvslsjj0cno8f" path="res://player/bullet.tscn" id="1_vkher"]
+[ext_resource type="AudioStream" uid="uid://br8kpq7l718bg" path="res://Music/Gunshot.mp3" id="4_6vk2s"]
+
+[resource]
+script = ExtResource("1_qt0hn")
+projectile_scene = ExtResource("1_vkher")
+modifiers = {
+"crit_chance": 10.0
+}
+dmg = 25.0
+current_ammo = 1
+ammo_capacity = 1
+fire_rate = 10.0
+critChance = 10.0
+reloadTime = 1.0
+maxRange = 3000.0
+is_sniper = true
+bullet_speed = 1700.0
+weapon_sound = ExtResource("4_6vk2s")
+name = "Sniper Rifle"
+description = "25 Damage / Bullet
+1 Ammo Capacity
+1s Reload time
+Infinite Range
++10% Critical Chance while holding"
+icon = ExtResource("1_6vk2s")
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

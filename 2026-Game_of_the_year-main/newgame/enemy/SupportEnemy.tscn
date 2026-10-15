@@ -1,0 +1,49 @@
+[gd_scene format=3 uid="uid://ce6bgcfl3nflw"]
+
+[ext_resource type="Script" uid="uid://b3anbcd7srn81" path="res://enemy/SupportEnemy.gd" id="1_gsw5v"]
+[ext_resource type="PackedScene" uid="uid://4ywibunex2t1" path="res://enemy/EnemyHitbox.tscn" id="2_4fv4v"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7rjw8"]
+radius = 21.264227
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_7xfkf"]
+radius = 13.038404
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7rjw8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n2asq"]
+bg_color = Color(1, 0, 0, 1)
+
+[node name="SupportEnemy" type="CharacterBody2D" unique_id=1877896440]
+scale = Vector2(4.234811, 4.234811)
+script = ExtResource("1_gsw5v")
+
+[node name="EnemyHitbox" parent="." unique_id=1256153223 instance=ExtResource("2_4fv4v")]
+scale = Vector2(1.0000001, 1.0000001)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="EnemyHitbox" unique_id=454708879]
+shape = SubResource("CircleShape2D_7rjw8")
+
+[node name="EnemySprite" type="Sprite2D" parent="." unique_id=2007058305]
+position = Vector2(0, -6.8480043)
+
+[node name="BuffArea" type="Area2D" parent="." unique_id=158794061]
+
+[node name="BuffAreaHitbox" type="CollisionShape2D" parent="BuffArea" unique_id=972759610]
+shape = SubResource("CircleShape2D_7xfkf")
+
+[node name="Tick" type="Timer" parent="." unique_id=739341608]
+autostart = true
+
+[node name="HealthBar" type="ProgressBar" parent="." unique_id=1125000080]
+modulate = Color(1, 1, 1, 0)
+offset_left = -36.36526
+offset_top = 23.14153
+offset_right = -0.4803276
+offset_bottom = 27.096546
+scale = Vector2(2.0300024, 2.0300024)
+theme_override_styles/background = SubResource("StyleBoxEmpty_7rjw8")
+theme_override_styles/fill = SubResource("StyleBoxFlat_n2asq")
+show_percentage = false
+
+[connection signal="timeout" from="Tick" to="." method="_on_tick_timeout"]

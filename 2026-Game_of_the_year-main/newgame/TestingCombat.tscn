@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://cau7co1ovh4uc"]
+
+[ext_resource type="PackedScene" uid="uid://du6hnr5wjit5g" path="res://enemy/Enemy.tscn" id="2_nxo15"]
+[ext_resource type="Resource" uid="uid://ccevkhcytyxpt" path="res://enemy/enemy_types/RatType.tres" id="3_xdgl4"]
+[ext_resource type="PackedScene" uid="uid://cqs77xbwblgla" path="res://player/Player_Placeholder.tscn" id="4_bc4p1"]
+
+[node name="Node2D" type="Node2D" unique_id=35204266]
+
+[node name="Player" parent="." unique_id=331261060 instance=ExtResource("4_bc4p1")]
+
+[node name="Enemy" parent="." unique_id=1635851413 instance=ExtResource("2_nxo15")]
+stats = ExtResource("3_xdgl4")

@@ -1,0 +1,88 @@
+[gd_scene format=3 uid="uid://dr2wg3njfvxk"]
+
+[ext_resource type="Script" uid="uid://dmhpwbdvwk0ui" path="res://tutorial.gd" id="1_7n6eb"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7n6eb"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_7n6eb"]
+
+[node name="Tutorial" type="Control" unique_id=109003121]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_7n6eb")
+
+[node name="ColorRect2" type="ColorRect" parent="." unique_id=1039221649]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.23529412)
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1855413087]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -300.0
+offset_right = 500.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.67058825)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ColorRect" unique_id=1685565272]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HSeparator2" type="HSeparator" parent="ColorRect/VBoxContainer" unique_id=404100512]
+layout_mode = 2
+theme_override_constants/separation = 100
+theme_override_styles/separator = SubResource("StyleBoxEmpty_7n6eb")
+
+[node name="TutorialLabel" type="Label" parent="ColorRect/VBoxContainer" unique_id=1202922216]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 32
+text = "TUTORIAL
+
+-WASD to move
+-Left Click to shoot
+-Right Click to Parry once you unlock it
+-Space to Dash once you unlock it
+-1,2,3,4,5 Inventory slots 
+-E to interact
+-R to reload
+-P to pause"
+label_settings = SubResource("LabelSettings_7n6eb")
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="ColorRect/VBoxContainer" unique_id=474484047]
+layout_mode = 2
+theme_override_constants/separation = 50
+theme_override_styles/separator = SubResource("StyleBoxEmpty_7n6eb")
+
+[node name="PlayButton" type="Button" parent="ColorRect/VBoxContainer" unique_id=290038730]
+custom_minimum_size = Vector2(150, 75)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 30
+text = "Start"
+
+[connection signal="pressed" from="ColorRect/VBoxContainer/PlayButton" to="." method="_on_play_button_pressed"]

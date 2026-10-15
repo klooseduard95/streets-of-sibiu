@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://d01i3os5csd5u"]
+
+[ext_resource type="PackedScene" uid="uid://bvslsjj0cno8f" path="res://player/bullet.tscn" id="1_71c2j"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_p8c04"]
+[ext_resource type="Texture2D" uid="uid://dp1kw3cb32n7m" path="res://item/item_assets/item icons/smg.png" id="1_q10p7"]
+[ext_resource type="AudioStream" uid="uid://br8kpq7l718bg" path="res://Music/Gunshot.mp3" id="4_q10p7"]
+
+[resource]
+script = ExtResource("1_p8c04")
+projectile_scene = ExtResource("1_71c2j")
+modifiers = {
+"speed": 0.1
+}
+dmg = 3.0
+current_ammo = 30
+ammo_capacity = 30
+fire_rate = 9.0
+reloadTime = 1.5
+maxRange = 550.0
+bullet_speed = 1300.0
+weapon_sound = ExtResource("4_q10p7")
+name = "SMG"
+description = "3 Damage / Bullet
+30 Ammo Capacity
+Fast Fire Speed
+1.5s Reload Time
+5 Tile Range
++10% Movement Speed while holding"
+icon = ExtResource("1_q10p7")
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

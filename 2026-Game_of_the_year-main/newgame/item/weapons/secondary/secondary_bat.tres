@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://f67ggobi4oei"]
+
+[ext_resource type="PackedScene" uid="uid://byfauq1njhmde" path="res://player/bullet_melee.tscn" id="1_5q2ba"]
+[ext_resource type="Texture2D" uid="uid://kqip3m17dufb" path="res://item/item_assets/item icons/bat.png" id="1_i1m5h"]
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_xl1pr"]
+[ext_resource type="AudioStream" uid="uid://e1pv6x5hep7m" path="res://Music/Slash.mp3" id="4_i1m5h"]
+
+[resource]
+script = ExtResource("1_xl1pr")
+projectile_scene = ExtResource("1_5q2ba")
+dmg = 8.0
+current_ammo = -1
+ammo_capacity = -1
+fire_rate = 2.0
+maxRange = 250.0
+bullet_speed = 800.0
+weapon_sound = ExtResource("4_i1m5h")
+name = "Bat"
+description = "8 Damage
+0.5s Cooldown
+2 Tile Range"
+icon = ExtResource("1_i1m5h")
+type = 1
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

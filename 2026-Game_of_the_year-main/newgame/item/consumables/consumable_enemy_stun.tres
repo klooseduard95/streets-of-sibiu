@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="ConsumableItem" format=3 uid="uid://lewiy8hienta"]
+
+[ext_resource type="Texture2D" uid="uid://crbpm3rlxpebt" path="res://item/item_assets/item icons/newbottle3.png" id="1_mv5q0"]
+[ext_resource type="Script" uid="uid://b8hqtbjssjhfw" path="res://item/consumable_item.gd" id="1_rvb0f"]
+
+[resource]
+script = ExtResource("1_rvb0f")
+hp = -20
+buffDuration = 6.0
+modifiers = {
+"slown_enemy": -1.0
+}
+name = "Stun Grenade"
+description = "Stun All Enemies
+-20 HP
+Duration: 6s"
+icon = ExtResource("1_mv5q0")
+type = 2
+metadata/_custom_type_script = "uid://b8hqtbjssjhfw"

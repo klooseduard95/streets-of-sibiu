@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="EnemyStats" format=3 uid="uid://cr50yue3txwln"]
+
+[ext_resource type="Script" uid="uid://b2c6jv8xbww8l" path="res://enemy/enemy_types/EnemyStats.gd" id="1_l6n0l"]
+
+[resource]
+script = ExtResource("1_l6n0l")
+type = "marshmallow"
+visionRange = 0
+hp = 60.0
+dmg = 0
+walkSpeed = 0.0
+hitCooldown = 10.0
+hitWindup = 0.0
+sizeModifier = 1.5
+metadata/_custom_type_script = "uid://b2c6jv8xbww8l"

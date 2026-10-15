@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://c8rwburfrcy3p"]
+
+[ext_resource type="PackedScene" uid="uid://cqs77xbwblgla" path="res://player/Player_Placeholder.tscn" id="1_jlbxj"]
+
+[node name="TestGhost" type="Node2D" unique_id=498645668]
+
+[node name="Player" parent="." unique_id=331261060 instance=ExtResource("1_jlbxj")]
+selected_parry = 1

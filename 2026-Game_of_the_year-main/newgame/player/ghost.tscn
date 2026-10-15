@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://cncwjca40bnx5"]
+
+[ext_resource type="Texture2D" uid="uid://i2edbjdn2i3s" path="res://player/player_assets/playerassets.png" id="1_d1rk1"]
+[ext_resource type="Script" uid="uid://chxjbyb1f1j4l" path="res://player/ghost.gd" id="2_d1rk1"]
+
+[node name="Ghost" type="Sprite2D" unique_id=1169015414]
+modulate = Color(0.31061712, 0.31061712, 0.3106171, 1)
+show_behind_parent = true
+z_index = 115
+position = Vector2(14, 3)
+texture = ExtResource("1_d1rk1")
+hframes = 3
+vframes = 4
+script = ExtResource("2_d1rk1")

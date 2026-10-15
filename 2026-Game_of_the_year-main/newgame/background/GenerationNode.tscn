@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://yhupx2yxxr23"]
+
+[ext_resource type="Script" uid="uid://2wj386mqhm7r" path="res://background/generation_node.gd" id="1_sa0jo"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_sa0jo"]
+size = Vector2(5.1750765, 12)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sa0jo"]
+radius = 1.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4y468"]
+size = Vector2(2, 11)
+
+[node name="GenerationNode" type="Node2D" unique_id=271445604]
+script = ExtResource("1_sa0jo")
+
+[node name="Teleporter" type="Area2D" parent="." unique_id=2129729319]
+position = Vector2(5, 0)
+
+[node name="TeleportArea" type="CollisionShape2D" parent="Teleporter" unique_id=1866507795]
+scale = Vector2(0.4532891, 1)
+shape = SubResource("RectangleShape2D_sa0jo")
+
+[node name="ArrivalNode" type="Node2D" parent="." unique_id=841761186]
+position = Vector2(11, 0)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ArrivalNode" unique_id=1868301411]
+shape = SubResource("CircleShape2D_sa0jo")
+
+[node name="Preventer" type="StaticBody2D" parent="." unique_id=2131631404]
+position = Vector2(2, 0)
+
+[node name="PreventerShape" type="CollisionShape2D" parent="Preventer" unique_id=1419641055]
+shape = SubResource("RectangleShape2D_4y468")
+
+[connection signal="body_entered" from="Teleporter" to="." method="_on_teleporter_body_entered"]

@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="WeaponItem" format=3 uid="uid://rt270q4wrbln"]
+
+[ext_resource type="Script" uid="uid://b8ary7l03m0ok" path="res://item/weapon_item.gd" id="1_5k5dr"]
+[ext_resource type="PackedScene" uid="uid://bvslsjj0cno8f" path="res://player/bullet.tscn" id="1_6f21u"]
+[ext_resource type="Texture2D" uid="uid://bl3f5f3wejkal" path="res://item/item_assets/item icons/negev.png" id="1_gwlq5"]
+[ext_resource type="AudioStream" uid="uid://br8kpq7l718bg" path="res://Music/Gunshot.mp3" id="4_gwlq5"]
+
+[resource]
+script = ExtResource("1_5k5dr")
+projectile_scene = ExtResource("1_6f21u")
+modifiers = {
+"speed": -0.3
+}
+dmg = 2.5
+current_ammo = 60
+ammo_capacity = 60
+fire_rate = 10.0
+reloadTime = 2.5
+maxRange = 650.0
+bullet_speed = 1350.0
+weapon_sound = ExtResource("4_gwlq5")
+name = "Negev"
+description = "2.5 Damage / Bullet
+60 Ammo Capacity
+Fast Fire Speed
+2.5s Reload Time
+6 Tile Range
+-30% Movement Speed while holding"
+icon = ExtResource("1_gwlq5")
+metadata/_custom_type_script = "uid://b8ary7l03m0ok"

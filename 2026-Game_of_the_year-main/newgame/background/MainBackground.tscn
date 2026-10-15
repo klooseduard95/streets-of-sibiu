@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://bu11lwfj4fi8p"]
+
+[ext_resource type="Script" uid="uid://bdioyk5j4twdr" path="res://background/main_background.gd" id="1_5aa5l"]
+[ext_resource type="PackedScene" uid="uid://cqs77xbwblgla" path="res://player/Player_Placeholder.tscn" id="4_5aa5l"]
+[ext_resource type="PackedScene" uid="uid://f38afb7d2yit" path="res://inventory/inventory_ui.tscn" id="4_nhsak"]
+[ext_resource type="Resource" uid="uid://dgbvlupjhvc68" path="res://item/weapons/secondary/secondary_punch.tres" id="4_pvl2x"]
+[ext_resource type="PackedScene" uid="uid://67uy322yd1uk" path="res://inventory/information_ui.tscn" id="6_pvl2x"]
+[ext_resource type="PackedScene" uid="uid://bgn82qt8g6pn8" path="res://interaction_system/item_placeholder.tscn" id="6_sdj8r"]
+[ext_resource type="PackedScene" uid="uid://dej4pis250fc1" path="res://pause_menu.tscn" id="7_p61uv"]
+[ext_resource type="PackedScene" uid="uid://bpgvmty6awyv6" path="res://upgradestings/upgrade window.tscn" id="8_pvl2x"]
+
+[node name="MainBackground" type="Node2D" unique_id=1098042321]
+script = ExtResource("1_5aa5l")
+
+[node name="Player" parent="." unique_id=331261060 instance=ExtResource("4_5aa5l")]
+z_index = 178
+position = Vector2(996, 545)
+
+[node name="CoolCamera" type="Camera2D" parent="Player" unique_id=1159600270]
+position = Vector2(-1.5258789e-05, -3.0517578e-05)
+scale = Vector2(3.9215689, 3.9215689)
+zoom = Vector2(0.03, 0.03)
+process_callback = 0
+limit_smoothed = true
+position_smoothing_enabled = true
+
+[node name="Overlay" type="CanvasLayer" parent="." unique_id=2096256817]
+
+[node name="BlackScreen" type="ColorRect" parent="Overlay" unique_id=2083393520]
+modulate = Color(0, 0, 0, 1)
+z_index = 44
+offset_top = 1.5258789e-05
+offset_right = 189.06091
+offset_bottom = 194.83852
+scale = Vector2(10.1554575, 5.5430527)
+color = Color(0, 0, 0, 1)
+
+[node name="Item_placeholder" parent="." unique_id=1030518401 instance=ExtResource("6_sdj8r")]
+position = Vector2(635, 552)
+item_data = ExtResource("4_pvl2x")
+
+[node name="InventoryHUD" parent="." unique_id=448217347 node_paths=PackedStringArray("player") instance=ExtResource("4_nhsak")]
+player = NodePath("../Player")
+
+[node name="information_ui" parent="." unique_id=714661159 node_paths=PackedStringArray("player") instance=ExtResource("6_pvl2x")]
+player = NodePath("../Player")
+
+[node name="PauseMenu" parent="." unique_id=1935334283 node_paths=PackedStringArray("player") instance=ExtResource("7_p61uv")]
+player = NodePath("../Player")
+
+[node name="UpgradeWindow" parent="." unique_id=691736283 node_paths=PackedStringArray("player") instance=ExtResource("8_pvl2x")]
+player = NodePath("../Player")
