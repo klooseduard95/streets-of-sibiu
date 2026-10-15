@@ -309,3 +309,24 @@ Related documents:
 - No Android phone (Apple devices only): emulator + desktop; physical-device validation deferred (D11).
 - Decisions in force: Q1–Q9, B1/B2/B11/B18 fixed; O1 fonts kept (Montserrat etc.); O2 music centred (D13).
 - Log every session here; keep `MIGRATION_STATUS.md` in sync.
+
+## 2026-10-15 — Session 10: black screen in Device Manager (diagnosed)
+
+**User:** the virtual phone shows a black screen when started from Android Studio's Device Manager.
+
+**Diagnosis (via adb on the running instance; Android Studio had launched it with `-qt-hide-window`, embedded in Running Devices):**
+1. The phone had booted (`sys.boot_completed=1`) but the **display was off** (`mWakefulness=Asleep`, screen OFF).
+2. After waking, Android still drew black. Quick Boot had restored a `default_boot` snapshot from 16:11 (uptime 31 min), with an **old build of our app (Phase 1 era) in the foreground**. That app's GL surface did not render after the snapshot restore.
+
+**Fix applied:**
+- Woke the screen.
+- Force-stopped and restarted the app: it renders.
+- Installed the current build (`:app:installDebug` from `main`): the Delivery 1 menu shows.
+
+**Verified:**
+- Screen off → on with today's build pauses and resumes correctly (`AndroidGraphics: paused/resumed`, frame redrawn). **Not a game bug.**
+- The emulator-only cause is the snapshot restore and screen sleep.
+
+**For the user:**
+- If it happens again: press the emulator's power button. If the game is still black, restart it, or use **Cold Boot Now**.
+- After rebuilding, press Run (or `./gradlew :app:installDebug`) so the emulator has the current build. The Quick Boot snapshot may otherwise bring back an old one.
