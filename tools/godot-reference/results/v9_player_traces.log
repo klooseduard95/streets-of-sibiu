@@ -1,0 +1,204 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Parse Error: Unindent doesn't match the previous indentation level.
+          at: GDScript::reload (res://death_screen.gd:27)
+          GDScript backtrace (most recent call first):
+              [0] _run (res://probes/v9_player_traces.gd:56)
+              [1] _initialize (res://probes/v9_player_traces.gd:120)
+              [2] frames (res://probes/probe_base.gd:24)
+ERROR: Failed to load script "res://death_screen.gd" with error "Parse error".
+   at: load (modules/gdscript/gdscript.cpp:2907)
+   GDScript backtrace (most recent call first):
+       [0] _run (res://probes/v9_player_traces.gd:56)
+       [1] _initialize (res://probes/v9_player_traces.gd:120)
+       [2] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Invalid access to property or key 'canWarp' on a base object of type 'Node2D'.
+          at: GenerationNode._on_teleporter_body_entered (res://background/generation_node.gd:17)
+          GDScript backtrace (most recent call first):
+              [0] _on_teleporter_body_entered (res://background/generation_node.gd:17)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Invalid access to property or key 'canWarp' on a base object of type 'Node2D'.
+          at: GenerationNode._on_teleporter_body_entered (res://background/generation_node.gd:17)
+          GDScript backtrace (most recent call first):
+              [0] _on_teleporter_body_entered (res://background/generation_node.gd:17)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Invalid access to property or key 'current_ammo' on a base object of type 'Resource (ConsumableItem)'.
+          at: Player._physics_process (res://player/player.gd:123)
+          GDScript backtrace (most recent call first):
+              [0] _physics_process (res://player/player.gd:123)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/World/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _run (res://probes/v9_player_traces.gd:55)
+       [2] _initialize (res://probes/v9_player_traces.gd:120)
+       [3] _run (res://probes/v9_player_traces.gd:87)
+       [4] frames (res://probes/probe_base.gd:24)
+SCRIPT ERROR: Invalid access to property or key 'ammo_capacity' on a base object of type 'Resource (ConsumableItem)'.
+          at: Player.trigger_medium_parry (res://player/player.gd:346)
+          GDScript backtrace (most recent call first):
+              [0] trigger_medium_parry (res://player/player.gd:346)
+              [1] handle_parry (res://player/player.gd:323)
+              [2] _physics_process (res://player/player.gd:67)
+PROBE v9_player_traces saved to /Users/kloos/AndroidStudioProjects/StreetsofSibiu/tools/godot-reference/results
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

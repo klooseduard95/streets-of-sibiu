@@ -2,12 +2,14 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
-**Overall state: Phase 1 is done on the emulator and desktop; the physical-device check is still open. The migration is NOT complete.** No gameplay has been ported yet.
+**Overall state (2026-10-15): Phases 0 and 1 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
+
+Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (see plan §10).
 
 | Phase | State |
 |---|---|
-| 0 — Decisions and Godot reference data | Decisions done. Godot 4.6 install and probes V1–V15 **not started** |
-| 1 — Minimal libGDX project builds and runs | **Done except the physical-device check** (details below) |
+| 0 — Decisions and Godot reference data | **Done** (2026-10-15): Godot 4.6.1 installed, V1–V15 answered, golden data recorded |
+| 1 — Minimal libGDX project builds and runs | **Done** on desktop and emulator; physical device **deferred** |
 | 2–14 | Not started |
 
 ---
@@ -24,7 +26,42 @@ Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations ac
 | Q6 | Bundle Montserrat, JetBrains Mono (NL), Hack and the Godot default font |
 | Q7 | Launcher icon derived from the player sprite (front-facing frame) |
 | Q8 | Modules `:logic` / `:core` / `:app` / `:desktop` |
-| Q9 | Install Godot 4.6 and run probes in a copy of the project |
+| Q9 | Install Godot 4.6 and run probes in a copy of the project (done with 4.6.1) |
+| Later decisions | B2 fixed (D-B2); git initialised; physical-device testing deferred (2026-10-15) |
+
+---
+
+## Phase 0 — completed tasks (2026-10-15)
+
+* Installed **Godot 4.6.1-stable (official)** in `tools/godot-reference/engine/` (git-ignored). SHA-512 verified, Apple-signed (team 6K46PWY5DM).
+* `setup_copy.sh` builds `project-copy/` from the original (git-ignored); `run_probe.sh` runs the probes. The original project stays untouched (checked: no file newer than the zip).
+* Probes `v0_smoke`, `v1_runtime`, `v2_defaults`, `v4_camera`, `v6_areas`, `v8_navigation`, `v9_player_traces`; results in `tools/godot-reference/results/`.
+* Relevant Godot 4.6.1 source files (MIT) in `tools/godot-reference/engine-source/` as the porting reference.
+* All answers are summarised in `tools/godot-reference/README.md` and plan §8.3.
+
+### Phase 0 — key findings
+
+| Finding | Effect on the port |
+|---|---|
+| V1: pause menu and death screen scripts fail to parse; the original shows a permanently visible, dead pause panel and a broken death screen | Port the intended behaviour (D-B1, already approved) |
+| V2: `spawnRadius` is 100 in every room | B16 closed |
+| V3: idle sprite = first keyframe of the last walk animation | Phase 5 |
+| V4: camera centres on the limits when the room is smaller than the screen; exponential smoothing at speed 5 | Phase 4 |
+| V5: the music is panned left (the source sits at world origin) | Preserved by default; open question O2 |
+| V6/V7: area re-entry fires on re-enable; hitbox before body | Phase 2 (overlap system), Phase 8 |
+| V8: the 500 px navigation search limit truncates paths; golden paths recorded | Phase 8 |
+| V9: 21 golden movement traces recorded (incl. dash through walls and the room clamp) | Phase 5/6 acceptance |
+| V10: runtime errors abort the function (B7 confirmed) | Phase 6 |
+| V11: the named fonts are not installed on typical machines, so the original effectively renders all text in **Open Sans SemiBold 16** | Open question O1 |
+| V14/V15: tweens and timers in idle frames; input edges on the next physics tick | Phase 2 frame-order contract |
+
+### Open questions for you
+
+| ID | Question | Default until you decide |
+|---|---|---|
+| O1 | Fonts: Q6 approved bundling Montserrat / JetBrains Mono / Hack. V11 shows that players without those fonts installed saw **Open Sans SemiBold** everywhere. Which look should the port reproduce: the designers' intended fonts or what most players saw? | Bundle the intended fonts (Q6) |
+| O2 | Music panning: the original music is panned left (62.5 % L / 37.5 % R in the menu) due to a Godot positional-audio side effect. Keep it, or centre the music? | Keep it (faithful) |
+| O3 | Delivery dates in plan §10 (Thursdays from 2026-10-22). Correct? | As proposed |
 
 ---
 
@@ -54,14 +91,14 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | Logcat has no errors | `adb logcat --pid=<app> '*:E'` | **PASS** — 0 error lines. Only emulator graphics-stack warnings (libc property access, HWUI EGL config) |
 | Survives background/foreground | HOME → relaunch, twice | **PASS** — same process, frame pixel-identical after resume, no crash. (The first relaunch showed Android's one-time "Viewing full screen" immersive hint, a system overlay.) |
 | Release (R8) build | `./gradlew :app:assembleRelease` | **PASS** (builds; unsigned). R8 warnings only for unused androidx/coroutines classes. Not installed or tested yet (Phase 13) |
-| Launches on a **physical Android device** | — | **NOT DONE**: no device was connected (`adb devices` showed none) |
+| Launches on a **physical Android device** | — | **DEFERRED**: no Android phone available (you only have Apple devices). Re-run when a device is available |
 
 ## Remaining work
 
-1. **Physical device:** connect an Android device with USB debugging, then run `./gradlew :app:installDebug` and launch. This is the last open Phase 1 criterion.
-2. **Phase 0:** install Godot 4.6, copy `newgame/` to `tools/godot-reference/project-copy/`, run probes V1–V15, record the results.
-4. **Phase 2:** runtime foundation in `:logic` (fixed-step loop, scheduler, tween, pause state, RNG, deferred queue, events).
-5. Phases 3–14 as in the plan.
+1. **Physical device (deferred):** when an Android phone is available, run `./gradlew :app:installDebug` and repeat the Phase 1 device checks.
+2. Answer open questions O1–O3.
+3. **Phase 2:** runtime foundation in `:logic` (fixed-step loop, scheduler, tween, pause state, RNG, deferred queue, events).
+4. Phases 3–14 as in the plan (delivery mapping in plan §10).
 
 ## Known differences (register)
 
@@ -70,6 +107,7 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D1 | Touch controls (Q1) replace keyboard/mouse; keyboard/mouse still supported | Android | approved, not implemented |
 | D2 | Pillarbox/letterbox on non-16:9 screens (FitViewport) | Device aspect ratios | **implemented** (Phase 1) |
 | D3 | Auto-pause on backgrounding; Android Back = pause | Android lifecycle | approved, not implemented (Back currently uses libGDX's default handling) |
+| D11 | Physical-device validation postponed; emulator (API 37) used meanwhile | No Android phone available | temporary |
 | D4 | Fullscreen window → immersive landscape (`sensorLandscape`). On Android 16+ large screens (≥ 600 dp) the system may ignore the orientation lock | Platform | **implemented** (Phase 1) |
 | D5 | Hover tooltips → long-press | No hover on touch | approved, not implemented |
 | D6 | Bundled fonts instead of machine-dependent system fonts | Fonts absent from the repo | approved, not implemented |

@@ -668,7 +668,7 @@ Translating the GDScript syntax alone would **not** reproduce these. Each one ge
 | E15 | Control/container layout engine, StyleBoxFlat, LabelSettings, RichTextLabel BBCode, hover tooltips, SystemFont fallback | All UI | Scene2D re-creation, generated drawables, FreeType |
 | E16 | `canvas_item` shader built-ins (`SCREEN_TEXTURE`, `SCREEN_UV`, `FRAGCOORD` origin, `TIME`) | CRT menu overlay | FrameBuffer + GLSL ES port |
 | E17 | Unseeded global RNG (Godot PCG) | Everything random | Same distributions, different sequences (difference D7). Seedable for tests |
-| E18 | Body-entered **ordering** when a bullet enters an enemy's hitbox and body in the same step (ranged bullets can despawn on the body without damage) | Point-blank shots | Define the order from probe results **[V7]** and document it |
+| E18 | Body-entered **ordering** when a bullet enters an enemy's hitbox and body in the same step | Point-blank shots | **Resolved (V7): hitbox first, then body**; the port processes hitbox overlaps before body overlaps |
 
 ---
 
@@ -695,7 +695,7 @@ The default in this plan is **Preserve**, so gameplay matches the original. Anyt
 | B13 | Stun + permanent slow → negative enemy speed multiplier | Enemies move away during the stun | Preserve |
 | B14 | Stats text truncation (`int` formats, sniper line always −0.00s unless ≥ 1) | Cosmetic | Preserve |
 | B15 | Ammo-capacity / reload-reduction upgrades affect every weapon | By design per card text ("or") | Preserve |
-| B16 | Medium/big rooms' spawn nodes inherit `spawnRadius = null` **[V2]** | Spawn spread 100 px or 0 px | Resolve by probe |
+| B16 | Medium/big rooms' spawn nodes inherit `spawnRadius = null` | **Resolved (V2): the value is 100**, same as small rooms | No action |
 | B17 | Dash input before any dash is unlocked still triggers a mini-slide (no cooldown) | Small movement exploit | Preserve |
 | B18 | Each hit after death re-triggers the death sound, animation and **another death screen** | Stacked screens | Ask (recommend guarding a single death screen) |
 | B19 | Spawner/aggro checks run while rooms are briefly attached during generation | Negligible | Preserve naturally |
@@ -817,10 +817,29 @@ All work happens in the Android project. The original Godot folder and the zip s
 * **Screenshot comparisons** at 1920×1080 (desktop backend) against Godot reference captures.
 * **Device tests:** install and smoke-test after every milestone; full checklist in Phase 14.
 
-### 8.3 Verification items (to be answered from the Godot 4.6 reference copy)
+### 8.3 Verification items — answered in Phase 0 (2026-10-15, Godot 4.6.1)
 
-| ID | Question |
-|---|---|
+Full answers and evidence: `tools/godot-reference/README.md`. Raw data: `tools/godot-reference/results/`.
+
+| ID | Question | Answer |
+|---|---|---|
+| V1 | Do `death_screen.gd` / `pause_menu.gd` load? | **No (parse error).** In the original the pause panel is permanently visible and dead; the death screen does not work. We port the intended behaviour (Q4) |
+| V2 | `spawnRadius` inherited as `null` | **100** everywhere |
+| V3 | Frame after `AnimationPlayer.stop()` | First keyframe of the current animation (idle: up 2, down 5, left 8, right 11) |
+| V4 | Camera2D | Scale ignored; limit span < screen → centre on the limits' midpoint; smoothing `pos += (target − pos)·5·Δt` in physics; smoothed limits ease |
+| V5 | AudioStreamPlayer2D | Formula captured from source; music at world origin is panned left (L/R 0.625/0.375 menu, up to 0.75/0.25) |
+| V6 | Re-enable re-emits `body_entered` | Yes (enemy attack loop confirmed) |
+| V7 | Bullet signal order | Hitbox before body |
+| V8 | Navigation paths | 60 recorded queries + 2 chase traces; the 500 px limit truncates paths in medium/big rooms |
+| V9 | Player traces | 21 golden scenarios recorded |
+| V10 | Truncation / runtime errors | `dmgMult` → 1; an error aborts the rest of the function (B7 confirmed) |
+| V11 | Fonts | None of the named system fonts exist on typical machines; Godot falls back to **Open Sans SemiBold 16** |
+| V12 | Shared sub-resources | Confirmed (projectile rectangle, aggro circle, hit circle) |
+| V13 | Camera limits | Truncated toward zero; per-room values recorded |
+| V14 | Tweens/timers | Idle processing; linear/EASE_IN_OUT default; SINE equations confirmed |
+| V15 | `just_pressed` | First physics tick after the event, once; counts even if released before that tick |
+
+---|---|
 | V1 | Do `death_screen.gd` and `pause_menu.gd` load, or fail with an indentation error? What does the player see? |
 | V2 | Effective `spawnRadius` of EnemySpawnNode instances that inherit `null` |
 | V3 | Sprite frame after `AnimationPlayer.stop()` when the player stops walking |
@@ -852,3 +871,19 @@ All work happens in the Android project. The original Godot folder and the zip s
 | Q7 | App launcher icon: the project icon is the Godot logo. Provide your own, or derive one from game art (e.g. the player sprite)? | Your choice |
 | Q8 | Module layout `:logic` / `:core` / `:app` / `:desktop` (§4.1), reusing the existing `:app` and namespace `ro.klooseduard.streetsofsibiu` | Yes |
 | Q9 | Approve installing Godot 4.6 and creating a project **copy** for reference probes (V1–V15). Without it, the "validated against the original" requirement cannot be met | Yes |
+
+---
+
+## 10. Delivery schedule (two-week iterations) — proposal, 2026-10-15
+
+You deliver every two weeks; the first deadline is next week. Each delivery is a working, demonstrable build on the **desktop dev build and the Android emulator** (no Android phone available yet). Dates assume Thursday deliveries starting 2026-10-22; **please confirm the dates.**
+
+| Delivery | Target date | Phases | Demonstrable result |
+|---|---|---|---|
+| D1 | 2026-10-22 | 0, 1 (done) + 2 + 3 + 4 | All 21 original rooms render from converted data with the original tiles; camera limits and smoothing as in Godot; room viewer on desktop and emulator; reference data and tests in place |
+| D2 | 2026-11-05 | 5, 6 | Player walks, collides and slides like the Godot traces; dash (incl. the D-B2 fix), parry, ghost trail; touch controls on the emulator |
+| D3 | 2026-11-19 | 7, 8 | Weapons, bullets, inventory, interaction, HUD; rats, pigeons, thieves and criminals with AI, navigation and attacks |
+| D4 | 2026-12-03 | 9, 10 | Ghost, manhole spawner, King Rotta; procedural levels 1–8, warps, barricades, exits |
+| D5 | 2026-12-17 | 11, 12 | Upgrades, rewards, consumables; menus, settings, pause, death/win, music and SFX, CRT shader: the full game loop |
+| D6 | 2027-01-14 | 13, 14 | Android hardening, release build, full validation against Godot; **needs a physical Android device** |
+

@@ -81,4 +81,36 @@ Related documents:
 - Physical-device testing deferred. The emulator is the Android test target until a phone is available.
 - This log file created.
 
-(continued below)
+**Git:**
+- `git init -b main`. `.gitignore` additions: `.kotlin/`, the original zip (duplicate of the committed folder), and the Godot engine/download/copy folders.
+- Checked the original project for CRLF files before committing: none, so its nested `.gitattributes` changes nothing.
+- Baseline commit `cd77101` on `main`: audit + Phase 1 + the original project as read-only reference.
+- Phase 0 work is on branch `phase-0-godot-reference`.
+
+**Phase 0 (Godot reference):**
+- Chose **Godot 4.6.1-stable**: newest release before the project's last file date (2026-02-22). Downloaded the official macOS universal zip into `tools/godot-reference/downloads/`, verified SHA-512 against `SHA512-SUMS.txt`, extracted to `engine/`. `--version` → `4.6.1.stable.official.14d19694e`.
+- `setup_copy.sh` copies the original to `project-copy/` and imports it headless. (The editor UI language there is Romanian; harmless.)
+- `--check-only` on every script: only `death_screen.gd` and `pause_menu.gd` have real parse errors. The "GlobalUtils not found" errors are a `--check-only` artifact, because autoloads are not registered in that mode.
+- Probe framework: SceneTree scripts extending `probe_base.gd` by path (new `class_name`s need an editor import). The runner writes JSON plus a log to `results/`.
+
+**Probes and fixes along the way:**
+- `v0_smoke`: autoloads load in script mode; headless root viewport is 64×64, so camera probes use a 1920×1080 SubViewport.
+- `v1_runtime`: V1 confirmed at runtime. In the real game the pause panel is visible and dead from the start. Level 1 generated 6 rooms in the probe run.
+- `v2_defaults`: V2 = 100, V10 truncation, V11 fonts all fall back to Open Sans SemiBold 16, V12 shared shapes, agent/camera/body/audio defaults, easing samples.
+- `v9_player_traces`:
+  - First run: dashes did not trigger, because `Input.action_press` is only "just pressed" on the next physics tick and my schedule released the move key on that tick. Fixed the schedules and documented the semantics in the results.
+  - Added room-clamp scenarios after seeing a Short Dash push the player out through the east wall (x 2510) without MainBackground's clamp.
+  - Moved the stop ticks so V3 is unambiguous.
+- `v4_camera`: scale ignored, midpoint centring, exponential smoothing, integer limits per room.
+- `v6_areas`: re-enable re-fires `body_entered`; bullet order is hitbox then body.
+- `v8_navigation`: the first run returned empty SpawnRoom paths because the navigation map had not synced. Now waits for `map_get_iteration_id` to advance; all rooms return paths. The 500 px limit truncates most medium/big-room paths.
+- Engine source (MIT) for audio panning, tween, scene tree, input, camera, character body, navigation agent/map/queries, area, physics space, easing, animation player, audio server → `tools/godot-reference/engine-source/` (with LICENSE and COPYRIGHT).
+- V5 from source: the music source at world origin makes the music left-panned (0.625/0.375 in the menu). The root viewport is the 2D audio listener (`scene_tree.cpp:2076`).
+- V14/V15 from source: tween default idle / PAUSE_BOUND / linear / EASE_IN_OUT; `action_press` sets `pressed_physics_frame = physics_frames + 1`; `legacy_just_pressed_behavior = false`.
+
+**Documents updated:**
+- `tools/godot-reference/README.md`: reproduction steps and the V1–V15 answers table.
+- `MIGRATION_PLAN.md`: §8.3 answered; B16 and E18 resolved; B2 decision; new §10 delivery schedule proposal (D1 2026-10-22 … D6 2027-01-14).
+- `MIGRATION_STATUS.md`: Phase 0 done; physical device deferred (D11); open questions O1 (fonts), O2 (music panning), O3 (delivery dates).
+
+**Next:** Phase 2 (runtime foundation), Phase 3 (data/room conversion), Phase 4 (room rendering + camera), targeting D1.

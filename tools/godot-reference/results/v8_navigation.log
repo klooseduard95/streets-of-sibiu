@@ -1,0 +1,37 @@
+Godot Engine v4.6.1.stable.official.14d19694e - https://godotengine.org
+
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/@Node2D@2/SpawnRoom").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _initialize (res://probes/v8_navigation.gd:81)
+       [2] frames (res://probes/probe_base.gd:24)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/@Node2D@2/Fightroom12Medium").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _initialize (res://probes/v8_navigation.gd:81)
+       [2] physics_frames (res://probes/probe_base.gd:28)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/@Node2D@2/Fightroom13Big").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _initialize (res://probes/v8_navigation.gd:81)
+       [2] physics_frames (res://probes/probe_base.gd:28)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/@Node2D@2/Fightroom34Big").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _initialize (res://probes/v8_navigation.gd:81)
+       [2] physics_frames (res://probes/probe_base.gd:28)
+ERROR: Node not found: "../UpgradeWindow" (relative to "/root/@Node2D@2/Fightroombigenemy1234").
+   at: get_node (scene/main/node.cpp:1964)
+   GDScript backtrace (most recent call first):
+       [0] @implicit_ready (res://background/Module.gd:8)
+       [1] _initialize (res://probes/v8_navigation.gd:81)
+       [2] physics_frames (res://probes/probe_base.gd:28)
+PROBE v8_navigation saved to /Users/kloos/AndroidStudioProjects/StreetsofSibiu/tools/godot-reference/results
+WARNING: ObjectDB instances leaked at exit (run with --verbose for details).
+     at: cleanup (core/object/object.cpp:2641)
+ERROR: 1 resources still in use at exit (run with --verbose for details).
+   at: clear (core/io/resource.cpp:810)

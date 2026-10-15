@@ -1,0 +1,63 @@
+{
+  "current_level": 1,
+  "death_screen_call_ok": false,
+  "death_screen_gd_loads": true,
+  "death_screen_tscn_instance": {
+    "has_pause_game": false,
+    "has_setup_death_screen": false,
+    "process_mode": 3,
+    "script_attached": false,
+    "visible": true
+  },
+  "godot_version": "4.6.1-stable (official)",
+  "in_game_pause_menu": {
+    "has_pause_game": false,
+    "has_setup_death_screen": false,
+    "process_mode": 3,
+    "script_attached": false,
+    "visible": true
+  },
+  "is_in_transition": false,
+  "level_rooms": 6,
+  "pause_menu_gd_loads": true,
+  "pause_menu_tscn_instance": {
+    "has_pause_game": false,
+    "has_setup_death_screen": false,
+    "process_mode": 3,
+    "script_attached": false,
+    "visible": true
+  },
+  "room_types": [
+    [
+      "FIGHTROOM_13_SMALL.tscn",
+      "small",
+      false
+    ],
+    [
+      "FIGHTROOMBIGENEMY_3.tscn",
+      "finisher",
+      true
+    ],
+    [
+      "FIGHTROOM_12.tscn",
+      "small",
+      false
+    ],
+    [
+      "FIGHTROOM_34_BIG.tscn",
+      "big",
+      false
+    ],
+    [
+      "FIGHTROOMBIGENEMY_1.tscn",
+      "finisher",
+      false
+    ],
+    [
+      "FIGHTROOM_13_SMALL.tscn",
+      "small",
+      false
+    ]
+  ],
+  "tree_paused_after_start": false
+}

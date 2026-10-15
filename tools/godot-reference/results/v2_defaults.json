@@ -1,0 +1,325 @@
+{
+  "V10_dmgMult_after_assign_1_3": [
+    1,
+    "int"
+  ],
+  "V11_default_font_size": 16,
+  "V11_default_theme_font": "Open Sans SemiBold / SemiBold",
+  "V11_system_fonts_this_machine": {
+    "Hack": {
+      "resolved_name": "Open Sans SemiBold",
+      "resolved_style": "SemiBold"
+    },
+    "JetBrains Mono": {
+      "resolved_name": "Open Sans SemiBold",
+      "resolved_style": "SemiBold"
+    },
+    "JetBrains Mono NL": {
+      "resolved_name": "Open Sans SemiBold",
+      "resolved_style": "SemiBold"
+    },
+    "Montserrat": {
+      "resolved_name": "Open Sans SemiBold",
+      "resolved_style": "SemiBold"
+    }
+  },
+  "V12_enemy_agro_circle_shared": true,
+  "V12_enemy_hit_circle_shared": true,
+  "V12_projectile_rect_shared": true,
+  "V14_easing_samples_t0_to_1_step_0_1": {
+    "LINEAR_IN": [
+      0.0,
+      0.100000001490116,
+      0.200000002980232,
+      0.300000011920929,
+      0.400000005960464,
+      0.5,
+      0.600000023841858,
+      0.699999988079071,
+      0.800000011920929,
+      0.899999976158142,
+      1.0
+    ],
+    "LINEAR_IN_OUT": [
+      0.0,
+      0.100000001490116,
+      0.200000002980232,
+      0.300000011920929,
+      0.400000005960464,
+      0.5,
+      0.600000023841858,
+      0.699999988079071,
+      0.800000011920929,
+      0.899999976158142,
+      1.0
+    ],
+    "LINEAR_OUT": [
+      0.0,
+      0.100000001490116,
+      0.200000002980232,
+      0.300000011920929,
+      0.400000005960464,
+      0.5,
+      0.600000023841858,
+      0.699999988079071,
+      0.800000011920929,
+      0.899999976158142,
+      1.0
+    ],
+    "LINEAR_OUT_IN": [
+      0.0,
+      0.100000001490116,
+      0.200000002980232,
+      0.300000011920929,
+      0.400000005960464,
+      0.5,
+      0.600000023841858,
+      0.699999988079071,
+      0.800000011920929,
+      0.899999976158142,
+      1.0
+    ],
+    "SINE_IN": [
+      0.0,
+      0.0123116597533226,
+      0.0489434860646725,
+      0.108993485569954,
+      0.190983012318611,
+      0.29289323091507,
+      0.412214785814285,
+      0.546009480953217,
+      0.69098299741745,
+      0.84356552362442,
+      1.0
+    ],
+    "SINE_IN_OUT": [
+      0.0,
+      0.0244717430323362,
+      0.0954915061593056,
+      0.206107392907143,
+      0.345491498708725,
+      0.5,
+      0.654508531093597,
+      0.793892621994019,
+      0.904508531093597,
+      0.975528240203857,
+      1.0
+    ],
+    "SINE_OUT": [
+      0.0,
+      0.156434461474419,
+      0.30901700258255,
+      0.453990519046783,
+      0.587785243988037,
+      0.70710676908493,
+      0.80901700258255,
+      0.891006529331207,
+      0.95105654001236,
+      0.987688362598419,
+      1.0
+    ],
+    "SINE_OUT_IN": [
+      0.0,
+      0.154508501291275,
+      0.293892621994019,
+      0.404508501291275,
+      0.47552827000618,
+      0.5,
+      0.524471759796143,
+      0.595491468906403,
+      0.706107378005981,
+      0.845491468906403,
+      1.0
+    ]
+  },
+  "V2_base_scene_spawnRadius": [
+    100,
+    "int"
+  ],
+  "V2_spawnRadius_per_room": {
+    "FIGHTROOMBIGENEMY_1": [],
+    "FIGHTROOMBIGENEMY_1234": [],
+    "FIGHTROOMBIGENEMY_2": [],
+    "FIGHTROOMBIGENEMY_3": [],
+    "FIGHTROOMBIGENEMY_4": [],
+    "FIGHTROOM_12": [
+      100,
+      100
+    ],
+    "FIGHTROOM_1234_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_123_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_124_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_12_BIG": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_12_MEDIUM": [
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_134_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_13_BIG": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_13_MEDIUM": [
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_13_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_234_SMALL": [
+      100,
+      100
+    ],
+    "FIGHTROOM_24_MEDIUM": [
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_34_BIG": [
+      100,
+      100,
+      100,
+      100,
+      100,
+      100
+    ],
+    "FIGHTROOM_34_SMALL": [
+      100,
+      100
+    ],
+    "SpawnRoom": []
+  },
+  "agent_enemy": {
+    "avoidance_enabled": false,
+    "navigation_layers": 2,
+    "path_desired_distance": 20.0,
+    "path_max_distance": 100.0,
+    "path_postprocessing": 0,
+    "path_search_max_distance": 500.0,
+    "path_search_max_polygons": 512,
+    "pathfinding_algorithm": 0,
+    "simplify_path": false,
+    "target_desired_distance": 10.0,
+    "target_position_default": [
+      0.0,
+      0.0
+    ]
+  },
+  "audio2d_defaults": {
+    "attenuation": 1.0,
+    "max_distance": 2000.0,
+    "panning_strength": 1.0
+  },
+  "body_enemy": {
+    "collision_layer": 1,
+    "collision_mask": 1,
+    "floor_block_on_wall": false,
+    "floor_constant_speed": false,
+    "floor_max_angle_deg": 45.0000012522391,
+    "floor_snap_length": 1.0,
+    "floor_stop_on_slope": true,
+    "max_slides": 4,
+    "motion_mode": 1,
+    "platform_floor_layers": 4294967294,
+    "platform_on_leave": 2,
+    "safe_margin": 0.0799999982118607,
+    "up_direction": [
+      0.0,
+      -1.0
+    ],
+    "wall_min_slide_angle_deg": 0.0
+  },
+  "body_king": {
+    "collision_layer": 1,
+    "collision_mask": 1,
+    "floor_block_on_wall": true,
+    "floor_constant_speed": false,
+    "floor_max_angle_deg": 45.0000012522391,
+    "floor_snap_length": 1.0,
+    "floor_stop_on_slope": true,
+    "max_slides": 4,
+    "motion_mode": 1,
+    "platform_floor_layers": 4294967295,
+    "platform_on_leave": 0,
+    "safe_margin": 0.0799999982118607,
+    "up_direction": [
+      0.0,
+      -1.0
+    ],
+    "wall_min_slide_angle_deg": 15.000000417413
+  },
+  "body_player": {
+    "collision_layer": 1,
+    "collision_mask": 1,
+    "floor_block_on_wall": true,
+    "floor_constant_speed": false,
+    "floor_max_angle_deg": 45.0000012522391,
+    "floor_snap_length": 1.0,
+    "floor_stop_on_slope": true,
+    "max_slides": 4,
+    "motion_mode": 0,
+    "platform_floor_layers": 4294967295,
+    "platform_on_leave": 0,
+    "safe_margin": 0.0799999982118607,
+    "up_direction": [
+      0.0,
+      -1.0
+    ],
+    "wall_min_slide_angle_deg": 15.000000417413
+  },
+  "camera_defaults": {
+    "anchor_mode": 1,
+    "drag_horizontal_enabled": false,
+    "ignore_rotation": true,
+    "limit_left": -10000000,
+    "limit_top": -10000000,
+    "position_smoothing_speed": 5.0,
+    "process_callback": 1
+  },
+  "godot_version": "4.6.1-stable (official)",
+  "project_settings": {
+    "audio/general/2d_panning_strength": 0.5,
+    "display/window/stretch/mode": "disabled",
+    "gui/theme/custom_font": "",
+    "gui/theme/default_font_antialiasing": 1,
+    "input_devices/buffering/agile_event_flushing": false,
+    "navigation/2d/default_cell_size": 1.0,
+    "navigation/2d/default_edge_connection_margin": 1.0,
+    "navigation/2d/default_link_connection_radius": 4.0,
+    "navigation/2d/merge_rasterizer_cell_scale": 1.0,
+    "physics/2d/solver/solver_iterations": 16,
+    "physics/common/physics_interpolation": false,
+    "physics/common/physics_jitter_fix": 0.5,
+    "rendering/2d/snap/snap_2d_transforms_to_pixel": false
+  }
+}

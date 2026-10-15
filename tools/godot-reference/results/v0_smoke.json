@@ -1,0 +1,11 @@
+{
+  "autoload_AudioPlayer": true,
+  "autoload_GlobalUtils": true,
+  "godot_version": "4.6.1-stable (official)",
+  "max_physics_steps": 8,
+  "physics_ticks": 60,
+  "viewport_size": [
+    64.0,
+    64.0
+  ]
+}
