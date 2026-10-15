@@ -34,7 +34,7 @@ tasks.named<JavaExec>("run") {
     // LWJGL warns about JNI on newer JDKs; run the dev build on a JDK 21 LTS toolchain.
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
     // Forward dev options, e.g. ./gradlew :desktop:run -Psos.screenshot=/tmp/shot.png
-    listOf("sos.window", "sos.screenshot", "sos.screenshotFrame").forEach { key ->
+    listOf("sos.window", "sos.screenshot", "sos.screenshotFrame", "sos.screen", "sos.room", "sos.captureRooms").forEach { key ->
         providers.gradleProperty(key).orNull?.let { systemProperty(key, it) }
     }
     if (System.getProperty("os.name").lowercase().contains("mac")) {

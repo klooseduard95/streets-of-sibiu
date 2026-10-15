@@ -2,9 +2,9 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
-**Overall state (2026-10-15): Phases 0–3 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
+**Overall state (2026-10-15): Phases 0–4 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
 
-Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (see plan §10).
+Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main menu and the start of the game. Scope in plan §10.
 
 | Phase | State |
 |---|---|
@@ -12,7 +12,8 @@ Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (se
 | 1 — Minimal libGDX project builds and runs | **Done** on desktop and emulator; physical device **deferred** |
 | 2 — Runtime foundation (`:logic`) | **Done** (2026-10-15): 39 new unit tests, all passing |
 | 3 — Data and rooms | **Done** (2026-10-15): 20 rooms converted, all game data transcribed, 24 parity tests passing |
-| 4–14 | Not started |
+| 4 — Room rendering and camera | **Done** (2026-10-15): 34/40 reference views pixel-identical to Godot, the other 6 differ only by sub-pixel texel selection (D14); runs on desktop and emulator |
+| 5–14 | Not started (D1 pulls the menu parts of 12 and the start of 5 forward) |
 
 ---
 
@@ -30,6 +31,49 @@ Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (se
 | Q8 | Modules `:logic` / `:core` / `:app` / `:desktop` |
 | Q9 | Install Godot 4.6 and run probes in a copy of the project (done with 4.6.1) |
 | Later decisions | B2 fixed (D-B2); git initialised; physical-device testing deferred (2026-10-15) |
+
+---
+
+## Phase 4 — completed tasks (2026-10-15)
+
+* **`CameraRig`** (`logic/world`): port of Godot 4.6.1 `Camera2D::get_camera_transform` for the game's settings (drag centre, zoom 1, smoothing 5, smoothed limits, physics callback):
+  * limits applied before smoothing
+  * centring when the room is smaller than the screen
+  * `reset_smoothing` = one update, then snap
+  * integer limits from the module box, truncated toward zero
+  * float32 arithmetic
+* **`:core` rendering:**
+  * `GodotView`: y-down camera, so world coordinates are identical to Godot's; FitViewport 1920×1080; black bars; Godot's default grey clear colour (0.3) inside the view.
+  * `PaddedTileAtlas`: Godot's `use_texture_padding`, a 1 px duplicated border per tile, so there are no seams at sub-pixel camera positions.
+  * `RoomRenderer`: culled tile drawing.
+  * `LoopScreen`: a screen driven by `GameLoop`, the first use of the Phase 2 loop in the app.
+* **`RoomViewerScreen`** (development/demo):
+  * all 20 rooms with the original camera
+  * keyboard: arrows/WASD move, N/P switch rooms
+  * touch: drag to pan, tap an edge to switch rooms
+  * Desktop: `./gradlew :desktop:run -Psos.screen=rooms [-Psos.room=ID]`.
+  * Android: `adb shell am start -n ro.klooseduard.streetsofsibiu/.AndroidLauncher -e screen rooms`.
+* **Pixel comparison tooling:**
+  * Godot probe `v10_room_screens` (windowed) writes 40 reference renders (20 rooms × centre/corner views) to `tools/godot-reference/results/room_screens/`.
+  * `RoomCaptureHarness` (`-Psos.captureRooms=<dir>`) writes the same 40 views from the port.
+  * `tools/compare_room_screens.py` compares them.
+
+## Phase 4 — test results (2026-10-15)
+
+| Check | Result |
+|---|---|
+| `./gradlew :logic:test :core:test` | **72 tests, 0 failures** (adds `CameraRigTest`, 4 tests) |
+| `CameraRigTest` vs Godot recordings (`v4_camera.json`) | Limit cases, **70 ticks of smoothing** and the reset all match within 1e-3; integer room limits match V13 |
+| Pixel comparison, 40 views (`compare_room_screens.py`) | **34/40 pixel-identical.** The 6 that differ are the centre views of the 5 boss rooms and `FIGHTROOM_34_BIG`. In all of them the camera's x lands on a half pixel (centre x = …​.5). ~96 % of the differing pixels are exact one-pixel horizontal texel shifts; the layout is identical (D14) |
+| Build (`--warning-mode all`) | Successful, no warnings |
+| Emulator (API 37, 2400×1080) | Room viewer runs: spawn room pillarboxed, tap-edge room switching and drag panning work, 0 logcat errors |
+
+### Phase 4 — mistakes found on the way (logged for context)
+* My first Godot reference renders used a `SubViewport`, which defaults to **linear** filtering (the game's root viewport uses the project's Nearest). Fixed in the probe.
+* My viewer snapped rooms with `enterTree()`, which skips the limits. Godot uses `reset_smoothing()`, and that only shows on the next update. Fixed in the viewer and the capture harness.
+* Atlas bleeding at half-pixel positions. Fixed with Godot's texture padding (`PaddedTileAtlas`).
+* My own extra camera test expected exactly 544.5. Float32 smoothing stalls at 544.50037, the same as Godot's arithmetic, so the test now uses a tolerance.
+* The emulator screen had gone to sleep, which gave black screenshots. Woke it and set `svc power stayon true`.
 
 ---
 
@@ -124,9 +168,9 @@ Package `ro.klooseduard.streetsofsibiu.logic.runtime` (pure Kotlin, no libGDX). 
 
 | ID | Question | Default until you decide |
 |---|---|---|
-| O1 | Fonts: Q6 approved bundling Montserrat / JetBrains Mono / Hack. V11 shows that players without those fonts installed saw **Open Sans SemiBold** everywhere. Which look should the port reproduce: the designers' intended fonts or what most players saw? | Bundle the intended fonts (Q6) |
-| O2 | Music panning: the original music is panned left (62.5 % L / 37.5 % R in the menu) due to a Godot positional-audio side effect. Keep it, or centre the music? | Keep it (faithful) |
-| O3 | Delivery dates in plan §10 (Thursdays from 2026-10-22). Correct? | As proposed |
+| O1 | Fonts | **Answered 2026-10-15: "fine for now"** → keep Q6 (bundle the intended fonts); revisit later if needed |
+| O2 | Music panning | **Answered 2026-10-15: fix → centred music** (D13) |
+| O3 | Delivery dates | **Answered 2026-10-15:** first delivery **Wednesday 2026-10-21 morning**, "the start of the game and the menu"; later dates every two weeks |
 
 ---
 
@@ -162,7 +206,7 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 
 1. **Physical device (deferred):** when an Android phone is available, run `./gradlew :app:installDebug` and repeat the Phase 1 device checks.
 2. Answer open questions O1–O3.
-3. **Phase 4:** room rendering and camera, wiring `GameLoop` into `:core` (completes D1).
+3. **D1 (Wed 2026-10-21 morning):** main menu, tutorial, options, centred music, start of the game (see plan §10).
 4. Phases 5–14 as in the plan (delivery mapping in plan §10).
 
 ## Known differences (register)
@@ -173,6 +217,8 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D2 | Pillarbox/letterbox on non-16:9 screens (FitViewport) | Device aspect ratios | **implemented** (Phase 1) |
 | D3 | Auto-pause on backgrounding; Android Back = pause | Android lifecycle | approved, not implemented (Back currently uses libGDX's default handling) |
 | D11 | Physical-device validation postponed; emulator (API 37) used meanwhile | No Android phone available | temporary |
+| D13 | Background music is centred instead of panned left (the original's AudioStreamPlayer2D at world origin panned it left: 62.5 % / 37.5 % in the menu) | Your decision (O2), 2026-10-15 | approved, implement with the music (D1) |
+| D14 | When the camera's x position is exactly on a half pixel, some texels are picked one pixel to the side compared with Godot's Forward+ renderer (34/40 static reference views identical; the rest differ by 1-px texel shifts, layout identical) | Renderer rasterisation detail; in-game the camera moves through sub-pixel positions continuously | accepted (Phase 4) |
 | D12 | Godot's `MainTimerSync` jitter-fix smoothing is not replicated: a tick may land one rendered frame earlier or later; tick rate and per-tick logic are identical. Idle-frame order: Timer nodes are processed after all entities' `_process`, not interleaved by tree order | Simplicity; no gameplay effect | **implemented** (Phase 2) |
 | D4 | Fullscreen window → immersive landscape (`sensorLandscape`). On Android 16+ large screens (≥ 600 dp) the system may ignore the orientation lock | Platform | **implemented** (Phase 1) |
 | D5 | Hover tooltips → long-press | No hover on touch | approved, not implemented |

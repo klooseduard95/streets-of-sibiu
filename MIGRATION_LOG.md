@@ -160,3 +160,34 @@ Related documents:
 **Results:** `:logic:test` 66/66. The full build is clean. The original is untouched.
 
 **Next:** Phase 4 (room rendering + camera, wiring the game loop into `:core`) to complete D1.
+
+## 2026-10-15 — Session 6: Phase 4 (rooms and camera)
+
+**User:** "continue with Phase 4. Font i guess is fine for now, fix the left-panned music and i have to deliver a first part (not the whole game just maybe the start of the game and the menu) until wednesday morning."
+
+**Decisions recorded:**
+- O1: fonts are fine for now (keep Q6).
+- O2: centre the music (D13).
+- O3: first delivery **Wed 2026-10-21 morning**, covering the menu and the start of the game. D1 scope revised in plan §10.
+
+**Phase 4, on branch `phase-4-rooms-camera`:**
+- Read Godot `camera_2d.cpp`: `get_camera_transform`, `_update_scroll`, notifications. With smoothing on, it updates once per physics tick in the internal physics process; `reset_smoothing` = `_update_scroll` + snap; ENTER_TREE sets first = true.
+- `CameraRig` (logic) + `CameraRigTest` (replays the `v4_camera` probe: limits, 70 smoothing ticks, reset; integer room limits).
+- Default clear colour confirmed from `main.cpp`: (0.3, 0.3, 0.3), not overridden by the project.
+- `:core`: `GodotView` (y-down), `RoomRenderer`, `LoopScreen`, `RoomViewerScreen`; start-screen option on desktop (`-Psos.screen=rooms`) and Android (`-e screen rooms`); `RoomCaptureHarness` (`-Psos.captureRooms`).
+- Godot probe `v10_room_screens` (windowed; a Godot window appears briefly) + `tools/compare_room_screens.py`.
+
+**Pixel-comparison iterations:**
+1. 2/40 identical. Two causes:
+   - The probe's SubViewport used linear filtering. Fixed by setting Nearest, as the root viewport does.
+   - The corner views were never limited (enterTree snap).
+2. 0/40: seams from atlas bleeding at half-pixel positions. Found Godot's `use_texture_padding` (`tile_set.cpp`, default true) and implemented `PaddedTileAtlas`. Also, `reset_smoothing` only takes effect on the next update, so the harness now advances one tick per frame.
+3. **34/40 identical.** The remaining 6 have half-pixel x camera positions. Tried ±0.01 and ±0.25 px biases: no change. ~96 % of the differing pixels are exact 1-px texel shifts. Accepted as D14 to protect the deadline.
+
+**Also:**
+- Reference PNGs re-saved losslessly optimised (9.6 MB, kept in git).
+- Emulator black screenshots were caused by the device sleeping. Fixed with `KEYCODE_WAKEUP` + `svc power stayon true`.
+
+**Results:** 72 tests pass; the build is clean; the emulator room viewer works; the original is untouched.
+
+**Next:** D1. Main menu, tutorial, options, centred music, then the level-1 start screen.

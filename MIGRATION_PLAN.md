@@ -880,8 +880,8 @@ You deliver every two weeks; the first deadline is next week. Each delivery is a
 
 | Delivery | Target date | Phases | Demonstrable result |
 |---|---|---|---|
-| D1 | 2026-10-22 | 0, 1 (done) + 2 + 3 + 4 | All 20 original rooms render from converted data with the original tiles; camera limits and smoothing as in Godot; room viewer on desktop and emulator; reference data and tests in place |
-| D2 | 2026-11-05 | 5, 6 | Player walks, collides and slides like the Godot traces; dash (incl. the D-B2 fix), parry, ghost trail; touch controls on the emulator |
+| D1 | **Wed 2026-10-21 (morning)** | 0–4 (done) + menu parts of 12 + start of 5 | **Revised 2026-10-15 at your request ("the start of the game and the menu"):** main menu (title, Start/Options/Exit, CRT "Cool thingo"), tutorial overlay, Options with volume sliders, centred background music + horse easter egg, Start → level-1 start: black-screen fade into the spawn room with the player, camera and HUD; player movement with wall collision if it can be validated in time. Room viewer stays available as a dev screen |
+| D2 | 2026-11-04 (Wed) | rest of 5, 6 | Player walks, collides and slides like the Godot traces; dash (incl. the D-B2 fix), parry, ghost trail; touch controls on the emulator |
 | D3 | 2026-11-19 | 7, 8 | Weapons, bullets, inventory, interaction, HUD; rats, pigeons, thieves and criminals with AI, navigation and attacks |
 | D4 | 2026-12-03 | 9, 10 | Ghost, manhole spawner, King Rotta; procedural levels 1–8, warps, barricades, exits |
 | D5 | 2026-12-17 | 11, 12 | Upgrades, rewards, consumables; menus, settings, pause, death/win, music and SFX, CRT shader: the full game loop |

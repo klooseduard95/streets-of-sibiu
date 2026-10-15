@@ -6,9 +6,11 @@ import ro.klooseduard.streetsofsibiu.core.StreetsOfSibiuGame
 import ro.klooseduard.streetsofsibiu.logic.GodotProjectSettings
 
 /**
- * Optional system properties (development only):
+ * Optional system properties (development only), passed as Gradle properties to `:desktop:run`:
+ *  - `sos.screen=menu|rooms` start screen; `sos.room=<ROOM_ID>` start room for the room viewer.
  *  - `sos.window=WIDTHxHEIGHT` window size (default: half of 1920x1080).
  *  - `sos.screenshot=/path/out.png` save a screenshot after `sos.screenshotFrame` frames (default 30), then exit.
+ *  - `sos.captureRooms=/dir` render every room (centre and top-left views) to PNG files, then exit.
  */
 fun main() {
     val (width, height) = System.getProperty("sos.window")
@@ -20,7 +22,12 @@ fun main() {
         useVsync(true)
         setForegroundFPS(60)
     }
-    val game = StreetsOfSibiuGame()
+    val captureDir = System.getProperty("sos.captureRooms")
+    if (captureDir != null) {
+        Lwjgl3Application(RoomCaptureHarness(captureDir), config)
+        return
+    }
+    val game = StreetsOfSibiuGame(System.getProperty("sos.screen") ?: "menu", System.getProperty("sos.room"))
     val screenshotPath = System.getProperty("sos.screenshot")
     val listener = if (screenshotPath == null) game else ScreenshotHarness(
         game, screenshotPath, System.getProperty("sos.screenshotFrame")?.toInt() ?: 30,
