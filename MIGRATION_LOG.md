@@ -222,3 +222,12 @@ Related documents:
 **Results:** 74 tests pass; the build is clean; `DELIVERY_D1.md` written. Status and plan updated (D15–D17).
 
 **Not done:** the CRT shader (optional before Wednesday); physical device.
+
+## 2026-10-15 — Session 8: merge to main
+
+**User:** "merge into main".
+
+- Fast-forwarded `main` to `d1-menu-and-start`, bringing in Phases 0, 2, 3, 4 and Delivery 1 (no merge commit needed: the branches are linear).
+- The phase branches are kept for reference: `phase-0-godot-reference`, `phase-2-runtime-foundation`, `phase-3-data-and-rooms`, `phase-4-rooms-camera`, `d1-menu-and-start`.
+- Verified on `main` after the merge: build and all tests pass.
+- From now on, new work branches off `main`.
