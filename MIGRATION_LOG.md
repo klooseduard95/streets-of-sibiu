@@ -276,7 +276,7 @@ Related documents:
   - screenshot: `-Psos.screenshot=/abs/path.png -Psos.screenshotFrame=N` (the 960×540 window = 1920×1080 back buffer on this Retina Mac)
   - room capture: `-Psos.captureRooms=/dir`, then `python3 -I tools/compare_room_screens.py /dir`
 - **Emulator:**
-  - start: `~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_37.0 -no-window -no-boot-anim` (run in background)
+  - start: `~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_37.0 -no-window -no-boot-anim -no-snapshot-load -no-snapshot-save` (run in background; never touch the user's Quick Boot snapshot)
   - then: `adb wait-for-device`; wake with `adb shell input keyevent KEYCODE_WAKEUP; adb shell svc power stayon true`
   - dev start: `adb shell am start -n ro.klooseduard.streetsofsibiu/.AndroidLauncher -e screen game|rooms`
   - screenshot: `adb exec-out screencap -p > file.png`
@@ -301,6 +301,7 @@ Related documents:
   - windowed probes may crash at exit after saving (harmless).
 - `String.format` uses the Mac's locale (comma decimals) → always `Locale.ROOT`.
 - The emulator sleeps, giving black screenshots → wake + `svc power stayon true`.
+- **Black screen in Android Studio's Device Manager (reported 2026-10-15):** the AVD uses Quick Boot (`fastboot.forceFastBoot=yes`) and resumed a `default_boot` snapshot after my headless SwiftShader runs. The emulator log showed `Failed to find ColorBuffer` / `invalid color buffer`. Fix for the user: power button → **Cold Boot Now** → if needed, switch Graphics Hardware/Software. **My runs must use `-no-snapshot-load -no-snapshot-save`** and be stopped (`adb emu kill`) before the user opens the emulator.
 - When transcribing from `.tscn`, do not filter out blank lines: multi-line strings contain them (the tutorial text bug).
 
 ## Constraints recap
