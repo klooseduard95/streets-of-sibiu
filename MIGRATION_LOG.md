@@ -114,3 +114,22 @@ Related documents:
 - `MIGRATION_STATUS.md`: Phase 0 done; physical device deferred (D11); open questions O1 (fonts), O2 (music panning), O3 (delivery dates).
 
 **Next:** Phase 2 (runtime foundation), Phase 3 (data/room conversion), Phase 4 (room rendering + camera), targeting D1.
+
+## 2026-10-15 — Session 4: run instructions and Phase 2
+
+**User:** asked how to run the build. Explained the desktop run (`./gradlew :desktop:run` with Android Studio's JDK), the emulator (Android Studio or adb) and opening the Godot reference copy. The user's first attempt typed the folder path without `cd` (zsh "permission denied" means a directory was executed); fixed. **User:** "it works, continue with Phase 2."
+
+**Phase 2, on branch `phase-2-runtime-foundation`** (branched from `phase-0-godot-reference`, so it contains Phase 0):
+- Fetched more Godot 4.6.1 sources: `main/main.cpp`, `main/main_timer_sync.*`, `scene/main/timer.cpp`, `core/math/random_pcg.*`, `core/variant/array.cpp`, `scene/animation/tween.h`. Read the exact rules: `Main::iteration` order, max-steps excess handling, `SceneTree::physics_process`/`process` order, `process_timers` (`<= 0`, skip new timers), Timer node (`< 0`, `+= wait_time`), `Tween::step` (leftover delta, loops), `PropertyTweener` (start value at step start), easing tables (sine in double, returned as float), `randi_range`, `Array.shuffle`, `action_press` (+1 frame).
+- Decided not to port `MainTimerSync`'s jitter fix (D12). It only shifts ticks between rendered frames.
+- Wrote `logic/runtime/`: `SceneNode`, `Timers`, `Tween` (+`Easing`), `GameRandom`, `GameRuntime`, `GameLoop` (+`FrameHooks`), `ActionInput`.
+- Computed the expected timer frames independently with Python double arithmetic (0.1 s fires on frame 7, not 6, because of floating point; Godot does the same).
+- Tests: 6 suites, 39 tests. The easing parity test reads Godot's recorded samples from `tools/godot-reference/results/v2_defaults.json`.
+
+**Interruption:** the user's laptop slept mid-session. My last message had announced the tween and random files without writing them. On resume I checked the disk (only `SceneNode.kt` and `Timers.kt` existed) and continued from there. Nothing was lost.
+
+**Results:** `:logic:test` 42/42 pass. The full build is clean (`--warning-mode all`). The original project is untouched.
+
+**Deferred on purpose:** `GameEvents` (no consumer yet), and wiring `GameLoop` into `:core` (Phase 4).
+
+**Next:** Phase 3 (room converter + data), Phase 4 (room rendering + camera), aiming at D1 (2026-10-22, to confirm).
