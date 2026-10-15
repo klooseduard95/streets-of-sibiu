@@ -231,3 +231,80 @@ Related documents:
 - The phase branches are kept for reference: `phase-0-godot-reference`, `phase-2-runtime-foundation`, `phase-3-data-and-rooms`, `phase-4-rooms-camera`, `d1-menu-and-start`.
 - Verified on `main` after the merge: build and all tests pass.
 - From now on, new work branches off `main`.
+
+## 2026-10-15 — Session 9: questions answered, stopping for the week
+
+**User:**
+- Asked which GitHub repo we work on. **Answer: none.** The repo is local only (`git init` in session 3, no remote, nothing pushed); `gh` is not installed. The original folder name suggests a GitHub ZIP download of `2026-Game_of_the_year`, but it has no `.git` data. If a remote is wanted later: ask for the repo URL and visibility first (recommend private: the original team's code and assets, music rights R15). Push only after explicit confirmation.
+- "stop for now. it's fine. Just log everything in our log for next week so you know where to continue from."
+
+---
+
+# HANDOFF — where to continue (written 2026-10-15)
+
+## State
+- `main` (`ddd3d62` + this log commit) contains everything: audit, Phases 0–4 and **Delivery 1 (ready for Wednesday 2026-10-21 morning)**. Clean build; **74 tests pass**.
+- Phase branches are kept for reference (not needed): `phase-0-godot-reference`, `phase-2-runtime-foundation`, `phase-3-data-and-rooms`, `phase-4-rooms-camera`, `d1-menu-and-start`. **New work: branch off `main`.**
+- Delivery documents: `DELIVERY_D1.md` (hand-over note), `MIGRATION_STATUS.md` (status, tests, differences register D1–D17, decisions), `MIGRATION_PLAN.md` (audit, phases, §10 delivery schedule).
+
+## Open questions for the user
+1. Port the "Cool thingo" CRT shader before Wednesday, or start D2? (Asked; not answered.)
+2. GitHub remote: none so far; only if the user asks.
+3. Delete the old phase branches? (Offered; not answered.)
+
+## Next work, in priority order
+1. *(Optional, before Wed 2026-10-21)* **CRT shader** (`shader_goesbrrrr.gdshader` → GLSL ES on a FrameBuffer; menu only). Notes: use texture2D (no textureLod), `highp` for the hash noise, check the FRAGCOORD origin, keep the scene's parameter values (curvature 0.0, etc.).
+2. **D2 (Wed 2026-11-04): rest of Phase 5 + Phase 6.**
+   - Dash NONE mini-slide, SHORT, MEDIUM (with the **D-B2 fix**: `can_take_dmg = true` when the slide ends, without the blue tint), LONG (teleport to the cursor; on Android the right-half "cursor" touch, Q1).
+   - Ghost trail (every 0.15 s, fade 0.75 s, grey modulate).
+   - Parries NORMAL/MEDIUM/CHARGE (B5–B7 rules).
+   - Invulnerability flicker, `take_dmg`.
+   - Golden traces already exist in `tools/godot-reference/results/v9_player_traces.json` (dash scenarios incl. dash into walls with/without clamp, NONE mini-slide, MEDIUM, parries, error paths).
+   - **Input caveat (V15):** in those traces an edge action pressed at tick t is seen at tick t+1 (`action_press` semantics); held keys are seen at tick t.
+   - Extend `PlayerTraceTest` to the dash/parry scenarios.
+   - Dash velocity changes depend on `move_and_slide` velocity corrections (floor/ceiling/wall rules); these are already ported in `KinematicBody`.
+3. Then, as in plan §10:
+   - D3: weapons, inventory, interaction, HUD ammo; basic enemies with navigation (port A*/funnel with search limits; golden paths in `v8_navigation.json`).
+   - D4: ghost, spawner, King Rotta; level generation (+ verify Godot's Area2D result for exactly touching ModuleBoxes; `Rect.overlaps` is strict for now).
+   - D5: upgrades, consumables, death/win, remaining menus and audio.
+   - D6: Android hardening + validation on a physical phone.
+
+## How to work (environment)
+- Gradle: `export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"`, then `./gradlew :logic:test :core:test :app:assembleDebug :desktop:installDist --warning-mode all`.
+- **Desktop run:**
+  - `./gradlew :desktop:run [-Psos.screen=menu|game|tutorial|options|paused|rooms] [-Psos.room=ID] [-Psos.window=WxH]`
+  - screenshot: `-Psos.screenshot=/abs/path.png -Psos.screenshotFrame=N` (the 960×540 window = 1920×1080 back buffer on this Retina Mac)
+  - room capture: `-Psos.captureRooms=/dir`, then `python3 -I tools/compare_room_screens.py /dir`
+- **Emulator:**
+  - start: `~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_37.0 -no-window -no-boot-anim` (run in background)
+  - then: `adb wait-for-device`; wake with `adb shell input keyevent KEYCODE_WAKEUP; adb shell svc power stayon true`
+  - dev start: `adb shell am start -n ro.klooseduard.streetsofsibiu/.AndroidLauncher -e screen game|rooms`
+  - screenshot: `adb exec-out screencap -p > file.png`
+  - geometry: the view is 1920×1080 at x offset 240 on the 2400×1080 screen
+  - avoid taps in the bottom ~84 px (system gestures)
+  - stop with `adb emu kill`
+- **Godot reference (4.6.1, never touch the original):**
+  - `tools/godot-reference/setup_copy.sh` recreates `project-copy/`
+  - `tools/godot-reference/run_probe.sh <probe> [--windowed]`
+  - probes in `tools/godot-reference/probes/`, results in `results/`, MIT engine sources in `engine-source/` (the porting reference: read the source before porting a behaviour)
+- Original Godot project: `2026-Game_of_the_year-main/newgame/`, read-only. Check after each session with `find 2026-Game_of_the_year-main -newer 2026-Game_of_the_year-main.zip` (must print nothing).
+
+## Gotchas learned (do not repeat)
+- **zsh:** an unquoted glob with no match aborts the whole command line (`--include='*.kt'`, `rm dir/*.png`). Quote it or use `find -delete`.
+- **Kotlin:** `/*` inside KDoc opens a nested comment (e.g. "enemy_types/*.tres").
+- **Android Studio "Configure Kotlin in Project" breaks the build** (duplicate `kotlin("jvm")`, `jvmToolchain(8)`). Revert `build.gradle.kts`/`settings.gradle.kts` if it reappears (ask the user first).
+- **Godot probes:**
+  - new `class_name` scripts need an editor import → extend `"res://probes/probe_base.gd"` by path;
+  - the headless root viewport is 64×64 → use a 1920×1080 SubViewport;
+  - a SubViewport defaults to **linear** filtering → set Nearest;
+  - wait for the navigation map sync (`map_get_iteration_id`);
+  - windowed probes may crash at exit after saving (harmless).
+- `String.format` uses the Mac's locale (comma decimals) → always `Locale.ROOT`.
+- The emulator sleeps, giving black screenshots → wake + `svc power stayon true`.
+- When transcribing from `.tscn`, do not filter out blank lines: multi-line strings contain them (the tutorial text bug).
+
+## Constraints recap
+- Deliver every two weeks (D1 Wed 2026-10-21; then 11-04, 11-18, 12-02, 12-16, 2027-01-13 per plan §10, to confirm).
+- No Android phone (Apple devices only): emulator + desktop; physical-device validation deferred (D11).
+- Decisions in force: Q1–Q9, B1/B2/B11/B18 fixed; O1 fonts kept (Montserrat etc.); O2 music centred (D13).
+- Log every session here; keep `MIGRATION_STATUS.md` in sync.
