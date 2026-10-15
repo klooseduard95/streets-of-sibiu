@@ -14,7 +14,7 @@ import ro.klooseduard.streetsofsibiu.logic.data.WeaponDef
  * inventory/information_ui.tscn (top-left: HP bar, shield, ammo) and inventory/inventory_ui.tscn
  * (bottom-left, scale 0.75: three weapon slots, two consumable slots). Geometry from the scenes.
  */
-class HudView(private val ui: UiKit, textures: (String) -> Texture) : Group() {
+class HudView(private val ui: UiKit, textures: (String) -> Texture, private val onSlotTapped: (Int) -> Unit = {}) : Group() {
     private val hpLabel: Label
     private val shieldLabel: Label
     private val ammoLabel: Label
@@ -63,6 +63,15 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture) : Group() {
             val img = Image(emptySlot)
             slotImages += img
             place(img, 475f, i * 132f, 125f, 128f)   // clip_contents: the 128 px slot is clipped at the HBox's 600 px edge
+        }
+    }
+
+    init {
+        // Touch scheme (Q1): tapping a slot selects it, like the 1-5 keys.
+        slotImages.forEachIndexed { i, img ->
+            img.addListener(object : com.badlogic.gdx.scenes.scene2d.utils.ClickListener() {
+                override fun clicked(event: com.badlogic.gdx.scenes.scene2d.InputEvent?, x: Float, y: Float) = onSlotTapped(i)
+            })
         }
     }
 

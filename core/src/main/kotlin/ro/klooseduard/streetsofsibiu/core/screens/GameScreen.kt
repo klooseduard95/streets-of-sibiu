@@ -66,7 +66,8 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
     private val blackScreen = Image(game.ui.color(Color.BLACK)).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) }
-    private val hud = HudView(game.ui, game::texture)
+    private val hud = HudView(game.ui, game::texture, ::selectSlot)
+    private var selectedSlot = 0
     private val settingsView: SettingsView = SettingsView(game.ui, game.texture("menu.png"), game.buses, game.music::applyVolumes) { hideSettings() }
     private val pauseView: PauseView = PauseView(game.ui, onResume = ::resumeFromPause, onSettings = { settingsView.isVisible = true }, onMainMenu = ::toMainMenu)
     private val stick = TouchStick(actions, stage.viewport)
@@ -127,6 +128,13 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             fadeOut.tweenProperty({ blackAlpha }, { blackAlpha = it }, 0.0, 0.25)
             fadeOut.onFinished { if (pauseRequested) togglePause() }
         }
+    }
+
+    /** InventoryComponent.selected_slot_index setter (equip/unequip has no effect in D1: no weapons yet). */
+    private fun selectSlot(index: Int) {
+        if (runtime.paused) return
+        selectedSlot = index
+        hud.setInventory(PlayerDefs.INITIAL_INVENTORY, selectedSlot)
     }
 
     private fun updateHealthUi() {
@@ -210,7 +218,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     }
 
     override fun show() {
-        Gdx.input.inputProcessor = InputMultiplexer(stage, KeyboardInput(actions, ::togglePause), stick)
+        Gdx.input.inputProcessor = InputMultiplexer(stage, KeyboardInput(actions, ::togglePause, ::selectSlot), stick)
     }
 
     override fun hide() {

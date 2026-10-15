@@ -191,3 +191,34 @@ Related documents:
 **Results:** 72 tests pass; the build is clean; the emulator room viewer works; the original is untouched.
 
 **Next:** D1. Main menu, tutorial, options, centred music, then the level-1 start screen.
+
+## 2026-10-15 — Session 7: Delivery 1 (menu + start of the game)
+
+**User:** "continue, walking is more important than the retro effect". Branch `d1-menu-and-start` (from `phase-4-rooms-camera`).
+
+**Walking:**
+- Read Godot `character_body_2d.cpp` (`move_and_slide`, grounded/floating, floor snap), `physics_body_2d.cpp` (`move_and_collide` cancel-sliding) and `godot_space_2d.cpp` (`test_body_motion`: recovery 4×, 40 %, min contact depth margin × 0.05, 8-step bisection with margin 0, rest contact at the unsafe position; `TEST_MOTION_MARGIN_MIN_VALUE` 0.0001).
+- Implemented `logic/physics` (exact TOI via a ray vs rounded-rectangle Minkowski region, fed into Godot's bisection) and `KinematicBody`.
+- First replay of the 9 walking traces: max error 0.073 px. Then `Player` + `FrameAnimator`; end-to-end replay through `GameLoop`: frames identical. Committed `73b81a9`.
+
+**UI and audio:**
+- Fetched `default_theme.cpp`, Godot's `OpenSans_SemiBold.woff2` (converted with fontTools) and the slider grabber SVGs.
+- Downloaded Montserrat (JulietaUla repo) and JetBrains Mono NL (release v2.304 zip; the raw URL had returned 404). OFL licences copied.
+- Added gdx-freetype (core, Android natives per ABI, desktop natives).
+- Wrote `Fonts`, `StyleBoxFlat`/`StyleBoxLine`, `UiKit`, `SettingsView`, `HudView`, `PauseView`, `MainMenuScreen`, `OptionsScreen`, `GameScreen`, `KeyboardInput`, `TouchStick`, `AudioBuses`, `MusicDirector`. Removed `MenuBackdropScreen`.
+- Dev start screens: `tutorial`, `options`, `paused`, `game`.
+- Found the Godot LabelSettings rule: when label_settings is set, its font size wins over the theme override, so the tutorial text is 16 px.
+
+**Godot comparison:**
+- Probe `v11_ui_screens` (windowed; it crashes on exit after saving, which is harmless).
+- Fixed after comparing: tutorial blank line, Exit text, title shadow (stamped halo), +3 line spacing, VBox spacing, vertical separators, `Locale.ROOT` formatting.
+- The Godot game-start render also shows the original's stuck pause panel (V1 confirmed visually).
+
+**Emulator:**
+- Full flow tested (audio on). Logcat errors were system-only.
+- Mistakes: wrong tap coordinates first; a tap in the bottom gesture zone opened Gemini (risk D16).
+- Added slot selection (keys 1–5, taps).
+
+**Results:** 74 tests pass; the build is clean; `DELIVERY_D1.md` written. Status and plan updated (D15–D17).
+
+**Not done:** the CRT shader (optional before Wednesday); physical device.

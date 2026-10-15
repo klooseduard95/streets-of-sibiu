@@ -2,7 +2,7 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
-**Overall state (2026-10-15): Phases 0–4 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
+**Overall state (2026-10-15): Phases 0–4 are done, and Delivery 1 (menu + start of the game) is ready (see `DELIVERY_D1.md`). Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
 
 Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main menu and the start of the game. Scope in plan §10.
 
@@ -13,7 +13,8 @@ Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main
 | 2 — Runtime foundation (`:logic`) | **Done** (2026-10-15): 39 new unit tests, all passing |
 | 3 — Data and rooms | **Done** (2026-10-15): 20 rooms converted, all game data transcribed, 24 parity tests passing |
 | 4 — Room rendering and camera | **Done** (2026-10-15): 34/40 reference views pixel-identical to Godot, the other 6 differ only by sub-pixel texel selection (D14); runs on desktop and emulator |
-| 5–14 | Not started (D1 pulls the menu parts of 12 and the start of 5 forward) |
+| D1 (Phase 5 walking subset + Phase 12 menu subset) | **Ready** (2026-10-15): menu, tutorial, options, centred music, level-1 start, walking verified against Godot, HUD, pause |
+| 5 (rest), 6–14 | Not started |
 
 ---
 
@@ -31,6 +32,58 @@ Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main
 | Q8 | Modules `:logic` / `:core` / `:app` / `:desktop` |
 | Q9 | Install Godot 4.6 and run probes in a copy of the project (done with 4.6.1) |
 | Later decisions | B2 fixed (D-B2); git initialised; physical-device testing deferred (2026-10-15) |
+
+---
+
+## Delivery 1 — completed tasks (2026-10-15, branch `d1-menu-and-start`)
+
+* **Physics port** (`logic/physics`): Godot 4.6.1 `test_body_motion` for vertical capsule/circle bodies vs axis-aligned boxes:
+  * recovery, 4 passes at 40 %, min depth = margin × 0.05;
+  * an exact time of impact fed through Godot's 8-step bisection;
+  * the rest contact.
+  * Plus `move_and_slide` grounded/floating with cancel sliding and the floor snap.
+* **Walking:**
+  * `Player` (8-way input, speed, walk animations) and `FrameAnimator` (AnimationPlayer timing: key 0 on `play`, idle-time advance, reset on `stop`).
+  * `RoomCollision` (solid tiles + door Preventers).
+  * The room clamp in `GameScreen`.
+* **UI:**
+  * Fonts via gdx-freetype: Godot's own Open Sans SemiBold (converted from the 4.6.1 sources), Montserrat, JetBrains Mono NL (OFL licences in `assets/fonts`).
+  * Godot `StyleBoxFlat`/`StyleBoxLine` drawables, default theme values (`default_theme.cpp`), the exact default slider grabber.
+  * `MainMenuScreen` + tutorial, `OptionsScreen`/`SettingsView`, `HudView`, `PauseView` (intended `pause_menu.gd`, D-B1), `GameScreen` (level-1 start sequence, camera, black screen under the HUD, pause, Android lifecycle → pause).
+* **Audio:** `AudioBuses` (original dB values), `MusicDirector` (looping, centred music D13, horse 1/250 per second).
+* **Input:**
+  * keyboard (project.godot map; P/Esc/Back → pause; 1–5 → slot)
+  * `TouchStick` (8-way, left half)
+  * slot taps
+  * on-screen pause button on Android
+* **Godot reference renders** (`v11_ui_screens`, windowed): menu, tutorial, options and game start, used for side-by-side comparison.
+* **Delivery note:** `DELIVERY_D1.md`.
+
+## Delivery 1 — test results (2026-10-15)
+
+| Check | Result |
+|---|---|
+| `./gradlew :logic:test :core:test` | **74 tests, 0 failures** (adds `PlayerWalkTraceTest`, `PlayerTraceTest`) |
+| Walking vs Godot (9 recorded scenarios: walls, corners, pillars, diagonal slides, stop, room clamp) | **Max position error 0.073 px at any tick (most ≤ 0.01 px); sprite frame identical at every tick** |
+| Layout vs Godot renders (menu, tutorial, options, game start) | Close match after fixes; remaining small offsets (tutorial Start button ≈ 10 px). Game start: player (996, 545) and camera centre (996, 544.5), identical to Godot |
+| Build (`--warning-mode all`) | Successful, no warnings; APK contains libgdx + libgdx-freetype for 4 ABIs and the fonts |
+| Emulator (API 37, audio on) | Menu → tutorial → game → walk (touch stick) → pause (Back) → Main Menu → Options → slider → Go Back; slot tap; no crash. MP3 decoder created (music playing). Logcat errors only from the system (SurfaceSyncGroup at startup, codec resource query) |
+
+### Delivery 1 — mistakes found and fixed on the way
+* Comparing with the Godot renders found **real transcription errors**:
+  * the tutorial text has an empty line after "TUTORIAL" (my audit printout had filtered out blank lines);
+  * Godot centres "Exit\n";
+  * the title shadow is a 17 px halo;
+  * labels have +3 px line spacing.
+* **Decimal formatting** used the Mac's locale ("1,00X"); now `Locale.ROOT` ("1.00X", as in the original).
+* My separator drawable could only draw horizontal lines (the inventory/pause dividers were missing). Fixed.
+* Emulator taps: my first pause-menu tap coordinates were wrong. Also, a tap in Android's bottom gesture zone opened the system assistant (recorded as risk D16).
+
+### Delivery 1 — known gaps
+See `DELIVERY_D1.md`:
+* no level generation, enemies or combat yet;
+* the CRT effect is not ported;
+* not tested on a physical phone.
 
 ---
 
@@ -206,8 +259,9 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 
 1. **Physical device (deferred):** when an Android phone is available, run `./gradlew :app:installDebug` and repeat the Phase 1 device checks.
 2. Answer open questions O1–O3.
-3. **D1 (Wed 2026-10-21 morning):** main menu, tutorial, options, centred music, start of the game (see plan §10).
-4. Phases 5–14 as in the plan (delivery mapping in plan §10).
+3. Optional before Wednesday: the "Cool thingo" CRT shader (lower priority than walking, as agreed).
+4. **D2 (2026-11-04):** rest of Phase 5 and Phase 6 (dash with the D-B2 fix, parry, ghost trail), level generation can start in parallel.
+5. Phases 7–14 as in the plan (delivery mapping in plan §10).
 
 ## Known differences (register)
 
@@ -218,6 +272,9 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D3 | Auto-pause on backgrounding; Android Back = pause | Android lifecycle | approved, not implemented (Back currently uses libGDX's default handling) |
 | D11 | Physical-device validation postponed; emulator (API 37) used meanwhile | No Android phone available | temporary |
 | D13 | Background music is centred instead of panned left (the original's AudioStreamPlayer2D at world origin panned it left: 62.5 % / 37.5 % in the menu) | Your decision (O2), 2026-10-15 | approved, implement with the music (D1) |
+| D15 | UI re-created in Scene2D from the scene offsets; small layout offsets vs Godot remain (e.g. tutorial Start button ≈ 10 px). Title uses Montserrat (the original's named font; Godot falls back to Open Sans where it is missing) | Engine UI system differs; font decision Q6/O1 | accepted (D1) |
+| D16 | Android: the bottom edge of the inventory slots overlaps the system gesture zone; taps on the lowest pixels can go to the system | Android platform | open (revisit with the full touch layout) |
+| D17 | Level start: the fade-in is not delayed by level generation frames (the original generates behind the black screen for a few frames) | D1 has no level generation yet | temporary (Phase 10) |
 | D14 | When the camera's x position is exactly on a half pixel, some texels are picked one pixel to the side compared with Godot's Forward+ renderer (34/40 static reference views identical; the rest differ by 1-px texel shifts, layout identical) | Renderer rasterisation detail; in-game the camera moves through sub-pixel positions continuously | accepted (Phase 4) |
 | D12 | Godot's `MainTimerSync` jitter-fix smoothing is not replicated: a tick may land one rendered frame earlier or later; tick rate and per-tick logic are identical. Idle-frame order: Timer nodes are processed after all entities' `_process`, not interleaved by tree order | Simplicity; no gameplay effect | **implemented** (Phase 2) |
 | D4 | Fullscreen window → immersive landscape (`sensorLandscape`). On Android 16+ large screens (≥ 600 dp) the system may ignore the orientation lock | Platform | **implemented** (Phase 1) |

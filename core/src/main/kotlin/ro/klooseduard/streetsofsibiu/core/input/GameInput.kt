@@ -14,7 +14,11 @@ import kotlin.math.floor
 import kotlin.math.sqrt
 
 /** project.godot input map on a keyboard/mouse (desktop, or Android with a keyboard). */
-class KeyboardInput(private val actions: ActionInput<Action>, private val onEscape: () -> Unit) : InputAdapter() {
+class KeyboardInput(
+    private val actions: ActionInput<Action>,
+    private val onEscape: () -> Unit,
+    private val onSlot: (Int) -> Unit = {},
+) : InputAdapter() {
     private val keys = mapOf(
         Input.Keys.W to Action.MOVE_FORWARD, Input.Keys.S to Action.MOVE_BACKWARD,
         Input.Keys.A to Action.MOVE_LEFTWARD, Input.Keys.D to Action.MOVE_RIGHTWARD,
@@ -30,7 +34,18 @@ class KeyboardInput(private val actions: ActionInput<Action>, private val onEsca
         }
         val action = keys[keycode] ?: return false
         actions.press(action)
+        // player.gd _unhandled_input: slot_1..slot_5 select the inventory slot immediately.
+        slotIndex(action)?.let(onSlot)
         return true
+    }
+
+    private fun slotIndex(action: Action): Int? = when (action) {
+        Action.SLOT_1 -> 0
+        Action.SLOT_2 -> 1
+        Action.SLOT_3 -> 2
+        Action.SLOT_4 -> 3
+        Action.SLOT_5 -> 4
+        else -> null
     }
 
     override fun keyUp(keycode: Int): Boolean {
