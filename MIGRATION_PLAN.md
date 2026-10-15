@@ -16,7 +16,7 @@
 ## 0. Executive summary
 
 * **Game type:** a top-down 2D roguelite with 8 levels. Each level is built procedurally from hand-made room modules, using 100×100 px tiles. You fight rats, pigeons, thieves, criminals, ghosts (buffers), manholes (spawners) and a final boss, King Rotta. Clearing rooms gives upgrade cards. The exit room of each level unlocks weapons, dashes and parries in a fixed order. Clearing level 8 shows "YOU WIN".
-* **Size:** about 2,500 lines of GDScript, 21 room modules, 53 images, 16 MP3s and 1 shader. There are **no plugins, no save/load system and no networking**.
+* **Size:** about 2,500 lines of GDScript, 20 room modules (plus an unused test room), 53 images, 16 MP3s and 1 shader. There are **no plugins, no save/load system and no networking**.
 * **Framework decision: libGDX is appropriate.** The audit found no strong technical reason to pick another framework. libGDX provides SpriteBatch rendering, Scene2D UI, MP3 playback on Android and desktop, touch, keyboard and mouse input, GLSL shaders, FreeType fonts and a desktop backend for side-by-side testing.
   **Box2D is not recommended.** The game relies on Godot's *kinematic* `CharacterBody2D.move_and_slide()` behaviour, Area2D overlap signals, a RayCast2D and Godot's NavigationServer. Box2D is a dynamic rigid-body simulator and would change the movement feel. A small, purpose-built collision, overlap and navigation layer in plain Kotlin is both simpler and more faithful (§6, R1–R3).
 * **The biggest unavoidable difference** is input. The original uses keyboard and mouse only (WASD, mouse aim, left/right click, Space, E, R, P, 1–5). Android needs a touch scheme, which is decision **Q1** (§9).
@@ -131,7 +131,7 @@
 | `upgradestings/select_upgrade_scene.tscn` | SelectUpgrade (Control) | — | Tinted backdrop, HBox of 3 cards (sets non-existent `sprite`/`textdesc` properties, which are ignored) |
 | `upgradestings/upgrade_card.tscn` | Panel (Panel) | upgrade_card.gd | 400×500 card, TextureRect, RichTextLabel (BBCode), full-size Button |
 
-**Room modules (21, all `RoomModule` with the same tile definitions, decoded):**
+**Room modules (20, all `RoomModule` with the same tile definitions, decoded; the 21st decoded scene, `DummyRoom`, is unused):**
 
 | Module | Tile grid (cells) | Doors (GenerationNodes) | ModuleBox centre / size | EnemySpawnNodes | Pool(s) |
 |---|---|---|---|---|---|
@@ -629,8 +629,8 @@ Dependencies are kept to: libGDX core, Android backend, platform natives, gdx-fr
 |---|---|---|
 | All used PNGs (§1.5) | **Reuse unchanged.** Copy into `assets/` under the same relative paths | Load with Nearest/Nearest, no mipmaps. Packing into an atlas is optional and only for performance; if used, the packer must use padding and edge bleed to match `fix_alpha_border` |
 | All used MP3s | **Reuse unchanged** | libGDX supports MP3 for `Sound` and `Music` on Android and desktop. Convert to OGG only if device tests show a problem, and record it if so |
-| Room tilemaps (inside `.tscn`, binary PackedByteArray format 0) | **Convert** with the `tools/` converter → JSON | Format decoded and verified in the audit (12 bytes per cell: x,y int16; source, atlasX, atlasY, alt uint16) |
-| Door, teleporter, preventer, arrival, module box, spawn positions (scene transforms) | **Convert** to JSON (pre-multiplied world-local rects) | 21 rooms |
+| Room tilemaps (inside `.tscn`, binary PackedByteArray format 0) | **Converted in Phase 3** by `tools/convert_rooms.py` → `GeneratedRooms.kt` | Format decoded and verified in the audit (12 bytes per cell: x,y int16; source, atlasX, atlasY, alt uint16) |
+| Door, teleporter, preventer, arrival, module box, spawn positions (scene transforms) | **Converted in Phase 3** (room-local rects, transforms kept) | 20 rooms |
 | `.tres` stats (enemies, weapons, consumables) | **Transcribe** to Kotlin data, with a JVM test that parses the original `.tres` files read-only and asserts equality | Prevents transcription errors |
 | Player animation (embedded in `Player_Placeholder.tscn`) | **Transcribe** to Kotlin constants | |
 | UI layouts (`.tscn` Controls) | **Re-create** in Scene2D using the original offsets, anchors and sizes at 1920×1080 | Screenshot comparison acceptance |
@@ -880,7 +880,7 @@ You deliver every two weeks; the first deadline is next week. Each delivery is a
 
 | Delivery | Target date | Phases | Demonstrable result |
 |---|---|---|---|
-| D1 | 2026-10-22 | 0, 1 (done) + 2 + 3 + 4 | All 21 original rooms render from converted data with the original tiles; camera limits and smoothing as in Godot; room viewer on desktop and emulator; reference data and tests in place |
+| D1 | 2026-10-22 | 0, 1 (done) + 2 + 3 + 4 | All 20 original rooms render from converted data with the original tiles; camera limits and smoothing as in Godot; room viewer on desktop and emulator; reference data and tests in place |
 | D2 | 2026-11-05 | 5, 6 | Player walks, collides and slides like the Godot traces; dash (incl. the D-B2 fix), parry, ghost trail; touch controls on the emulator |
 | D3 | 2026-11-19 | 7, 8 | Weapons, bullets, inventory, interaction, HUD; rats, pigeons, thieves and criminals with AI, navigation and attacks |
 | D4 | 2026-12-03 | 9, 10 | Ghost, manhole spawner, King Rotta; procedural levels 1–8, warps, barricades, exits |

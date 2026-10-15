@@ -2,7 +2,7 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
-**Overall state (2026-10-15): Phases 0, 1 and 2 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
+**Overall state (2026-10-15): Phases 0–3 are done. Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
 
 Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (see plan §10).
 
@@ -11,7 +11,8 @@ Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (se
 | 0 — Decisions and Godot reference data | **Done** (2026-10-15): Godot 4.6.1 installed, V1–V15 answered, golden data recorded |
 | 1 — Minimal libGDX project builds and runs | **Done** on desktop and emulator; physical device **deferred** |
 | 2 — Runtime foundation (`:logic`) | **Done** (2026-10-15): 39 new unit tests, all passing |
-| 3–14 | Not started |
+| 3 — Data and rooms | **Done** (2026-10-15): 20 rooms converted, all game data transcribed, 24 parity tests passing |
+| 4–14 | Not started |
 
 ---
 
@@ -29,6 +30,38 @@ Next delivery: **D1, target 2026-10-22 (to confirm)**, covering Phases 2–4 (se
 | Q8 | Modules `:logic` / `:core` / `:app` / `:desktop` |
 | Q9 | Install Godot 4.6 and run probes in a copy of the project (done with 4.6.1) |
 | Later decisions | B2 fixed (D-B2); git initialised; physical-device testing deferred (2026-10-15) |
+
+---
+
+## Phase 3 — completed tasks (2026-10-15)
+
+* **Room converter** `tools/convert_rooms.py`: reads the 20 room modules and `GenerationNode.tscn` (read-only) and generates `logic/.../data/rooms/GeneratedRooms.kt`. It includes the tile grids, doors with their transforms and the derived teleporter, preventer and arrival geometry, the module boxes, and the spawn nodes. Floats are rounded to Godot's float32. Output is deterministic (re-running reproduces the file byte for byte).
+* **Room model** (`data/rooms/RoomModel.kt`, `RoomCatalog.kt`): `RoomDef`, `TileGrid`, `DoorDef`, `SpawnNodeDef`, the shared `RoomTileSet` semantics and the room pools from `GlobalUtils.gd`.
+* **Game data** (`data/`), transcribed by hand:
+  * `Enemies.kt`: 7 enemy stat blocks, looks, level scaling, the 5 attack kinds and their parameters.
+  * `Items.kt`: 8 weapons, 8 consumables.
+  * `Upgrades.kt`: 11 card pools (37 cards), the reward-pool rules, dash and parry types.
+  * `LevelRules.kt`: generation depth, pools per depth, barricade cells, exit and room rewards, timings, spawn tables.
+  * `PlayerDefs.kt`: constants, cooldowns, capsule, animations, starting inventory, slots.
+  * `Stats.kt`: stat names.
+* **Math types** `Vec2` and `Rect` (Godot float32 precision).
+* **Parity tests** (logic test sources) use their own Godot text parser (`parity/GodotText.kt`), written independently of the Python converter:
+  * `RoomParityTest` (9 tests): every one of the **10,565 tiles**; 40 tile definitions × 20 rooms; node structure; **46 doors** (orientation, transform, geometry recomputed in Kotlin); module boxes; **47 spawn nodes** (all on walkable tiles, radius 100); barricade tile.
+  * `GameDataParityTest` (15 tests): weapons, consumables and enemy stats field by field against the `.tres` files and the script defaults; looks and level scaling against `IEnemy.gd`; attack call sites against `enemy.gd`/`KingRotta.gd`/`SupportEnemy.gd`/`enemy_projectile.gd`; all 37 upgrade cards and the show rules against `upgrade_window.gd`; pools against `GlobalUtils.gd`; depth and pools against `main_background.gd`/`Module.gd`; exit rewards against `Module.gd`; spawn tables against `EnemySpawnNode.gd`; barricades against `Barricade.gd`; player constants, animations and inventory against `player.gd`, the player scene, `ghost.gd` and `inventory_component.gd`; every referenced asset exists in `assets/`.
+* **Mutation check:** I changed one weapon value and one generated tile. The matching tests failed (`weaponsMatchTheirResources`, `everyTileMatchesTheOriginal`), and the original data was then restored.
+
+### Phase 3 — findings
+* The parity test caught a **real transcription error**: the Adrenaline description has an empty line before "After Effect:". Fixed.
+* There are **20** room modules, not 21 (the 21st decoded scene, `DummyRoom`, is unused). The plan is corrected.
+* `GlobalUtils.roomSceneList` is declared but never read by the original code (kept for completeness).
+* The `small_consumable` reward pool exists in `upgrade_window.gd` but is never requested.
+
+## Phase 3 — test results (2026-10-15)
+
+`./gradlew :logic:test`: **66 tests, 0 failures** (3 settings + 39 runtime + 24 parity). Full build (`:core:test :app:assembleDebug :desktop:installDist`, `--warning-mode all`): successful, no warnings. Original project untouched.
+
+### Incident during Phase 3
+At 16:07 the root `build.gradle.kts` and `settings.gradle.kts` were changed outside this session, most likely by Android Studio's "Configure Kotlin in Project" prompt. The change added a duplicate `kotlin("jvm")` plugin, `jvmToolchain(8)` and a test dependency, and broke every Gradle build. **With your approval both files were reverted** to the committed version. **If Android Studio offers to "Configure Kotlin" again, dismiss it**: Kotlin is already configured per module.
 
 ---
 
@@ -129,9 +162,8 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 
 1. **Physical device (deferred):** when an Android phone is available, run `./gradlew :app:installDebug` and repeat the Phase 1 device checks.
 2. Answer open questions O1–O3.
-3. **Phase 3:** room converter (`.tscn` → JSON) and transcribed game data with parity tests.
-4. **Phase 4:** room rendering and camera, wiring `GameLoop` into `:core` (completes D1).
-5. Phases 5–14 as in the plan (delivery mapping in plan §10).
+3. **Phase 4:** room rendering and camera, wiring `GameLoop` into `:core` (completes D1).
+4. Phases 5–14 as in the plan (delivery mapping in plan §10).
 
 ## Known differences (register)
 

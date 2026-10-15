@@ -133,3 +133,30 @@ Related documents:
 **Deferred on purpose:** `GameEvents` (no consumer yet), and wiring `GameLoop` into `:core` (Phase 4).
 
 **Next:** Phase 3 (room converter + data), Phase 4 (room rendering + camera), aiming at D1 (2026-10-22, to confirm).
+
+## 2026-10-15 — Session 5: Phase 3 (data and rooms)
+
+**User:** "continue with Phase 3". Branch `phase-3-data-and-rooms` (from `phase-2-runtime-foundation`).
+
+**Done:**
+- Audited the room scene structure. Every room has the same node layout: root, TileMapLayer (no transform), GenerationNodes and ModuleBox with no props, GN instances (position/rotation/scale/orientation only), Shape, EnemySpawnNodes. No overrides inside instances; one atlas definition everywhere.
+- Found there are **20** room modules, not 21. Corrected the plan.
+- Data model `logic/math` (`Vec2`, `Rect`) and `logic/data/rooms` (`RoomModel`, `RoomCatalog`).
+- Decided on generated Kotlin instead of JSON for room data: no JSON dependency in `:logic`, compile-time checked, still verified against the original.
+- `tools/convert_rooms.py` generates `GeneratedRooms.kt` (float32 rounding, door geometry from `GenerationNode.tscn`).
+- Transcribed data: `Stats`, `Enemies` (stats, looks, scaling, attacks), `Items` (weapons, consumables), `Upgrades` (pools, reward rules), `LevelRules` (depth, pools, barricades, rewards, spawn tables), `PlayerDefs`.
+- Test-side Godot text parser `parity/GodotText.kt`, plus `RoomParityTest` (9) and `GameDataParityTest` (15).
+
+**Problems and fixes:**
+- Kotlin nested comments: `/*` inside KDoc paths (`enemy_types/*.tres`) opened comments that never closed. Reworded.
+- zsh aborted a command line on an unquoted `--include=*.kt` glob. Quote globs.
+- **External edit at 16:07** to `build.gradle.kts`/`settings.gradle.kts` (Android Studio "Configure Kotlin"): duplicate plugin, `jvmToolchain(8)`. It broke the build. Asked the user; **reverted with approval**. User advised to dismiss that prompt in future.
+- First parity run: 3 failures.
+  - **Real data error:** the Adrenaline description is missing an empty line. Fixed.
+  - **Test bugs:** `Array[PackedScene]` contains `]`; `=[` without a space; an over-broad call regex. Fixed.
+- My hand-computed tile total (12045) was wrong; the correct sum from the per-room counts is 10565. I also removed a meaningless filler assertion I had written.
+- Mutation check: changed a weapon value and a tile. Both caught; restored. The converter is reproducible.
+
+**Results:** `:logic:test` 66/66. The full build is clean. The original is untouched.
+
+**Next:** Phase 4 (room rendering + camera, wiring the game loop into `:core`) to complete D1.
