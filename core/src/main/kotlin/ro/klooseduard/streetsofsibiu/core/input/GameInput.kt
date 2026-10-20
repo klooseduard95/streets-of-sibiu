@@ -13,7 +13,6 @@ import kotlin.math.atan2
 import kotlin.math.floor
 import kotlin.math.sqrt
 
-/** project.godot input map on a keyboard/mouse (desktop, or Android with a keyboard). */
 class KeyboardInput(
     private val actions: ActionInput<Action>,
     private val onEscape: () -> Unit,
@@ -29,12 +28,11 @@ class KeyboardInput(
 
     override fun keyDown(keycode: Int): Boolean {
         if (keycode == Input.Keys.P || keycode == Input.Keys.BACK || keycode == Input.Keys.ESCAPE) {
-            onEscape()   // pause_menu.gd handles "escape" (P) in _input, immediately; Back/Esc map to it (D3)
+            onEscape()
             return true
         }
         val action = keys[keycode] ?: return false
         actions.press(action)
-        // player.gd _unhandled_input: slot_1..slot_5 select the inventory slot immediately.
         slotIndex(action)?.let(onSlot)
         return true
     }
@@ -55,10 +53,6 @@ class KeyboardInput(
     }
 }
 
-/**
- * Decision Q1 (D1 scope: movement only): a floating virtual stick on the left half of the screen,
- * quantised to the original's 8 digital directions (WASD combinations), with a dead zone.
- */
 class TouchStick(private val actions: ActionInput<Action>, private val viewport: Viewport) : InputAdapter() {
     private var pointer = -1
     private val origin = Vector2()
@@ -86,7 +80,6 @@ class TouchStick(private val actions: ActionInput<Action>, private val viewport:
         knob.set(if (len > RADIUS) origin.cpy().add(dx / len * RADIUS, dy / len * RADIUS) else p)
         val wanted = mutableSetOf<Action>()
         if (len > DEAD_ZONE) {
-            // y-up view coordinates: sector 0 = right, counter-clockwise in 45° steps.
             val sector = Math.floorMod(floor((atan2(dy, dx) + Math.PI / 8) / (Math.PI / 4)).toInt(), 8)
             when (sector) {
                 0 -> wanted += Action.MOVE_RIGHTWARD
@@ -119,7 +112,6 @@ class TouchStick(private val actions: ActionInput<Action>, private val viewport:
         pointer = -1
     }
 
-    /** Draws the stick in view coordinates (y-up stage camera). */
     fun draw(batch: Batch, circle: Texture) {
         if (!isActive) return
         val old = batch.color.cpy()

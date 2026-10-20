@@ -13,10 +13,6 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.sqrt
 
-/**
- * Replays the Godot 4.6.1 walking traces (Phase 0, v9_player_traces.json) through the ported
- * move_and_slide in the real SpawnRoom and compares the player position at every tick.
- */
 class PlayerWalkTraceTest {
     @Suppress("UNCHECKED_CAST")
     private val scenarios: Map<String, Map<String, Any?>> by lazy {
@@ -26,7 +22,6 @@ class PlayerWalkTraceTest {
 
     private val directions = mapOf("move_forward" to (0 to -1), "move_backward" to (0 to 1), "move_leftward" to (-1 to 0), "move_rightward" to (1 to 0))
 
-    /** Max per-tick position error in px for one scenario (walking only, dash NONE, no parry). */
     @Suppress("UNCHECKED_CAST")
     private fun replay(name: String): Double {
         val sc = scenarios.getValue(name)

@@ -5,10 +5,6 @@ import com.badlogic.gdx.backends.android.AndroidApplication
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration
 import ro.klooseduard.streetsofsibiu.core.StreetsOfSibiuGame
 
-/**
- * Android entry point: hosts the shared libGDX game in an immersive landscape activity.
- * Development extras: `adb shell am start -n ro.klooseduard.streetsofsibiu/.AndroidLauncher -e screen rooms [-e room ID]`.
- */
 class AndroidLauncher : AndroidApplication() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

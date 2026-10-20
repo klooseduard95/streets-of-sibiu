@@ -1,4 +1,3 @@
-## V2, V10 (truncation), V11 (fonts), V12 (shared shapes) + engine defaults for V4/V8/V14 and easing samples.
 extends "res://probes/probe_base.gd"
 
 const ROOMS := [
@@ -11,7 +10,6 @@ const ROOMS := [
 
 func _initialize() -> void:
 	await frames(1)
-	# --- V2: spawnRadius when the base scene stores null
 	var spawn_node = load("res://enemy/EnemySpawnNode.tscn").instantiate()
 	results["V2_base_scene_spawnRadius"] = [spawn_node.spawnRadius, type_string(typeof(spawn_node.spawnRadius))]
 	var per_room := {}
@@ -25,12 +23,10 @@ func _initialize() -> void:
 		room.free()
 	results["V2_spawnRadius_per_room"] = per_room
 
-	# --- V10: float assigned to the int-typed EnemyStats.dmgMult
 	var stats = load("res://enemy/enemy_types/RatType.tres").duplicate(true)
 	stats.dmgMult = 1.3
 	results["V10_dmgMult_after_assign_1_3"] = [stats.dmgMult, type_string(typeof(stats.dmgMult))]
 
-	# --- V12: sub-resource sharing between scene instances
 	var p1 = load("res://enemy/enemy_projectile/EnemyProjectile.tscn").instantiate()
 	var p2 = load("res://enemy/enemy_projectile/EnemyProjectile.tscn").instantiate()
 	results["V12_projectile_rect_shared"] = is_same(p1.get_node("ProjectileHitbox").shape, p2.get_node("ProjectileHitbox").shape)
@@ -39,7 +35,6 @@ func _initialize() -> void:
 	results["V12_enemy_agro_circle_shared"] = is_same(e1.get_node("AgroRange/AgroShape").shape, e2.get_node("AgroRange/AgroShape").shape)
 	results["V12_enemy_hit_circle_shared"] = is_same(e1.get_node("HitRange/HitShape").shape, e2.get_node("HitRange/HitShape").shape)
 
-	# --- Defaults: navigation agent, camera, bodies, audio, project settings
 	var agent: NavigationAgent2D = e1.get_node("NavigationAgent2D")
 	results["agent_enemy"] = {
 		"path_desired_distance": agent.path_desired_distance, "target_desired_distance": agent.target_desired_distance,
@@ -78,7 +73,6 @@ func _initialize() -> void:
 		settings[key] = ProjectSettings.get_setting(key)
 	results["project_settings"] = settings
 
-	# --- V11: which font faces the SystemFonts resolve to on this machine; default theme font
 	var fonts := {}
 	for spec in [["Montserrat", 400], ["JetBrains Mono NL", 400], ["JetBrains Mono", 400], ["Hack", 750]]:
 		var f := SystemFont.new()
@@ -89,7 +83,6 @@ func _initialize() -> void:
 	results["V11_default_theme_font"] = ThemeDB.fallback_font.get_font_name() + " / " + ThemeDB.fallback_font.get_font_style_name()
 	results["V11_default_font_size"] = ThemeDB.fallback_font_size
 
-	# --- V14: easing samples (Tween.interpolate_value), timer/tween defaults
 	var trans := {"LINEAR": Tween.TRANS_LINEAR, "SINE": Tween.TRANS_SINE}
 	var eases := {"IN": Tween.EASE_IN, "OUT": Tween.EASE_OUT, "IN_OUT": Tween.EASE_IN_OUT, "OUT_IN": Tween.EASE_OUT_IN}
 	var samples := {}

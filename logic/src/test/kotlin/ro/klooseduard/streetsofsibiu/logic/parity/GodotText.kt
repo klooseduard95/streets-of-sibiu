@@ -2,7 +2,6 @@ package ro.klooseduard.streetsofsibiu.logic.parity
 
 import java.io.File
 
-/** Locations of the original Godot project (read-only) and the copied assets. */
 object Original {
     val repoRoot = File(System.getProperty("sos.repoRoot") ?: error("sos.repoRoot not set"))
     val game = File(repoRoot, "2026-Game_of_the_year-main/newgame")
@@ -12,10 +11,6 @@ object Original {
     fun text(resPath: String): String = file(resPath).readText()
 }
 
-/**
- * Minimal reader for Godot's text scene/resource format (format 3/4), written independently of
- * tools/convert_rooms.py so the parity tests cross-check the converter.
- */
 class GodotText(text: String) {
     data class Section(val header: String, val attrs: Map<String, String>, val props: Map<String, String>)
 
@@ -79,7 +74,6 @@ class GodotText(text: String) {
 
     val nodes: List<Section> by lazy { sections.filter { it.header == "node" } }
 
-    /** The `[resource]` section of a `.tres` file. */
     val resource: Map<String, String> by lazy { sections.first { it.header == "resource" }.props }
 
     fun node(name: String): Section = nodes.first { it.attrs["name"] == name }
@@ -98,20 +92,17 @@ class GodotText(text: String) {
             return m.groupValues[1].toDouble() to m.groupValues[2].toDouble()
         }
 
-        /** A Godot string literal (handles \n, \", \\ escapes and literal newlines). */
         fun string(value: String): String {
             val v = value.trim()
             require(v.startsWith("\"") && v.endsWith("\"")) { "not a string: $value" }
             return v.substring(1, v.length - 1).replace("\\n", "\n").replace("\\\"", "\"").replace("\\\\", "\\")
         }
 
-        /** A flat Godot dictionary of string keys to numbers, e.g. `{ "speed": -0.3 }`. */
         fun numberDict(value: String): Map<String, Double> =
             Regex(""""([^"]+)"\s*:\s*(-?[0-9.]+)""").findAll(value).associate { it.groupValues[1] to it.groupValues[2].toDouble() }
     }
 }
 
-/** Default values of `@export var` declarations in a GDScript file. */
 fun gdscriptDefaults(resPath: String): Map<String, String> =
     Regex("""^(?:@export(?:_\w+)?\s+)?var\s+(\w+)\s*(?::\s*\w+)?\s*:?=\s*(.+?)\s*(?:#.*)?$""", RegexOption.MULTILINE)
         .findAll(Original.text(resPath)).associate { it.groupValues[1] to it.groupValues[2] }

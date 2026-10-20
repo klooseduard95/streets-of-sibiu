@@ -14,13 +14,6 @@ import ro.klooseduard.streetsofsibiu.logic.data.rooms.RoomTileSet
 import ro.klooseduard.streetsofsibiu.logic.math.Vec2
 import ro.klooseduard.streetsofsibiu.logic.world.CameraRig
 
-/**
- * Development/demo screen (Phase 4): shows every room module with the original tiles and the
- * original camera behaviour (module-box limits, smoothing speed 5, snap on room change).
- *
- * Keyboard: arrows/WASD move the camera target, N/] next room, P/[ previous room.
- * Touch: drag to pan, tap the left/right 15 % of the screen to change room.
- */
 class RoomViewerScreen(startRoom: String = RoomCatalog.SPAWN_ROOM) : LoopScreen() {
     private val view = GodotView()
     private val batch = SpriteBatch()
@@ -34,15 +27,12 @@ class RoomViewerScreen(startRoom: String = RoomCatalog.SPAWN_ROOM) : LoopScreen(
     private var roomIndex = RoomCatalog.all.indexOfFirst { it.id == startRoom }.coerceAtLeast(0)
     val room: RoomDef get() = RoomCatalog.all[roomIndex]
 
-    /** The point the camera follows (the player's position in the real game). */
     var target = Vec2.ZERO
     private var dragX = 0f
     private var dragY = 0f
     private var dragged = false
 
     init {
-        // Camera enters the tree at the start target (snap, limits not yet set), then the room
-        // anchor applies limits and resets smoothing, as MainBackground does at level start.
         target = room.moduleBox.center
         rig.enterTree()
         rig.update(target, TICK)
@@ -83,7 +73,6 @@ class RoomViewerScreen(startRoom: String = RoomCatalog.SPAWN_ROOM) : LoopScreen(
         }
     }
 
-    /** Like MainBackground.updateCameraAnchor: new limits, then reset_smoothing (limits applied, snap). */
     fun showRoom(index: Int, focus: Vec2? = null) {
         roomIndex = Math.floorMod(index, RoomCatalog.all.size)
         rig.setLimitsFromModuleBox(room.moduleBox)

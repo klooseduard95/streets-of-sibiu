@@ -7,7 +7,6 @@ import ro.klooseduard.streetsofsibiu.logic.math.Vec2
 import ro.klooseduard.streetsofsibiu.logic.parity.Original
 import java.io.File
 
-/** Replays the Phase 0 camera probe (tools/godot-reference/probes/v4_camera.gd) and compares. */
 class CameraRigTest {
     private val json = File(Original.repoRoot, "tools/godot-reference/results/v4_camera.json").readText().replace(Regex("\\s+"), "")
     private val dt = (1.0 / 60).toFloat()
@@ -67,7 +66,6 @@ class CameraRigTest {
 
     @Test
     fun roomLimitsTruncateLikeGodot() {
-        // V13 reference values (int limits LTRB) recorded from Godot.
         val expected = mapOf(
             "SpawnRoom" to listOf(19, 24, 1973, 1065),
             "FIGHTROOM_12_MEDIUM" to listOf(41, 24, 2051, 2961),
@@ -92,8 +90,6 @@ class CameraRigTest {
         val centre = RoomCatalog.room("SpawnRoom").moduleBox.center
         rig.update(centre, dt)
         repeat(120) { rig.update(centre, dt) }
-        // Smoothed limits converge to the midpoint 544.5; 32-bit float smoothing stalls a few
-        // ten-thousandths short, exactly as Godot's real_t arithmetic does.
         assertEquals(544.5, rig.screenCenter.y.toDouble(), 1e-3)
     }
 }

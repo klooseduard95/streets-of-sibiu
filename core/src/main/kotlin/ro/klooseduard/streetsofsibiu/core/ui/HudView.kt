@@ -10,15 +10,10 @@ import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
 import ro.klooseduard.streetsofsibiu.logic.data.WeaponDef
 
-/**
- * inventory/information_ui.tscn (top-left: HP bar, shield, ammo) and inventory/inventory_ui.tscn
- * (bottom-left, scale 0.75: three weapon slots, two consumable slots). Geometry from the scenes.
- */
 class HudView(private val ui: UiKit, textures: (String) -> Texture, private val onSlotTapped: (Int) -> Unit = {}) : Group() {
     private val hpLabel: Label
     private val shieldLabel: Label
     private val ammoLabel: Label
-    /** ProgressBar.value (tweened by the game on health_changed). */
     var hpBarValue = 0.0
     var hpBarMax = 100.0
     private val slotImages = mutableListOf<Image>()
@@ -27,7 +22,6 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture, private val 
 
     init {
         setSize(UiKit.VIEW_W, UiKit.VIEW_H)
-        // information_ui
         addActor(Image(ui.color(Color(0.5019608f, 0.5019608f, 0.5019608f, 0.5019608f))).apply { godotBounds(0f, 0f, 410f, 115f) })
         addActor(object : com.badlogic.gdx.scenes.scene2d.Actor() {
             val bg = ui.flat(Color(0.2665752f, 0.26657522f, 0.26657507f, 1f))
@@ -47,7 +41,6 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture, private val 
         ammoLabel = ui.label("", 16).apply { godotBounds(240f, 58f, 160f, 50f); setAlignment(Align.left); isVisible = false }
         addActor(ammoLabel)
 
-        // inventory_ui: Control at bottom-left with scale 0.75; HBox (30,-290)-(630,-30) unscaled.
         val s = 0.75f
         fun place(img: Image, x: Float, y: Float, w: Float, h: Float) {
             img.godotBounds(30f * s + x * s, 1080f - 290f * s + y * s, w * s, h * s)
@@ -58,16 +51,15 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture, private val 
             slotImages += img
             place(img, i * 132f, 132f, 128f, 128f)
         }
-        place(Image(StyleBoxLine(Color(0.5f, 0.5f, 0.5f, 1f), 1f, ui.white, vertical = true)), 396f, 4f, 75f, 252f)   // VSeparator, separation 75
+        place(Image(StyleBoxLine(Color(0.5f, 0.5f, 0.5f, 1f), 1f, ui.white, vertical = true)), 396f, 4f, 75f, 252f)
         for (i in 0..1) {
             val img = Image(emptySlot)
             slotImages += img
-            place(img, 475f, i * 132f, 125f, 128f)   // clip_contents: the 128 px slot is clipped at the HBox's 600 px edge
+            place(img, 475f, i * 132f, 125f, 128f)
         }
     }
 
     init {
-        // Touch scheme (Q1): tapping a slot selects it, like the 1-5 keys.
         slotImages.forEachIndexed { i, img ->
             img.addListener(object : com.badlogic.gdx.scenes.scene2d.utils.ClickListener() {
                 override fun clicked(event: com.badlogic.gdx.scenes.scene2d.InputEvent?, x: Float, y: Float) = onSlotTapped(i)
@@ -81,7 +73,6 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture, private val 
         shieldLabel.setText("Shield: %d".format(java.util.Locale.ROOT, shield.toInt()))
     }
 
-    /** inventory_ui.gd update_ui(): icon or empty slot, empty alpha 0.2, selected slot yellow. */
     fun setInventory(items: List<WeaponDef?>, selected: Int) {
         items.forEachIndexed { i, item ->
             val img = slotImages[i]

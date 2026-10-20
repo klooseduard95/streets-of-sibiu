@@ -2,8 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
-// libGDX (and gdx-freetype) ship their Android native libraries (.so) inside per-ABI jars; they are extracted
-// into build/gdx-natives/<abi>/ and packaged as jniLibs.
 val gdxNativeAbis = listOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")
 val gdxNativesDir = layout.buildDirectory.dir("gdx-natives")
 val gdxNativeConfigurations = gdxNativeAbis.associateWith { abi -> configurations.create("gdxNatives-$abi") }
@@ -59,7 +57,6 @@ interface ArchiveOperationsHolder {
 
 val copyAndroidNatives = tasks.register<Sync>("copyAndroidNatives") {
     into(gdxNativesDir)
-    // Local reference so the lazy provider below does not capture the build script (configuration cache).
     val archives = objects.newInstance<ArchiveOperationsHolder>().archives
     gdxNativeConfigurations.forEach { (abi, configuration) ->
         from(configuration.elements.map { jars -> jars.map { archives.zipTree(it) } }) {

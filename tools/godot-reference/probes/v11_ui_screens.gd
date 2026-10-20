@@ -1,6 +1,3 @@
-## Reference renders of the D1 screens (windowed run): main menu, main menu + tutorial, Settings,
-## and the game start (MainBackground after the level-1 fade). Each scene is instanced in a
-## 1920x1080 SubViewport (Nearest filter, like the root viewport) and saved to results/ui_screens/.
 extends "res://probes/probe_base.gd"
 
 func _shot(vp: SubViewport, name: String, dir: String) -> void:
@@ -32,7 +29,6 @@ func _initialize() -> void:
 
 	var bg = load("res://background/MainBackground.tscn").instantiate()
 	vp.add_child(bg)
-	# Wait for level generation and the black-screen fade-out (generation takes a few frames).
 	for i in 240:
 		await process_frame
 	await _shot(vp, "game_start", dir)

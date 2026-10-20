@@ -1,14 +1,5 @@
 package ro.klooseduard.streetsofsibiu.logic.world
 
-/**
- * Godot `AnimationPlayer` driving `Sprite2D.frame` with discrete keys (the player's walk cycles),
- * as observed in Godot 4.6.1 (V3, v9 traces):
- * - `play(name)` on a different (or stopped) animation restarts at 0 and shows key 0 immediately;
- *   on the animation already playing it continues.
- * - Playback time advances in idle frames ([process]); loops wrap at [length].
- * - `stop()` resets to 0 and shows key 0 of the current animation.
- * Key times are 32-bit floats in the scene (PackedFloat32Array), compared with the double time.
- */
 class FrameAnimator(
     private val animations: Map<String, List<Int>>,
     private val keyStep: Double,

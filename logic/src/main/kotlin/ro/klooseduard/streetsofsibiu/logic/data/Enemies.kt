@@ -1,16 +1,10 @@
 package ro.klooseduard.streetsofsibiu.logic.data
 
-/** `EnemyStats.type` values. */
 enum class EnemyType(val godotName: String) {
     RAT("rat"), PIGEON("pigeon"), THIEF("thief"), CRIMINAL("criminal"),
     GHOST("ghost"), MARSHMALLOW("marshmallow"), KING_ROTTA("king_rotta"),
 }
 
-/**
- * `EnemyStats` resource (enemy/enemy_types/EnemyStats.gd) with its defaults. Mutable copies are
- * made per enemy at runtime (`stats.duplicate(1)`). `dmgMult` is an int in the original, so the
- * ghost's 1.3 buff truncates to 1 (V10).
- */
 data class EnemyStats(
     val type: EnemyType,
     val visionRange: Double = 300.0,
@@ -24,7 +18,6 @@ data class EnemyStats(
     val dmgMult: Int = 1,
 )
 
-/** The seven enemy type resources in `enemy/enemy_types/`. */
 object EnemyTypes {
     val RAT = EnemyStats(EnemyType.RAT, hp = 10.0, walkSpeed = 300.0, hitCooldown = 0.7)
     val PIGEON = EnemyStats(EnemyType.PIGEON, hp = 5.0, dmg = 2.0, walkSpeed = 400.0, reach = 75.0, hitCooldown = 0.4)
@@ -56,7 +49,6 @@ object EnemyTypes {
         EnemyType.KING_ROTTA -> KING_ROTTA
     }
 
-    /** `IEnemy.assets` + `updateLooks()`: sprite sheet and frame grid per type. */
     data class Looks(val texture: String, val hframes: Int, val vframes: Int, val initialFrame: Int)
 
     fun looks(type: EnemyType): Looks? = when (type) {
@@ -66,10 +58,9 @@ object EnemyTypes {
         EnemyType.CRIMINAL -> Looks("enemy/enemy_assets/criminalAssets.png", 3, 4, 5)
         EnemyType.MARSHMALLOW -> Looks("enemy/enemy_assets/manhole.png", 1, 1, 0)
         EnemyType.GHOST -> Looks("enemy/enemy_assets/ghost.png", 1, 1, 0)
-        EnemyType.KING_ROTTA -> null // set in KingRottaBoss.tscn (KingRotta.png, hframes 2)
+        EnemyType.KING_ROTTA -> null
     }
 
-    /** `IEnemy.updateStats()`: added per (level - 1). */
     data class LevelScaling(val hpPerLevel: Double, val dmgPerLevel: Double)
 
     fun levelScaling(type: EnemyType): LevelScaling? = when (type) {
@@ -81,7 +72,6 @@ object EnemyTypes {
     }
 }
 
-/** `EnemyProjectile.getSprite` attack names. */
 enum class AttackKind(val godotName: String, val texture: String, val spriteRotationDeg: Double) {
     BASIC_SLASH("BASIC_SLASH", "enemy/enemy_projectile/enemy_projectile_assets/claw.png", 45.0),
     BASIC_BULLET("BASIC_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/bullet.png", 0.0),
@@ -90,22 +80,13 @@ enum class AttackKind(val godotName: String, val texture: String, val spriteRota
     CRIMINAL_SLASH("CRIMINAL_SLASH", "item/item_assets/item icons/knife.png", 90.0),
 }
 
-/**
- * Arguments of each `initializeProjectile` call site. [speedPerTick] is in px per physics tick
- * (the original adds it every `_physics_process` without delta).
- */
 data class AttackParams(val kind: AttackKind, val travelTime: Double, val speedPerTick: Double, val piercing: Boolean, val isSupport: Boolean)
 
 object EnemyAttacks {
-    /** enemy.gd attack(): rat and pigeon (defaults travelTime 0.1, speed 0, piercing). */
     val SLASH = AttackParams(AttackKind.BASIC_SLASH, 0.1, 0.0, piercing = true, isSupport = false)
-    /** enemy.gd attack(): thief. */
     val THIEF_BULLET = AttackParams(AttackKind.BASIC_BULLET, 6.0, 7.0, piercing = false, isSupport = false)
-    /** enemy.gd attack(): criminal. */
     val CRIMINAL_SLASH = AttackParams(AttackKind.CRIMINAL_SLASH, 0.5, 5.0, piercing = false, isSupport = false)
-    /** KingRotta.gd shotgunAttack(). */
     val KING_ORB = AttackParams(AttackKind.KING_ROTTA_BULLET, 4.0, 30.0, piercing = false, isSupport = false)
-    /** SupportEnemy.gd sendBuff(): "damage" 1.3 is the dmgMult it tries to apply. */
     val GHOST_BUFF = AttackParams(AttackKind.GHOST_BULLET, 2.0, 4.0, piercing = true, isSupport = true)
     const val GHOST_BUFF_VALUE = 1.3
 

@@ -25,15 +25,12 @@ import ro.klooseduard.streetsofsibiu.logic.data.Weapons
 import ro.klooseduard.streetsofsibiu.logic.data.rooms.DoorOrientation
 import ro.klooseduard.streetsofsibiu.logic.data.rooms.RoomCatalog
 
-/** Every transcribed constant must equal the original resources and scripts (read-only). */
 class GameDataParityTest {
     private fun modifiers(value: String?): Modifiers =
         GodotText.numberDict(value ?: "{}").map { (k, v) -> Stat.fromGodot(k) to v }.toMap()
 
     private fun num(props: Map<String, String>, key: String, defaults: Map<String, String>): Double =
         (props[key] ?: defaults[key] ?: "0").toDouble()
-
-    // ---------------------------------------------------------------- items
 
     @Test
     fun weaponsMatchTheirResources() {
@@ -88,8 +85,6 @@ class GameDataParityTest {
             assertEquals(msg, modifiers(p["after_effect_modifiers"]), c.afterEffectModifiers)
         }
     }
-
-    // ---------------------------------------------------------------- enemies
 
     @Test
     fun enemyStatsMatchTheirResources() {
@@ -179,8 +174,6 @@ class GameDataParityTest {
         assertEquals(support.split(',')[2].trim().toDouble(), EnemyAttacks.GHOST_BUFF_VALUE, 0.0)
     }
 
-    // ---------------------------------------------------------------- upgrades
-
     private fun cardsOf(script: String, varName: String): List<String> {
         val block = script.substringAfter("var $varName = [").substringBefore("\n]")
         return block.lines().map { it.trim() }.filter { it.startsWith("{") }
@@ -239,8 +232,6 @@ class GameDataParityTest {
         )
         for ((pool, varName) in varFor) assertTrue(pool.name, branches.getValue(pool.godotName).contains("pool = $varName.duplicate()"))
     }
-
-    // ---------------------------------------------------------------- level rules
 
     @Test
     fun roomPoolsMatchGlobalUtils() {
@@ -340,8 +331,6 @@ class GameDataParityTest {
         }
     }
 
-    // ---------------------------------------------------------------- player
-
     @Test
     fun playerConstantsMatchScriptAndScene() {
         val script = Original.text("player/player.gd")
@@ -365,7 +354,7 @@ class GameDataParityTest {
         val scene = GodotText.load("player/Player_Placeholder.tscn")
         val root = scene.node("Player").props
         assertEquals(PlayerDefs.INITIAL_DASH.ordinal.toString(), root["selected_dash"])
-        assertEquals("3", root["selected_parry"])  // out of range: no parry (INITIAL_PARRY = null)
+        assertEquals("3", root["selected_parry"])
         assertEquals(null, PlayerDefs.INITIAL_PARRY)
         val capsule = scene.sub(scene.node("CollisionShape2D").props.getValue("shape")).props
         assertEquals(capsule.getValue("radius").toDouble(), PlayerDefs.CAPSULE_RADIUS, 0.0)
@@ -403,8 +392,6 @@ class GameDataParityTest {
         assertEquals(listOf(2), PlayerDefs.validSlots(ItemType.SECONDARY))
         assertEquals(listOf(3, 4), PlayerDefs.validSlots(ItemType.CONSUMABLE))
     }
-
-    // ---------------------------------------------------------------- assets
 
     @Test
     fun everyAssetReferencedByTheDataIsBundled() {

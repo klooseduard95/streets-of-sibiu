@@ -1,6 +1,5 @@
 package ro.klooseduard.streetsofsibiu.logic.parity
 
-/** Minimal JSON reader for the Godot reference results (objects, arrays, numbers, strings, booleans, null). */
 class MiniJson private constructor(private val s: String) {
     private var i = 0
 
@@ -24,7 +23,7 @@ class MiniJson private constructor(private val s: String) {
         i++; ws()
         if (s[i] == '}') { i++; return m }
         while (true) {
-            ws(); val k = str(); ws(); i++ // ':'
+            ws(); val k = str(); ws(); i++
             m[k] = value(); ws()
             if (s[i] == ',') { i++; continue }
             i++; return m

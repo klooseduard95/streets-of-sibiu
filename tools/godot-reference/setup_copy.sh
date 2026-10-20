@@ -1,7 +1,4 @@
 #!/usr/bin/env bash
-# Creates tools/godot-reference/project-copy/ as a fresh copy of the ORIGINAL Godot project
-# (2026-Game_of_the_year-main/newgame, never modified), adds the probe scripts and imports it.
-# Usage: tools/godot-reference/setup_copy.sh   (from anywhere)
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"

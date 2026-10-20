@@ -19,11 +19,6 @@ import ro.klooseduard.streetsofsibiu.core.ui.UiKit
 import ro.klooseduard.streetsofsibiu.core.ui.godotBounds
 import ro.klooseduard.streetsofsibiu.core.ui.godotCentered
 
-/**
- * main_menu.tscn + main_menu.gd + tutorial.tscn: background, title, Start Game / Options / Exit,
- * the "Cool thingo" CRT toggle and the tutorial overlay (Start Game shows it; its Start begins
- * the game).
- */
 class MainMenuScreen(private val game: StreetsOfSibiuGame) : ScreenAdapter() {
     private val ui = game.ui
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
@@ -32,8 +27,6 @@ class MainMenuScreen(private val game: StreetsOfSibiuGame) : ScreenAdapter() {
     init {
         stage.addActor(Image(game.texture("menu.png")).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) })
 
-        // Title: Montserrat 100 via LabelSettings (overrides the theme size 67). LabelSettings shadow:
-        // black glyphs with an outline of shadow_size 17, offset (0, 5), drawn behind the text.
         stage.addActor(
             ShadowedLabel("Streets of Sibiu", game.fonts.get(Fonts.Face.MONTSERRAT, 100, lineSpacing = 3), Color.WHITE, Color.BLACK, 17, 0f, 5f)
                 .apply { godotCentered(-412.25f, -422f, 412.25f, -149f) },
@@ -46,7 +39,6 @@ class MainMenuScreen(private val game: StreetsOfSibiuGame) : ScreenAdapter() {
         }
         buttons.add(menu("Start Game") { tutorial.isVisible = true }).size(629f, buttonHeight).row()
         buttons.add(menu("Options") { game.showOptions() }).size(629f, buttonHeight).padTop(26f).row()
-        // The scene's text is "Exit\n"; Godot's Button ignores the trailing empty line and centres "Exit".
         buttons.add(menu("Exit") { Gdx.app.exit() }).size(629f, buttonHeight).padTop(26f).row()
         stage.addActor(buttons)
 
@@ -55,13 +47,11 @@ class MainMenuScreen(private val game: StreetsOfSibiuGame) : ScreenAdapter() {
             godotBounds(1604f, 942f, w, 49f)
         })
 
-        // tutorial.tscn (hidden until Start Game).
         tutorial.setSize(UiKit.VIEW_W, UiKit.VIEW_H)
         tutorial.isVisible = false
         tutorial.addActor(Image(ui.color(Color(0f, 0f, 0f, 0.23529412f))).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) })
         tutorial.addActor(Image(ui.color(Color(0f, 0f, 0f, 0.67058825f))).apply { godotCentered(-500f, -300f, 500f, 300f) })
-        val box = Table().apply { godotCentered(-480f, -280f, 480f, 280f); top(); defaults().spaceBottom(4f) }   // VBox separation 4
-        // LabelSettings (empty) overrides the theme font size 32 -> the text renders at 16 px in the original.
+        val box = Table().apply { godotCentered(-480f, -280f, 480f, 280f); top(); defaults().spaceBottom(4f) }
         box.add().height(100f).row()
         box.add(ui.label(TUTORIAL_TEXT, 16).apply { setAlignment(Align.center) }).center().row()
         box.add().height(50f).row()

@@ -2,7 +2,6 @@ package ro.klooseduard.streetsofsibiu.logic.math
 
 import kotlin.math.sqrt
 
-/** 2D vector with Godot `Vector2` precision (32-bit float components). */
 data class Vec2(val x: Float, val y: Float) {
     operator fun plus(o: Vec2) = Vec2(x + o.x, y + o.y)
     operator fun minus(o: Vec2) = Vec2(x - o.x, y - o.y)
@@ -14,16 +13,11 @@ data class Vec2(val x: Float, val y: Float) {
     }
 }
 
-/** Axis-aligned rectangle (Godot `Rect2`): [position] is the top-left corner. */
 data class Rect(val x: Float, val y: Float, val width: Float, val height: Float) {
     val right: Float get() = x + width
     val bottom: Float get() = y + height
     val center: Vec2 get() = Vec2(x + width / 2, y + height / 2)
 
-    /**
-     * Strict overlap (touching edges do not count). Godot's Area2D result for exactly touching
-     * rectangles is not verified yet; it only matters for room placement (Phase 10 probe).
-     */
     fun overlaps(o: Rect): Boolean = x < o.right && o.x < right && y < o.bottom && o.y < bottom
 
     fun contains(p: Vec2): Boolean = p.x >= x && p.x <= right && p.y >= y && p.y <= bottom

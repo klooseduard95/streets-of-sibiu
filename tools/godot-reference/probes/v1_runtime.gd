@@ -1,4 +1,3 @@
-## V1: do pause_menu.gd / death_screen.gd load, and what does the running game look like?
 extends "res://probes/probe_base.gd"
 
 func _describe_screen(node: Node) -> Dictionary:
@@ -17,7 +16,6 @@ func _initialize() -> void:
 	results["pause_menu_tscn_instance"] = _describe_screen(load("res://pause_menu.tscn").instantiate())
 	results["death_screen_tscn_instance"] = _describe_screen(load("res://death_screen.tscn").instantiate())
 
-	# Run the real game scene and look at the in-game pause menu after level 1 is generated.
 	change_scene_to_file("res://background/MainBackground.tscn")
 	await frames(240)
 	var bg = current_scene
@@ -29,7 +27,6 @@ func _initialize() -> void:
 	results["level_rooms"] = bg.currentLevelRooms.size()
 	results["room_types"] = bg.currentLevelRooms.map(func(r): return [r.scene_file_path.get_file(), r.roomType, r.isExitRoom])
 
-	# Simulate the player's death screen call path.
 	var ds = load("res://death_screen.tscn").instantiate()
 	bg.add_child(ds)
 	results["death_screen_call_ok"] = ds.has_method("setup_death_screen")

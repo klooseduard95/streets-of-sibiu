@@ -9,7 +9,6 @@ import ro.klooseduard.streetsofsibiu.core.StreetsOfSibiuGame
 import ro.klooseduard.streetsofsibiu.core.ui.SettingsView
 import ro.klooseduard.streetsofsibiu.core.ui.UiKit
 
-/** Options from the main menu: Settings.tscn as its own scene; Go Back returns to the main menu. */
 class OptionsScreen(private val game: StreetsOfSibiuGame) : ScreenAdapter() {
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
     private val view = SettingsView(game.ui, game.texture("menu.png"), game.buses, game.music::applyVolumes) { game.showMainMenu() }

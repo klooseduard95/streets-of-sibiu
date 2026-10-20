@@ -1,6 +1,3 @@
-## V8: NavigationServer2D paths on the real room tile maps with the Enemy agent's settings
-## (layers 2, max polygons 512, max search distance 500, corridor funnel), with and without the
-## distance limit, plus an agent-in-the-loop chase trace that mimics BasicEnemy.pathFind().
 extends "res://probes/probe_base.gd"
 
 const ROOMS := ["SpawnRoom", "FIGHTROOM_12_MEDIUM", "FIGHTROOM_13_BIG", "FIGHTROOM_34_BIG", "FIGHTROOMBIGENEMY_1234"]
@@ -36,7 +33,6 @@ func _query(map: RID, from: Vector2, to: Vector2, limited: bool) -> Array:
 	return Array(result.path).map(func(p): return vec(p))
 
 func _chase_trace(world: Node2D, start: Vector2, target_positions: Array) -> Array:
-	# Replica of an Enemy (size 1): floating CharacterBody2D, circle r10, wall_min_slide_angle 0.
 	var enemy := CharacterBody2D.new()
 	enemy.motion_mode = CharacterBody2D.MOTION_MODE_FLOATING
 	enemy.wall_min_slide_angle = 0.0
@@ -56,7 +52,7 @@ func _chase_trace(world: Node2D, start: Vector2, target_positions: Array) -> Arr
 	var rows := []
 	for t in 240:
 		await physics_frame
-		if t % 60 == 0:  # BasicEnemy re-targets on its 1 s Tick
+		if t % 60 == 0:
 			agent.target_position = target_positions[(t / 60) % target_positions.size()]
 		var next := agent.get_next_path_position()
 		var dir := enemy.to_local(next).normalized()
@@ -79,7 +75,6 @@ func _initialize() -> void:
 		var map := world.get_world_2d().navigation_map
 		var iteration_before := NavigationServer2D.map_get_iteration_id(map)
 		world.add_child(room)
-		# Wait until the navigation map has synchronised the new region (iteration id advances).
 		for i in 60:
 			await physics_frame
 			if NavigationServer2D.map_get_iteration_id(map) > iteration_before + 1:

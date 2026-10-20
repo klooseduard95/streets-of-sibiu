@@ -11,10 +11,6 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-/**
- * Godot `StyleBoxFlat` as a Scene2D drawable: background colour, uniform corner radius, uniform
- * border, and a drop shadow (size + offset). Built from generated anti-aliased nine-patches.
- */
 class StyleBoxFlat(
     private val bg: Color,
     private val cornerRadius: Int = 0,
@@ -22,7 +18,7 @@ class StyleBoxFlat(
     private val borderColor: Color = Color.CLEAR,
     private val shadowSize: Int = 0,
     private val shadowOffsetX: Float = 0f,
-    private val shadowOffsetY: Float = 0f,   // Godot: positive = down
+    private val shadowOffsetY: Float = 0f,
     private val shadowColor: Color = Color(0f, 0f, 0f, 0.6f),
     private val drawCenter: Boolean = true,
     private val expandMargin: Float = 0f,
@@ -73,7 +69,6 @@ class StyleBoxFlat(
     fun dispose() = textures.forEach { it.dispose() }
 
     companion object {
-        /** Signed distance from (px,py) to a rounded rectangle [x0,x1]×[y0,y1] with corner radius r. */
         fun roundedRectDistance(px: Float, py: Float, x0: Float, y0: Float, x1: Float, y1: Float, r: Float): Float {
             val cx = (x0 + x1) / 2
             val cy = (y0 + y1) / 2
@@ -88,7 +83,6 @@ class StyleBoxFlat(
     }
 }
 
-/** Godot `StyleBoxLine`: a centred line of [thickness] px, horizontal or [vertical]. */
 class StyleBoxLine(private val color: Color, private val thickness: Float, private val white: Texture, private val vertical: Boolean = false) : BaseDrawable() {
     override fun draw(batch: Batch, x: Float, y: Float, width: Float, height: Float) {
         val old = batch.color.cpy()
@@ -99,7 +93,6 @@ class StyleBoxLine(private val color: Color, private val thickness: Float, priva
     }
 }
 
-/** Solid colour fill (Godot ColorRect). */
 class ColorDrawable(private val color: Color, private val white: Texture) : BaseDrawable() {
     override fun draw(batch: Batch, x: Float, y: Float, width: Float, height: Float) {
         val old = batch.color.cpy()
@@ -109,5 +102,4 @@ class ColorDrawable(private val color: Color, private val white: Texture) : Base
     }
 }
 
-/** A drawable that draws nothing (Godot StyleBoxEmpty). */
 object EmptyDrawable : BaseDrawable(), Drawable
