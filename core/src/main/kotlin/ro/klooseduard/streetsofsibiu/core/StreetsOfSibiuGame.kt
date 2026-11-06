@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.Screen
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import ro.klooseduard.streetsofsibiu.core.audio.AudioBuses
 import ro.klooseduard.streetsofsibiu.core.audio.MusicDirector
@@ -15,18 +16,28 @@ import ro.klooseduard.streetsofsibiu.core.ui.Fonts
 import ro.klooseduard.streetsofsibiu.core.ui.UiKit
 import ro.klooseduard.streetsofsibiu.logic.runtime.GameRandom
 
-class StreetsOfSibiuGame(private val startScreen: String = "menu", private val startRoom: String? = null) : Game() {
+class StreetsOfSibiuGame(
+    private val startScreen: String = "menu",
+    private val startRoom: String? = null,
+    val devDash: String? = null,
+    val devParry: String? = null,
+) : Game() {
     lateinit var fonts: Fonts; private set
     lateinit var ui: UiKit; private set
     val buses = AudioBuses()
     lateinit var music: MusicDirector; private set
     private val random = GameRandom()
     private val textures = HashMap<String, Texture>()
+    private val sounds = HashMap<String, Sound>()
 
     var crtEnabled = false
 
     fun texture(path: String): Texture = textures.getOrPut(path) {
         Texture(Gdx.files.internal(path)).apply { setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest) }
+    }
+
+    fun playSfx(path: String) {
+        sounds.getOrPut(path) { Gdx.audio.newSound(Gdx.files.internal(path)) }.play(buses.sfxLinear.toFloat())
     }
 
     override fun create() {
@@ -74,6 +85,7 @@ class StreetsOfSibiuGame(private val startScreen: String = "menu", private val s
     override fun dispose() {
         screen?.dispose()
         textures.values.forEach { it.dispose() }
+        sounds.values.forEach { it.dispose() }
         ui.dispose()
         fonts.dispose()
         music.dispose()

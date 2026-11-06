@@ -2,6 +2,8 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
+**Update 2026-11-06: Delivery 2 (dash, parry, ghost trail, damage; branch `d2-dash-parry-ghost-trail`) is implemented — see `DELIVERY_D2.md`. 101 tests, 0 failures.**
+
 **Overall state (2026-10-15): Phases 0–4 are done, and Delivery 1 (menu + start of the game) is ready (see `DELIVERY_D1.md`). Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
 
 Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main menu and the start of the game. Scope in plan §10.
@@ -274,6 +276,9 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D13 | Background music is centred instead of panned left (the original's AudioStreamPlayer2D at world origin panned it left: 62.5 % / 37.5 % in the menu) | Your decision (O2), 2026-10-15 | approved, implement with the music (D1) |
 | D15 | UI re-created in Scene2D from the scene offsets; small layout offsets vs Godot remain (e.g. tutorial Start button ≈ 10 px). Title uses Montserrat (the original's named font; Godot falls back to Open Sans where it is missing) | Engine UI system differs; font decision Q6/O1 | accepted (D1) |
 | D16 | Android: the bottom edge of the inventory slots overlaps the system gesture zone; taps on the lowest pixels can go to the system | Android platform | open (revisit with the full touch layout) |
+| D18 | Dash teleport deep into a 2-tile wall next to a door Preventer (`short_dash_into_east_wall`): depenetration ends up to ~20–30 px from Godot's (x agrees within 1 px). Cause not confirmed; probably the order Godot's broadphase visits the overlapping shapes, which feeds the cumulative 40 % recovery. Every other dash/parry/walk trace matches (≤ 0.01 px). The room clamp keeps the player in the room | Godot broadphase order not reproducible | accepted; test tolerance 30 px |
+| D19 | Parry CHARGE tint `(2, 0.5, 0.5)` is overbright in Godot; libGDX's `SpriteBatch` colour clamps to 1, so red is capped (R8) | SpriteBatch limitation | accepted (shader if wanted later) |
+| D20 | Player sounds (dash, parry, death) play non-positionally at the SFX volume; the original uses `AudioStreamPlayer2D` centred on the player | Listener is at the player anyway | accepted |
 | D17 | Level start: the fade-in is not delayed by level generation frames (the original generates behind the black screen for a few frames) | D1 has no level generation yet | temporary (Phase 10) |
 | D14 | When the camera's x position is exactly on a half pixel, some texels are picked one pixel to the side compared with Godot's Forward+ renderer (34/40 static reference views identical; the rest differ by 1-px texel shifts, layout identical) | Renderer rasterisation detail; in-game the camera moves through sub-pixel positions continuously | accepted (Phase 4) |
 | D12 | Godot's `MainTimerSync` jitter-fix smoothing is not replicated: a tick may land one rendered frame earlier or later; tick rate and per-tick logic are identical. Idle-frame order: Timer nodes are processed after all entities' `_process`, not interleaved by tree order | Simplicity; no gameplay effect | **implemented** (Phase 2) |
@@ -288,4 +293,4 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D-B11 | Fresh item instances per run | Q3 | approved, not implemented |
 | D-B18 | Single death screen | Q3 | approved, not implemented |
 | D-B1 | Intended pause/death behaviour ported regardless of the original's parse error | Q4 | approved, not implemented |
-| D-B2 | Medium Dash: invulnerability ends when the slide ends, as for the Short Dash (the original never restores `can_take_dmg`, so the player stays invulnerable until the next room warp or parry). Exact fix: on slide end, MEDIUM restores `can_take_dmg = true` like SHORT, without the SHORT dash's blue tint | Your decision, 2026-10-15 | approved, implement in Phase 6 |
+| D-B2 | Medium Dash: invulnerability ends when the slide ends, as for the Short Dash (the original never restores `can_take_dmg`, so the player stays invulnerable until the next room warp or parry). Exact fix: on slide end, MEDIUM restores `can_take_dmg = true` like SHORT, without the SHORT dash's blue tint | Your decision, 2026-10-15 | **implemented** (D2, `PlayerMechanicsTest.mediumDashB2Fix…`) |
