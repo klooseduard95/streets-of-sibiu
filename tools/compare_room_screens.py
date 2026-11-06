@@ -1,10 +1,3 @@
-"""Compares the port's room captures with Godot's reference renders pixel by pixel.
-
-Usage: python3 -I tools/compare_room_screens.py <port_dir> [<godot_dir>]
-  port_dir:  output of ./gradlew :desktop:run -Psos.captureRooms=<port_dir> (960x540 window = 1920x1080 back buffer)
-  godot_dir: default tools/godot-reference/results/room_screens (probe v10_room_screens)
-Exit code 0 only if every pair is identical.
-"""
 import os
 import sys
 

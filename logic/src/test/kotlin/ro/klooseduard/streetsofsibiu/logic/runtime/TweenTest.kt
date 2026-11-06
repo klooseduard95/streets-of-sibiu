@@ -11,7 +11,6 @@ class TweenTest {
     private val loop = GameLoop(runtime, object : FrameHooks {})
     private fun frames(n: Int) = repeat(n) { loop.advance(1.0 / 60) }
 
-    /** Godot `Tween.interpolate_value` samples recorded by the Phase 0 probe (v2_defaults.json). */
     @Test
     fun easingMatchesGodotReferenceSamples() {
         val root = File(System.getProperty("sos.repoRoot") ?: error("sos.repoRoot not set"))
@@ -36,8 +35,7 @@ class TweenTest {
         var value = 0.0
         val tween = runtime.createTween(null)
         tween.tweenProperty({ value }, { value = it }, 10.0, 0.1)
-        tween.tweenProperty({ value }, { value = it }, 20.0, 0.1)   // starts from 10, read at step start
-        // 7 frames = 0.11666 s: step 1 done at 0.1, 0.01666 s carried into step 2 (linear: 10 + 10 * 1/6).
+        tween.tweenProperty({ value }, { value = it }, 20.0, 0.1)
         frames(7)
         assertEquals(10.0 + 10.0 * ((7.0 / 60 - 0.1) / 0.1).toFloat(), value, 1e-9)
         frames(6)
@@ -50,7 +48,6 @@ class TweenTest {
         var alpha = 1.0
         var scale = 1.0
         var finished = 0
-        // player.gd death: modulate:a -> 0 over 1 s, parallel scale -> 0 over 1 s, sine transition
         val tween = runtime.createTween(SceneNode()).setTrans(TransitionType.SINE)
         tween.tweenProperty({ alpha }, { alpha = it }, 0.0, 1.0)
         tween.parallel().tweenProperty({ scale }, { scale = it }, 0.0, 1.0)
@@ -67,7 +64,6 @@ class TweenTest {
 
     @Test
     fun infiniteLoopKeepsBobbing() {
-        // KingRotta.gd: y -> y + 5 over 1 s, back over 1 s, set_loops() (forever)
         var y = 0.0
         val tween = runtime.createTween(SceneNode()).setLoops().setTrans(TransitionType.SINE).setEase(EaseType.IN_OUT)
         tween.tweenProperty({ y }, { y = it }, 5.0, 1.0)
@@ -121,9 +117,9 @@ class TweenTest {
         var a = 0.0
         var b = 0.0
         val tween = runtime.createTween(null)
-        tween.tweenProperty({ a }, { a = it }, 1.0, 1.0)            // linear (default)
+        tween.tweenProperty({ a }, { a = it }, 1.0, 1.0)
         tween.setTrans(TransitionType.SINE)
-        tween.parallel().tweenProperty({ b }, { b = it }, 1.0, 1.0)  // sine
+        tween.parallel().tweenProperty({ b }, { b = it }, 1.0, 1.0)
         frames(15)
         assertEquals((15.0 / 60).toFloat().toDouble(), a, 1e-6)
         assertEquals(Easing.run(TransitionType.SINE, EaseType.IN_OUT, (15.0 / 60).toFloat(), 0f, 1f, 1f).toDouble(), b, 1e-6)

@@ -1,13 +1,8 @@
-## V9 golden traces of the real Player scene in the real SpawnRoom, plus V3 (idle frame after stop),
-## V10b (runtime error mid-function) and V15 (is_action_just_pressed per physics tick).
-## Inputs are applied in the SceneTree.physics_frame signal, which fires before nodes' _physics_process
-## in the same tick. State is recorded at the start of each tick = result of the previous tick.
 extends "res://probes/probe_base.gd"
 
 const DashType = {"NONE": 0, "SHORT": 1, "MEDIUM": 2, "LONG": 3}
 const ParryType = {"NORMAL": 0, "MEDIUM": 1, "CHARGE": 2}
 
-# name: [start_pos, ticks, dash, parry, {tick: {"press": [...], "release": [...]}}, setup]
 var scenarios := {
 	"walk_right_into_east_wall": [Vector2(1600, 300), 60, "NONE", 3, {0: {"press": ["move_rightward"]}}, ""],
 	"diagonal_up_right_slide_to_corner": [Vector2(1000, 300), 120, "NONE", 3, {0: {"press": ["move_forward", "move_rightward"]}}, ""],
@@ -67,7 +62,7 @@ func _run(name: String, spec: Array) -> Dictionary:
 		var left := int(sizes[0].x - sizes[1] / 2.0); var right := int(sizes[0].x + sizes[1] / 2.0)
 		var top := int(sizes[0].y - sizes[2] / 2.0); var bottom := int(sizes[0].y + sizes[2] / 2.0)
 		clamp_rect = Rect2(Vector2(left + 40, top + 40), Vector2(right - left - 80, bottom - top - 80))
-	await physics_frames(2)  # let the physics space register the room and the player
+	await physics_frames(2)
 	var rows := []
 	var schedule: Dictionary = spec[4]
 	for t in spec[1]:
@@ -88,8 +83,6 @@ func _run(name: String, spec: Array) -> Dictionary:
 		"inputs": schedule, "rows": rows}
 
 func _v15() -> Dictionary:
-	# Edge detection inside physics ticks for (a) Input.action_press inside the physics tick and
-	# (b) a real InputEventAction parsed during an idle frame (buffered like OS events).
 	var out := {}
 	var seen := []
 	for t in 6:

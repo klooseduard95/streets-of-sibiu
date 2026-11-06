@@ -9,10 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import ro.klooseduard.streetsofsibiu.logic.GodotProjectSettings
 
-/**
- * Shared UI resources and the Godot → Scene2D conversions:
- * Godot Control coordinates are top-left/y-down in the 1920x1080 viewport; Scene2D is y-up.
- */
 class UiKit(val fonts: Fonts) {
     val white: Texture = Texture(Pixmap(1, 1, Pixmap.Format.RGBA8888).apply { setColor(Color.WHITE); fill() })
     private val styleBoxes = mutableListOf<StyleBoxFlat>()
@@ -25,7 +21,6 @@ class UiKit(val fonts: Fonts) {
 
     fun color(c: Color): Drawable = ColorDrawable(c, white)
 
-    /** Godot default theme Button (default_theme.cpp): flat dark boxes, radius 3, text colour 0.875. */
     fun godotDefaultButton(text: String, fontSize: Int): TextButton {
         val style = TextButton.TextButtonStyle().apply {
             up = flat(Color(0.1f, 0.1f, 0.1f, 0.6f), corner = 3)
@@ -39,7 +34,6 @@ class UiKit(val fonts: Fonts) {
         return TextButton(text, style)
     }
 
-    /** The white rounded buttons of main_menu.tscn / Settings.tscn (StyleBoxFlat r16, shadow 5 at (0,3)). */
     fun menuButton(text: String, fontSize: Int = 35): TextButton {
         val shadow = Color(0f, 0f, 0f, 0.8f)
         val style = TextButton.TextButtonStyle().apply {
@@ -70,11 +64,6 @@ class UiKit(val fonts: Fonts) {
     }
 }
 
-/**
- * Godot LabelSettings shadow with `shadow_size`: the text drawn in [shadowColor] with an outline of
- * [shadowSize] px at the glyphs' own positions, offset by ([offsetX], [offsetY]) (y-down), behind
- * the text. Rendered by stamping the glyphs over a disc of radius shadowSize / 2.
- */
 class ShadowedLabel(
     private val text: String,
     private val font: com.badlogic.gdx.graphics.g2d.BitmapFont,
@@ -112,12 +101,10 @@ class ShadowedLabel(
     }
 }
 
-/** Places an actor at a Godot rect (top-left x/y, y-down) in the 1920x1080 view. */
 fun Actor.godotBounds(x: Float, y: Float, w: Float, h: Float, parentHeight: Float = UiKit.VIEW_H) {
     setBounds(x, parentHeight - y - h, w, h)
 }
 
-/** Godot anchors at the centre with offsets (anchors_preset 8). */
 fun Actor.godotCentered(left: Float, top: Float, right: Float, bottom: Float, parentW: Float = UiKit.VIEW_W, parentH: Float = UiKit.VIEW_H) {
     godotBounds(parentW / 2 + left, parentH / 2 + top, right - left, bottom - top, parentH)
 }

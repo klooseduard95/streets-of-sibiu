@@ -1,5 +1,3 @@
-## V4 (Camera2D scale/limits/smoothing) and V13 (integer camera limits per room).
-## Uses a 1920x1080 SubViewport because the headless root viewport is 64x64.
 extends "res://probes/probe_base.gd"
 
 var vp: SubViewport
@@ -19,7 +17,6 @@ func _camera(scale_value: Vector2, smoothing: bool) -> Camera2D:
 
 func _room_limits(room) -> Array:
 	var sizes = room.getRoomSizes()
-	# Same expressions as MainBackground.updateCameraAnchor; assignment to int properties truncates.
 	var cam := Camera2D.new()
 	cam.limit_top = sizes[0].y - sizes[2] / 2
 	cam.limit_bottom = sizes[0].y + sizes[2] / 2
@@ -34,7 +31,6 @@ func _initialize() -> void:
 	root.add_child(vp)
 	await frames(2)
 
-	# a) Does the camera node's scale affect the view? (scene uses scale 3.92 with zoom set to 1)
 	var cam := _camera(Vector2(3.9215689, 3.9215689), false)
 	cam.get_parent().position = Vector2(1000, 600)
 	await physics_frames(3)
@@ -43,7 +39,6 @@ func _initialize() -> void:
 	cam.get_parent().queue_free()
 	await physics_frames(2)
 
-	# b) Limits narrower than the view (SpawnRoom height 1041 < 1080) and normal clamping.
 	var limit_cases := {}
 	var cam2 := _camera(Vector2.ONE, false)
 	cam2.limit_left = 19; cam2.limit_top = 24; cam2.limit_right = 1973; cam2.limit_bottom = 1065
@@ -60,7 +55,6 @@ func _initialize() -> void:
 	cam2.get_parent().queue_free()
 	await physics_frames(2)
 
-	# c) Smoothing: target jumps by (+600, +300) inside wide limits; record the screen centre per tick.
 	var cam3 := _camera(Vector2.ONE, true)
 	cam3.limit_left = -10000; cam3.limit_top = -10000; cam3.limit_right = 10000; cam3.limit_bottom = 10000
 	cam3.get_parent().position = Vector2(0, 0)
@@ -73,7 +67,6 @@ func _initialize() -> void:
 		await physics_frame
 		track.append(vec(cam3.get_screen_center_position()))
 	results["smoothing_track_after_jump"] = track
-	# Smoothed limits: limit moves inward while the camera is smoothing.
 	cam3.limit_right = 1500
 	var track2 := []
 	for i in 30:
@@ -85,7 +78,6 @@ func _initialize() -> void:
 	results["after_reset_smoothing"] = vec(cam3.get_screen_center_position())
 	cam3.get_parent().queue_free()
 
-	# V13: integer limits per room
 	var per_room := {}
 	for room_name in ["SpawnRoom", "FIGHTROOM_12", "FIGHTROOM_124_SMALL", "FIGHTROOM_12_MEDIUM", "FIGHTROOM_12_BIG",
 			"FIGHTROOM_13_BIG", "FIGHTROOM_34_BIG", "FIGHTROOMBIGENEMY_1"]:

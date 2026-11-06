@@ -5,7 +5,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 import java.io.File
 
-/** Checks the transcribed settings against the original `project.godot` (read-only). */
 class GodotProjectSettingsParityTest {
     private val projectGodot: Map<String, String> by lazy {
         val root = File(System.getProperty("sos.repoRoot") ?: error("sos.repoRoot not set"))
@@ -36,7 +35,6 @@ class GodotProjectSettingsParityTest {
 
     @Test
     fun physicsSettingsAreEngineDefaults() {
-        // The original never overrides the physics tick rate, so Godot's defaults apply.
         assertFalse(projectGodot.keys.any { it.startsWith("physics/") })
     }
 }

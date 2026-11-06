@@ -1,6 +1,3 @@
-## Reference renders of every room module (windowed run; real renderer needed):
-## camera snapped to the module-box centre and to the room origin (clamped by the limits),
-## exactly like MainBackground.updateCameraAnchor. Writes results/room_screens/<ROOM>_<view>.png.
 extends "res://probes/probe_base.gd"
 
 const ROOMS := [
@@ -16,8 +13,6 @@ func _initialize() -> void:
 	var vp := SubViewport.new()
 	vp.size = Vector2i(1920, 1080)
 	vp.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	# The game renders in the root viewport, which takes the project's Nearest default filter;
-	# a SubViewport defaults to Linear, so match the root viewport explicitly.
 	vp.canvas_item_default_texture_filter = Viewport.DEFAULT_CANVAS_ITEM_TEXTURE_FILTER_NEAREST
 	root.add_child(vp)
 	var written := []

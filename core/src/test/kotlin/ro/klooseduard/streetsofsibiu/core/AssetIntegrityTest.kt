@@ -6,16 +6,11 @@ import org.junit.Test
 import java.io.File
 import java.security.MessageDigest
 
-/**
- * Every copied asset must be byte-identical to the file at the same relative path in the
- * original Godot project, and every asset the original uses at runtime must be present.
- */
 class AssetIntegrityTest {
     private val root = File(System.getProperty("sos.repoRoot") ?: error("sos.repoRoot not set"))
     private val assetsDir = File(root, "assets")
     private val originalDir = File(root, "2026-Game_of_the_year-main/newgame")
 
-    /** Runtime-used images and audio from MIGRATION_PLAN.md section 1.5. */
     private val expected = setOf(
         "tilesetbig.png", "cone.png", "menu.png",
         "player/player_assets/playerassets.png", "player/player_assets/diagonals.png",

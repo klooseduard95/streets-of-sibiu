@@ -1,7 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-// Development-only desktop launcher (LWJGL3) for side-by-side testing with keyboard/mouse.
-// Not part of the shipped Android app.
 plugins {
     alias(libs.plugins.kotlin.jvm)
     application
@@ -30,11 +28,8 @@ application {
 }
 
 tasks.named<JavaExec>("run") {
-    // Gdx.files.internal() resolves against the working directory, as on Android it resolves against assets/.
     workingDir = rootDir.resolve("assets")
-    // LWJGL warns about JNI on newer JDKs; run the dev build on a JDK 21 LTS toolchain.
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
-    // Forward dev options, e.g. ./gradlew :desktop:run -Psos.screenshot=/tmp/shot.png
     listOf("sos.window", "sos.screenshot", "sos.screenshotFrame", "sos.screen", "sos.room", "sos.captureRooms").forEach { key ->
         providers.gradleProperty(key).orNull?.let { systemProperty(key, it) }
     }

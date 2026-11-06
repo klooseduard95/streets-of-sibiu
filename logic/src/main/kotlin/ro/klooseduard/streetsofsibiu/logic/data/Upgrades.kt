@@ -1,15 +1,9 @@
 package ro.klooseduard.streetsofsibiu.logic.data
 
-/** `Player.DashType` (stored as ints in scenes: NONE 0, SHORT 1, MEDIUM 2, LONG 3). */
 enum class DashType { NONE, SHORT, MEDIUM, LONG }
 
-/**
- * `Player.ParryType` (NORMAL 0, MEDIUM 1, CHARGE 2). The player scene starts with the
- * out-of-range value 3, i.e. no parry until one is unlocked: modelled as `null`.
- */
 enum class ParryType { NORMAL, MEDIUM, CHARGE }
 
-/** One entry of an upgrade pool in upgrade_window.gd. [desc] and [icon] are shown on the card. */
 sealed class UpgradeCard {
     abstract val desc: String
     abstract val icon: String
@@ -21,10 +15,6 @@ sealed class UpgradeCard {
     data class ParryCard(override val desc: String, override val icon: String, val parry: ParryType) : UpgradeCard()
 }
 
-/**
- * The `reward_type` values accepted by `show_upgrades`, with how many cards are shown and whether
- * the pool is shuffled first. SMALL_CONSUMABLE exists in the original but is never requested.
- */
 enum class RewardPool(val godotName: String, val numChoices: Int, val shuffle: Boolean) {
     SMALL_UPGRADES("small_upgrades", 3, true),
     BIG_UPGRADES("big_upgrades", 3, true),
@@ -43,7 +33,6 @@ enum class RewardPool(val godotName: String, val numChoices: Int, val shuffle: B
 private const val ICONS = "item/item_assets/item icons/"
 private const val BULLET_ICON = "enemy/enemy_projectile/enemy_projectile_assets/bullet.png"
 
-/** The card pools of upgrade_window.gd, in declaration order. */
 object UpgradePools {
     val smallUpgrades = listOf(
         UpgradeCard.StatCard("+1 ammo capacity\nor\n0.05sec sniper cooldown reduction", BULLET_ICON,
@@ -119,7 +108,6 @@ object UpgradePools {
         UpgradeCard.ConsumableCard("Temporary Damage Bonus", ICONS + "newbottle2.png", Consumables.ADRENALINE),
     )
 
-    /** The pool `show_upgrades` draws from (SMALL_CONSUMABLE is assembled at runtime in the original). */
     fun pool(reward: RewardPool): List<UpgradeCard> = when (reward) {
         RewardPool.SMALL_UPGRADES -> smallUpgrades
         RewardPool.BIG_UPGRADES -> bigUpgrades

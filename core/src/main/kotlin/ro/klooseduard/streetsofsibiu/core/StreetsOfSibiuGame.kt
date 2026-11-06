@@ -15,13 +15,6 @@ import ro.klooseduard.streetsofsibiu.core.ui.Fonts
 import ro.klooseduard.streetsofsibiu.core.ui.UiKit
 import ro.klooseduard.streetsofsibiu.logic.runtime.GameRandom
 
-/**
- * Application entry point shared by the Android and desktop launchers. Owns what the original
- * keeps in autoloads (music) or shares between scenes (fonts, bus volumes), and switches screens
- * like `get_tree().change_scene_to_file`.
- * [startScreen]: "menu" (default), "game", or development entries: "rooms" (room viewer),
- * "tutorial" (menu with the tutorial open), "options", "paused" (game with the pause menu open).
- */
 class StreetsOfSibiuGame(private val startScreen: String = "menu", private val startRoom: String? = null) : Game() {
     lateinit var fonts: Fonts; private set
     lateinit var ui: UiKit; private set
@@ -30,10 +23,8 @@ class StreetsOfSibiuGame(private val startScreen: String = "menu", private val s
     private val random = GameRandom()
     private val textures = HashMap<String, Texture>()
 
-    /** "Cool thingo" CRT overlay toggle (main_menu.gd). The shader itself is not ported yet (D1 gap). */
     var crtEnabled = false
 
-    /** Loads an asset texture once, with the project's Nearest filtering. */
     fun texture(path: String): Texture = textures.getOrPut(path) {
         Texture(Gdx.files.internal(path)).apply { setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest) }
     }

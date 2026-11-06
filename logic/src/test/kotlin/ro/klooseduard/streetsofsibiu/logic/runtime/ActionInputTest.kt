@@ -3,7 +3,6 @@ package ro.klooseduard.streetsofsibiu.logic.runtime
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-/** Edge semantics verified against Godot 4.6.1 in Phase 0 (V15, v9_player_traces.json). */
 class ActionInputTest {
     private val runtime = GameRuntime(GameRandom(1))
     private val input = ActionInput<String>(runtime)
@@ -19,7 +18,7 @@ class ActionInputTest {
     @Test
     fun pressBetweenTicksIsJustPressedInTheNextTickOnly() {
         loop.advance(1.0 / 60)
-        input.press("blink")          // OS event between frames
+        input.press("blink")
         repeat(4) { loop.advance(1.0 / 60) }
         assertEquals(listOf(false, true, false, false, false), seen)
     }
@@ -35,20 +34,18 @@ class ActionInputTest {
 
     @Test
     fun pressDuringATickIsSeenInTheFollowingTick() {
-        pressDuringTick = 2           // like Input.action_press in a physics callback
+        pressDuringTick = 2
         repeat(5) { loop.advance(1.0 / 60) }
-        // ticks 1..5: the press happens in tick 2 after the check of tick 2 is not yet made,
-        // and becomes visible in tick 3 (pressed_physics_frame = physics_frames + 1).
         assertEquals(listOf(false, false, true, false, false), seen)
     }
 
     @Test
     fun pressWithoutTickOnFastDisplayWaitsForTheNextTick() {
         input.press("blink")
-        loop.advance(1.0 / 240)       // no physics tick this frame
         loop.advance(1.0 / 240)
         loop.advance(1.0 / 240)
-        loop.advance(1.0 / 240)       // tick happens here
+        loop.advance(1.0 / 240)
+        loop.advance(1.0 / 240)
         assertEquals(listOf(true), seen)
     }
 

@@ -1,15 +1,9 @@
 package ro.klooseduard.streetsofsibiu.logic.data
 
-/** `ItemData.Type` (enum order matters: the .tres files store 0/1/2). */
 enum class ItemType { PRIMARY, SECONDARY, CONSUMABLE }
 
-/** Which projectile scene a weapon fires (`projectile_scene`). */
 enum class ProjectileKind(val scene: String) { RANGED("player/bullet.tscn"), MELEE("player/bullet_melee.tscn") }
 
-/**
- * A `WeaponItem` resource. Defaults follow weapon_item.gd (`bullet_speed` 1200, `is_ramping`
- * false, `ramp_gain_per_hit` 1.0, `ramp_decay_per_sec` 2.0). `ammoCapacity == -1` means infinite.
- */
 data class WeaponDef(
     val id: String,
     val name: String,
@@ -33,7 +27,6 @@ data class WeaponDef(
     val rampDecayPerSec: Double = 2.0,
 )
 
-/** A `ConsumableItem` resource (consumable_item.gd defaults: 0 / empty). */
 data class ConsumableDef(
     val id: String,
     val name: String,
@@ -51,7 +44,6 @@ data class ConsumableDef(
 
 private const val ICONS = "item/item_assets/item icons/"
 
-/** The eight weapon resources under `item/weapons/`; [id] is the file name without extension. */
 object Weapons {
     val PUNCH = WeaponDef(
         id = "secondary_punch", name = "Punch",
@@ -116,7 +108,6 @@ object Weapons {
     val all = listOf(PUNCH, KNIFE, BAT, CHAINSAW, MEDIUM_RIFLE, SMG, NEGEV, SNIPER)
 }
 
-/** The eight consumable resources in `item/consumables/`; [id] is the file name without extension. */
 object Consumables {
     val HEALTH = ConsumableDef(
         id = "consumable_health", name = "Health Potion", description = "+40 HP",

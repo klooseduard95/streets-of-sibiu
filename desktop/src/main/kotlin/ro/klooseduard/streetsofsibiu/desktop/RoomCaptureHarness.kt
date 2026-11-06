@@ -8,11 +8,6 @@ import ro.klooseduard.streetsofsibiu.core.screens.RoomViewerScreen
 import ro.klooseduard.streetsofsibiu.logic.data.rooms.RoomCatalog
 import ro.klooseduard.streetsofsibiu.logic.math.Vec2
 
-/**
- * Development tool: renders every room with the camera snapped to (a) the module-box centre and
- * (b) the room origin (clamped by the limits), writes `<dir>/<ROOM>_<centre|corner>.png`, exits.
- * Compared with the Godot captures by tools/compare_room_screens.py.
- */
 class RoomCaptureHarness(private val dir: String) : ApplicationAdapter() {
     private lateinit var viewer: RoomViewerScreen
     private val jobs = RoomCatalog.all.flatMap { room -> listOf(room.id to "centre", room.id to "corner") }
@@ -36,7 +31,6 @@ class RoomCaptureHarness(private val dir: String) : ApplicationAdapter() {
     override fun resize(width: Int, height: Int) = viewer.resize(width, height)
 
     override fun render() {
-        // One physics tick per frame: like Godot, reset_smoothing() only shows on the next camera update.
         viewer.render(1f / 60f)
         if (++framesOnJob == 3) {
             val (id, view) = jobs[index]

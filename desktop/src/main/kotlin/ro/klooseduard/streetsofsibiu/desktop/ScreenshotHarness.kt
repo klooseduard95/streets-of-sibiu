@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.PixmapIO
 
-/** Development tool: renders [frames] frames of [game], writes the back buffer to [path] and exits. */
 class ScreenshotHarness(
     private val game: ApplicationListener,
     private val path: String,

@@ -330,3 +330,29 @@ Related documents:
 **For the user:**
 - If it happens again: press the emulator's power button. If the game is still black, restart it, or use **Cold Boot Now**.
 - After rebuilding, press Run (or `./gradlew :app:installDebug`) so the emulator has the current build. The Quick Boot snapshot may otherwise bring back an old one.
+
+## 2026-10-20 — Session 11: progress summary for the teacher
+
+**User:** "check our progress and explain me what we have done until now. I have to explain it tomorrow to my teacher."
+
+- Re-read the plan, status, delivery note and log; no code changes since 2026-10-15.
+- Re-ran `:logic:test :core:test :app:assembleDebug`: build OK, **74 tests, 0 failures**. Original project still untouched.
+- Gave the user a plain-language summary of Phases 0–4 and Delivery 1 for the presentation on Wed 2026-10-21.
+- **User:** "make a short slide deck for tomorrow". Made a 9-slide deck with speaker notes: project, method, progress table, Delivery 1 features, key numbers, decisions, roadmap D2–D6, demo. Placeholder left: `[Your name]` on the cover.
+
+## 2026-10-20 — Session 12: code comments removed (branch `remove-code-comments`)
+
+**User (in Romanian):** write the progress so far in Romanian for the teacher, and "I would prefer you remove the comments from the code."
+
+**Done:**
+- Branch `remove-code-comments` from `main`.
+- Removed all comments (line, block, KDoc; Python `#` comments and docstrings; GDScript `#`/`##`; shell comments except the shebang) from our own code: 61 Kotlin files, 6 Gradle scripts, 3 Python tools, 10 Godot probes, 2 shell scripts. Used a string-aware stripper (scratchpad, not committed), so `"res://…"` and raw strings were not touched.
+- `tools/convert_rooms.py` no longer emits comments into `GeneratedRooms.kt`; regenerating gives a byte-identical file.
+- Not touched: the original Godot project, the Godot engine sources (MIT licence headers), the Gradle wrapper (`gradlew`, `gradlew.bat`), config files (XML, `.properties`, `.toml`, keep rules, `.gitignore`) and the Markdown documents.
+
+**Checks:**
+- Every remaining line is an original line, at most with a trailing comment cut off; every deleted line was a comment, docstring or blank.
+- Python files parse; `bash -n` OK on the shell scripts; Godot 4.6.1 `--check-only` OK on all 10 probes (sanity-checked that it does catch a broken script).
+- Clean build `:logic:test :core:test :app:assembleDebug :desktop:installDist --warning-mode all`: OK, **74 tests, 0 failures**. Original project untouched.
+
+**Note for future sessions:** the code has no comments now, by the user's choice. The explanations (Godot source references, why a behaviour is ported a certain way) remain in this log, `MIGRATION_PLAN.md`, `MIGRATION_STATUS.md`, `tools/godot-reference/README.md` and the git history (`main` before this branch). Do not add comments to new code unless the user asks.

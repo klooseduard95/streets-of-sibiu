@@ -7,27 +7,19 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sqrt
 
-/**
- * A vertical capsule (Godot `CapsuleShape2D`: [radius], total [height]) or a circle (height = 2r)
- * centred on the body position. Covers every moving body shape in the game.
- */
 data class BodyShape(val radius: Double, val height: Double = radius * 2) {
-    /** Half length of the capsule's straight segment. */
     val halfSegment: Double get() = max(0.0, height / 2 - radius)
 }
 
-/** Static colliders on layer 1: tile squares, door Preventers, barricade cones (all axis-aligned). */
 class StaticWorld(solids: List<Rect>) {
     private val rects = solids.map { doubleArrayOf(it.x.toDouble(), it.y.toDouble(), it.right.toDouble(), it.bottom.toDouble()) }
 
-    /** Rects whose bounds intersect [x0,x1]×[y0,y1] (inclusive), in insertion order. */
     fun query(x0: Double, y0: Double, x1: Double, y1: Double): List<DoubleArray> =
         rects.filter { it[0] <= x1 && it[2] >= x0 && it[1] <= y1 && it[3] >= y0 }
 
     val size: Int get() = rects.size
 }
 
-/** Godot `PhysicsServer2D::MotionResult` (the fields the game logic reads). */
 data class MotionResult(
     val collided: Boolean,
     val travel: DVec,
@@ -38,7 +30,6 @@ data class MotionResult(
     val unsafeFraction: Double = 1.0,
 )
 
-/** Double-precision 2D vector for the solver internals. */
 data class DVec(val x: Double, val y: Double) {
     operator fun plus(o: DVec) = DVec(x + o.x, y + o.y)
     operator fun minus(o: DVec) = DVec(x - o.x, y - o.y)
@@ -46,7 +37,6 @@ data class DVec(val x: Double, val y: Double) {
     fun dot(o: DVec) = x * o.x + y * o.y
     fun length() = sqrt(x * x + y * y)
     fun normalized(): DVec = length().let { if (it == 0.0) ZERO else DVec(x / it, y / it) }
-    /** Godot `Vector2.slide(n)`: this - n * dot(n). */
     fun slide(n: DVec) = this - n * dot(n)
     fun isZeroApprox() = abs(x) < CMP_EPSILON && abs(y) < CMP_EPSILON
     fun toVec2() = Vec2(x.toFloat(), y.toFloat())
@@ -59,21 +49,12 @@ data class DVec(val x: Double, val y: Double) {
 
 internal const val CMP_EPSILON = 0.00001
 
-/**
- * Port of Godot 4.6.1 `GodotSpace2D::test_body_motion` for [BodyShape] against axis-aligned boxes:
- * 1. recovery: up to 4 passes, each contact within `margin` deeper than `margin * 0.05` pushes the
- *    body out by 40 % of the excess;
- * 2. cast: for every candidate, Godot's 8-step bisection on "does the swept shape touch it" (here
- *    answered with the exact time of impact, so the resulting safe/unsafe fractions match);
- * 3. rest info at the unsafe position: deepest contact within the margin gives the normal/depth.
- */
 object Kinematics {
     private const val MIN_CONTACT_DEPTH_FACTOR = 0.05
     private const val MARGIN_MIN = 0.0001
 
     private class Contact(val signedDistance: Double, val normal: DVec)
 
-    /** Signed distance from the shape at [c] to the box (negative = penetration) and the normal pointing from box to shape. */
     private fun contact(shape: BodyShape, c: DVec, b: DoubleArray): Contact {
         val h = shape.halfSegment
         val r = shape.radius
@@ -95,7 +76,6 @@ object Kinematics {
             val ny = if (s1 < b[1]) -dy else if (s0 > b[3]) dy else 0.0
             return Contact(d - r, DVec(nx / d, ny / d))
         }
-        // Segment inside the box: minimum translation out along an axis.
         val pushLeft = (c.x + r) - b[0]
         val pushRight = b[2] - (c.x - r)
         val pushUp = (s1 + r) - b[1]
@@ -110,12 +90,9 @@ object Kinematics {
         return Contact(-m, n)
     }
 
-    /** First fraction t in [0,1] at which the shape moving from [c] by [m] touches the box, or null. */
     private fun timeOfImpact(shape: BodyShape, c: DVec, m: DVec, b: DoubleArray): Double? {
         val h = shape.halfSegment
         val r = shape.radius
-        // Minkowski region of centre positions touching the box: rounded rectangle around
-        // E = [x0, x1] x [y0 - h, y1 + h] with corner radius r.
         val ey0 = b[1] - h
         val ey1 = b[3] + h
         var best: Double? = null
@@ -168,7 +145,6 @@ object Kinematics {
         var pos = from
         var recovered = false
 
-        // 1. Recovery.
         repeat(4) {
             val nearby = world.query(pos.x - ext, pos.y - extY, pos.x + ext, pos.y + extY)
             val contacts = nearby.map { contact(shape, pos, it) }.filter { it.signedDistance < margin }
@@ -184,7 +160,6 @@ object Kinematics {
             pos += recover
         }
 
-        // 2. Cast (Godot bisection, 8 steps).
         val motionLength = motion.length()
         var safe = 1.0
         var unsafe = 1.0
@@ -217,7 +192,6 @@ object Kinematics {
             }
         }
 
-        // 3. Rest information.
         if ((recoveryAsCollision && recovered) || safe < 1) {
             val ugt = pos + motion * unsafe
             val minAllowed = min(motionLength, minContactDepth)

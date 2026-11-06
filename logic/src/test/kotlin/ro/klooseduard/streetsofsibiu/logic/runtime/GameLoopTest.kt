@@ -45,9 +45,7 @@ class GameLoopTest {
         val recorder = Recorder()
         val loop = GameLoop(GameRuntime(GameRandom(1)), recorder)
         assertEquals(8, loop.advance(1.0))
-        // Godot: process_step -= (steps - max) * physics_step  ->  1.0 - 52/60
         assertEquals(1.0 - 52.0 / 60.0, recorder.idleDeltas.single(), 1e-12)
-        // The dropped time is not carried over.
         assertEquals(1, loop.advance(1.0 / 60))
     }
 

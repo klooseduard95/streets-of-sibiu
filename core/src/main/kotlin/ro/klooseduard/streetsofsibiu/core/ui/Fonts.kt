@@ -6,12 +6,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 
-/**
- * Fonts used by the original UI, rendered with FreeType at the exact sizes the scenes use.
- * - Open Sans SemiBold: Godot 4.6.1's built-in default theme font (thirdparty/fonts), size 16 by default.
- * - Montserrat Regular: main-menu title (SystemFont "Montserrat", decision Q6/O1).
- * - JetBrains Mono NL Regular: pause/death statistics (SystemFont "JetBrains Mono NL").
- */
 class Fonts {
     enum class Face(val file: String) {
         DEFAULT("fonts/OpenSans-SemiBold.ttf"),
@@ -41,7 +35,7 @@ class Fonts {
             minFilter = Texture.TextureFilter.Linear
             magFilter = Texture.TextureFilter.Linear
             if (outline > 0) {
-                borderWidth = outline / 2f   // Godot outline_size is the full width of the outline
+                borderWidth = outline / 2f
                 borderColor = outlineColor ?: Color.BLACK
             }
             if (shadowY != 0) {
@@ -50,7 +44,7 @@ class Fonts {
                 shadowColor = Color(0f, 0f, 0f, 1f)
             }
             incremental = true
-        }).also { it.data.setLineHeight(it.data.lineHeight + lineSpacing) }   // Godot Label line_spacing
+        }).also { it.data.setLineHeight(it.data.lineHeight + lineSpacing) }
     }
 
     fun dispose() {

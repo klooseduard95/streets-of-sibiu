@@ -1,5 +1,3 @@
-## Shared helpers for reference probes. Probes run as SceneTree scripts against a COPY of the
-## original project:  Godot --headless --path project-copy --script res://probes/<probe>.gd -- --out=<dir>
 extends SceneTree
 
 var results: Dictionary = {}

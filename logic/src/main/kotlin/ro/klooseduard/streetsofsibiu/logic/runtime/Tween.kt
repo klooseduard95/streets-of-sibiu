@@ -5,19 +5,12 @@ import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
 
-/** Godot `Tween.TransitionType` values used by the original project. */
 enum class TransitionType { LINEAR, SINE }
 
-/** Godot `Tween.EaseType`. */
 enum class EaseType { IN, OUT, IN_OUT, OUT_IN }
 
-/** Godot `Tween.TweenPauseMode`. */
 enum class TweenPauseMode { BOUND, STOP, PROCESS }
 
-/**
- * Godot's easing equations (scene/animation/easing_equations.h). Godot evaluates them with
- * `real_t` (32-bit float) arguments and result, so this returns a [Float].
- */
 object Easing {
     fun run(trans: TransitionType, ease: EaseType, time: Float, initial: Float, delta: Float, duration: Float): Float {
         if (duration == 0f) return initial + delta
@@ -43,28 +36,12 @@ object Easing {
     private fun sineOut(t: Float, b: Float, c: Float, d: Float): Float =
         (c * sin(t / d * (PI / 2)) + b).toFloat()
 
-    /** Godot `Tween.interpolate_value` for a float value. */
     fun interpolate(initial: Double, delta: Double, time: Double, duration: Double, trans: TransitionType, ease: EaseType): Double {
         val t = run(trans, ease, time.toFloat(), 0f, 1f, duration.toFloat())
         return initial + delta * t
     }
 }
 
-/**
- * Godot `Tween` (scene/animation/tween.cpp), limited to what the original uses:
- * sequential and parallel `tween_property` steps, `set_trans`/`set_ease`, `set_loops`,
- * `finished`, `kill`, binding to a node and the pause mode.
- *
- * Semantics kept from Godot:
- * - Steps run in order. Delta left over when a step finishes carries into the next step in
- *   the same frame.
- * - A property tweener reads its start value when its step starts, not when it is created.
- * - Transition and ease are copied from the tween's defaults when a tweener is appended.
- * - `setLoops()` without an argument (0) loops forever.
- * - A tween bound to a node waits while the node is outside the tree, dies when the node
- *   is freed, and pauses with the node ([TweenPauseMode.BOUND]).
- * - Processed in idle frames unless [processInPhysics].
- */
 class Tween internal constructor(private val bound: SceneNode?) {
     var processInPhysics = false
     var pauseMode = TweenPauseMode.BOUND
@@ -78,7 +55,6 @@ class Tween internal constructor(private val bound: SceneNode?) {
     private var started = false
     private var running = true
 
-    /** True once finished or killed; the runtime then discards the tween. */
     var isDead = false
         private set
     private val finishedListeners = mutableListOf<() -> Unit>()
@@ -86,13 +62,10 @@ class Tween internal constructor(private val bound: SceneNode?) {
     fun setTrans(trans: TransitionType): Tween = apply { defaultTransition = trans }
     fun setEase(ease: EaseType): Tween = apply { defaultEase = ease }
 
-    /** The next appended tweener runs together with the previous one. */
     fun parallel(): Tween = apply { parallelNext = true }
 
-    /** The next appended tweener runs after the previous step (the default). */
     fun chain(): Tween = apply { parallelNext = false }
 
-    /** 0 = loop forever (Godot `set_loops()` without an argument). */
     fun setLoops(count: Int = 0): Tween = apply { loops = count }
 
     fun onFinished(listener: () -> Unit): Tween = apply { finishedListeners += listener }
@@ -102,7 +75,6 @@ class Tween internal constructor(private val bound: SceneNode?) {
         isDead = true
     }
 
-    /** Godot `tween_property` for any value type, given a linear interpolation function. */
     fun <V> tweenProperty(
         get: () -> V,
         set: (V) -> Unit,
@@ -123,7 +95,6 @@ class Tween internal constructor(private val bound: SceneNode?) {
         return tweener
     }
 
-    /** `tween_property` on a Double-valued property. */
     fun tweenProperty(get: () -> Double, set: (Double) -> Unit, finalValue: Double, duration: Double): PropertyTweener<Double> =
         tweenProperty(get, set, finalValue, duration) { a, b, t -> a + (b - a) * t }
 
@@ -134,7 +105,6 @@ class Tween internal constructor(private val bound: SceneNode?) {
         return !treePaused || pauseMode == TweenPauseMode.PROCESS
     }
 
-    /** Returns false when the tween is finished or dead and should be discarded. */
     internal fun step(delta: Double): Boolean {
         if (isDead) return false
         if (bound != null) {
@@ -186,10 +156,8 @@ class Tween internal constructor(private val bound: SceneNode?) {
     private fun startStep() = steps[currentStep].forEach { it.start() }
 }
 
-/** Result of one tweener step: still active, and the delta left over if it finished. */
 internal data class TweenerStep(val active: Boolean, val remainingDelta: Double)
 
-/** Godot `PropertyTweener` (without delay, relative, from or custom interpolation). */
 class PropertyTweener<V> internal constructor(
     private val get: () -> V,
     private val set: (V) -> Unit,

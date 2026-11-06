@@ -14,11 +14,6 @@ import com.badlogic.gdx.utils.Align
 import ro.klooseduard.streetsofsibiu.core.audio.AudioBuses
 import kotlin.math.roundToInt
 
-/**
- * scenes/Settings.tscn: full-screen menu.png background, " Go Back" button, a default-theme panel
- * with "Optons" (sic) and three bus sliders (h_slider.gd: value = db_to_linear(bus dB), step 0.05;
- * changing it sets bus dB = linear_to_db(value)). Volumes are not saved, as in the original.
- */
 class SettingsView(ui: UiKit, background: Texture, private val buses: AudioBuses, onChanged: () -> Unit, onBack: () -> Unit) : Group() {
     private val grabber = Texture(Pixmap(16, 16, Pixmap.Format.RGBA8888).apply {
         blending = Pixmap.Blending.None

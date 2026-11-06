@@ -16,11 +16,6 @@ import java.io.File
 import kotlin.math.abs
 import kotlin.math.max
 
-/**
- * End-to-end: Player + ActionInput + GameLoop replaying the Godot walking traces. Inputs are
- * applied at the start of each tick (like the probe's physics_frame signal); position and sprite
- * frame are compared with Godot at every tick.
- */
 class PlayerTraceTest {
     @Suppress("UNCHECKED_CAST")
     private val scenarios = (MiniJson.parse(File(Original.repoRoot, "tools/godot-reference/results/v9_player_traces.json").readText())

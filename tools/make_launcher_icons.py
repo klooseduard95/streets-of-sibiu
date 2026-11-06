@@ -1,14 +1,9 @@
-"""Generates the Android launcher icons from the original player sprite (front-facing frame 4).
-
-Usage (from the repository root):  python3 -I tools/make_launcher_icons.py
-Reads assets/player/player_assets/playerassets.png and writes app/src/main/res/mipmap-*/.
-"""
 import os
 from PIL import Image, ImageDraw
 
 SHEET = "assets/player/player_assets/playerassets.png"
-FRAME = (78, 102, 156, 204)          # hframes=3, vframes=4, frame 4 (row 1, col 1)
-BACKGROUND = (152, 173, 182, 255)    # floor colour sampled from tilesetbig.png
+FRAME = (78, 102, 156, 204)
+BACKGROUND = (152, 173, 182, 255)
 RES = "app/src/main/res"
 DENSITIES = {"mdpi": 1.0, "hdpi": 1.5, "xhdpi": 2.0, "xxhdpi": 3.0, "xxxhdpi": 4.0}
 
@@ -31,10 +26,8 @@ def centered(canvas_px, sprite_height, background=None, round_mask=False):
 for name, factor in DENSITIES.items():
     out = os.path.join(RES, f"mipmap-{name}")
     os.makedirs(out, exist_ok=True)
-    # Adaptive foreground: 108dp canvas, sprite inside the 66dp safe zone.
     fg = round(108 * factor)
     centered(fg, fg * 0.58).save(os.path.join(out, "ic_launcher_foreground.png"))
-    # Legacy icons (API < 26): 48dp.
     legacy = round(48 * factor)
     centered(legacy, legacy * 0.8, BACKGROUND).save(os.path.join(out, "ic_launcher.png"))
     centered(legacy, legacy * 0.7, BACKGROUND, round_mask=True).save(os.path.join(out, "ic_launcher_round.png"))

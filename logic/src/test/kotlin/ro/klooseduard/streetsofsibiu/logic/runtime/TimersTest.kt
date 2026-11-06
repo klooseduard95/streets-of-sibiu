@@ -10,7 +10,6 @@ class TimersTest {
     private val loop = GameLoop(runtime, object : FrameHooks {})
     private fun frames(n: Int) = repeat(n) { loop.advance(1.0 / 60) }
 
-    /** Expected frames computed with Godot's double arithmetic (time_left -= 1/60; fire at <= 0). */
     @Test
     fun sceneTimerFiresOnTheSameFrameAsGodot() {
         val fired = mutableMapOf<Double, Int>()
@@ -56,7 +55,7 @@ class TimersTest {
         var frame = 0
         runtime.createNodeTimer(owner, waitTime = 0.15, autostart = true).onTimeout { firedAt += frame }
         repeat(30) { frame++; loop.advance(1.0 / 60) }
-        assertEquals(listOf(10, 19, 28), firedAt)  // Godot double arithmetic, strict < 0
+        assertEquals(listOf(10, 19, 28), firedAt)
     }
 
     @Test
@@ -81,11 +80,11 @@ class TimersTest {
         val timer = runtime.createNodeTimer(enemy, waitTime = 1.0, autostart = true)
         frames(30)
         val left = timer.timeLeft
-        room.setAttached(false)          // room removed from the tree (inactive room)
+        room.setAttached(false)
         frames(30)
         assertEquals(left, timer.timeLeft, 0.0)
         room.setAttached(true)
-        room.processMode = ProcessMode.DISABLED   // warp fade
+        room.processMode = ProcessMode.DISABLED
         frames(30)
         assertEquals(left, timer.timeLeft, 0.0)
         room.processMode = ProcessMode.INHERIT

@@ -4,15 +4,8 @@ import ro.klooseduard.streetsofsibiu.logic.math.Vec2
 import kotlin.math.PI
 import kotlin.math.acos
 
-/** Godot `CharacterBody2D.MotionMode`. */
 enum class MotionMode { GROUNDED, FLOATING }
 
-/**
- * Port of Godot 4.6.1 `CharacterBody2D.move_and_slide()` (character_body_2d.cpp) and
- * `PhysicsBody2D.move_and_collide()` (cancel-sliding), without moving platforms (the game has none).
- * Defaults are Godot's; the player uses GROUNDED with up = (0, -1), which in a top-down game makes
- * walls below the player "floor" and walls above it "ceiling" (V9 traces verify the effects).
- */
 class KinematicBody(
     val shape: BodyShape,
     var position: Vec2,
@@ -79,7 +72,6 @@ class KinematicBody(
 
     private lateinit var world: StaticWorld
 
-    /** Godot `move_and_slide()` with the current [velocity]; returns true if anything was hit. */
     fun moveAndSlide(world: StaticWorld, delta: Double): Boolean {
         this.world = world
         motionResults.clear()

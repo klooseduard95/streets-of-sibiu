@@ -1,9 +1,5 @@
 package ro.klooseduard.streetsofsibiu.logic.data
 
-/**
- * Stat names used in the original's modifier dictionaries (`player.get_stat(name, base)`).
- * [godotName] is the exact dictionary key.
- */
 enum class Stat(val godotName: String) {
     SPEED("speed"),
     DAMAGE_BONUS("damage_bonus"),
@@ -22,5 +18,4 @@ enum class Stat(val godotName: String) {
     }
 }
 
-/** Ordered modifier dictionary (Godot dictionaries keep insertion order). */
 typealias Modifiers = Map<Stat, Double>

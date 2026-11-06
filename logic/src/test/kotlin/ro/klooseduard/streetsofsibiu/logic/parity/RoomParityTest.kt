@@ -15,7 +15,6 @@ import java.util.Base64
 import kotlin.math.cos
 import kotlin.math.sin
 
-/** Checks the generated room data against the original scenes, decoded independently here. */
 class RoomParityTest {
     private fun scene(id: String) = GodotText.load("background/modules/$id.tscn")
 
@@ -55,12 +54,11 @@ class RoomParityTest {
             val cells = decodeTiles(scene(room.id))
             assertEquals("${room.id} cell count", cells.size, room.tiles.cells.size)
             for ((cell, atlas) in cells) assertEquals("${room.id} $cell", atlas, room.tiles.atlasAt(cell.first, cell.second))
-            // Cells absent from the original must be empty here too.
             for ((cell, _) in room.tiles.cells) assertTrue("${room.id} extra $cell", cell in cells)
             assertNull(room.tiles.atlasAt(room.tiles.minX - 1, room.tiles.minY))
             total += cells.size
         }
-        assertEquals(10565, total)  // 9 small x 220 + 5 x 441 + 3 x 630 + 1813 + 1764 + 913
+        assertEquals(10565, total)
     }
 
     @Test
@@ -95,7 +93,6 @@ class RoomParityTest {
             assertEquals("Vector2i(100, 100)", tileSet.props["tile_size"])
             assertEquals("1", tileSet.props["physics_layer_0/collision_layer"])
             assertEquals("2", tileSet.props["navigation_layer_0/layers"])
-            // Every nav polygon is the full tile square.
             scene.subResources.values.filter { it.attrs["type"] == "NavigationPolygon" }.forEach {
                 assertEquals("PackedVector2Array(50, 50, -50, 50, -50, -50, 50, -50)", it.props["vertices"])
                 assertEquals("0.0", it.props["agent_radius"])
@@ -122,7 +119,6 @@ class RoomParityTest {
         }
     }
 
-    /** Godot Transform2D(rotation, scale) + origin, applied as x*X + y*Y + O. */
     private class Xf(val xx: Double, val xy: Double, val yx: Double, val yy: Double, val ox: Double, val oy: Double) {
         operator fun times(b: Xf) = Xf(
             xx * b.xx + yx * b.xy, xy * b.xx + yy * b.xy,
@@ -183,7 +179,6 @@ class RoomParityTest {
                 val arr = xf.apply(arrival.first, arrival.second)
                 assertEquals("$msg arrival x", arr.first, door.arrival.x.toDouble(), 1e-3)
                 assertEquals("$msg arrival y", arr.second, door.arrival.y.toDouble(), 1e-3)
-                // The arrival point lies inside the room's module box, past the teleporter.
                 assertTrue("$msg arrival inside box", room.moduleBox.contains(door.arrival))
                 doors++
             }
@@ -199,7 +194,6 @@ class RoomParityTest {
             val centre = GodotText.vec2(shape.props.getValue("position"))
             val size = GodotText.vec2(scene.sub(shape.props.getValue("shape")).props.getValue("size"))
             assertRect(room.id, doubleArrayOf(centre.first - size.first / 2, centre.second - size.second / 2, size.first, size.second), room.moduleBox)
-            // The tile grid encloses the module box.
             val t = room.tiles
             assertTrue(room.id, room.moduleBox.x >= t.minX * 100f && room.moduleBox.right <= (t.minX + t.width) * 100f)
             assertTrue(room.id, room.moduleBox.y >= t.minY * 100f && room.moduleBox.bottom <= (t.minY + t.height) * 100f)

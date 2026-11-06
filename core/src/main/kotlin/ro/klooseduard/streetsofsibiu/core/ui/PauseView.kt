@@ -8,11 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 
-/**
- * pause_menu.tscn with the *intended* behaviour of pause_menu.gd (D-B1: the original script does
- * not parse): centred 700x630 panel, Resume / Settings / Main Menu (font 32, default theme) and the
- * statistics text (JetBrains Mono NL 28, yellow outline 3).
- */
 class PauseView(ui: UiKit, onResume: () -> Unit, onSettings: () -> Unit, onMainMenu: () -> Unit) : Group() {
     private val stats: Label = ui.label("", 28, face = Fonts.Face.JETBRAINS_MONO_NL, outline = 3, outlineColor = Color(1f, 0.85882354f, 0f, 1f), lineSpacing = 4)
 
@@ -35,7 +30,6 @@ class PauseView(ui: UiKit, onResume: () -> Unit, onSettings: () -> Unit, onMainM
         addActor(row)
     }
 
-    /** pause_menu.gd update_stats() text, verbatim (including the int-formatted sniper line, B14). */
     fun setStats(level: Int, hp: Double, maxHp: Double, shield: Double) {
         stats.setText(
             "Player Statistics\n" +

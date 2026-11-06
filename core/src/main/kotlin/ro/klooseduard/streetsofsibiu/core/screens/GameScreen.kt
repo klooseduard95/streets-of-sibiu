@@ -39,12 +39,6 @@ import ro.klooseduard.streetsofsibiu.logic.world.CameraRig
 import ro.klooseduard.streetsofsibiu.logic.world.Player
 import ro.klooseduard.streetsofsibiu.logic.world.RoomCollision
 
-/**
- * MainBackground.tscn at the start of the game (D1 scope): level 1 begins with the black screen,
- * the spawn room is placed, the camera anchors to it and the screen fades in; the player walks
- * with the ported move_and_slide and the room clamp. Level generation, enemies, items and warps
- * follow in later phases (the doors' Preventers block the openings until then).
- */
 class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val view = GodotView()
     private val batch = SpriteBatch()
@@ -54,15 +48,15 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val circle: Texture
 
     private val actions = ActionInput<Action>(runtime)
-    private val mainBackground = SceneNode()          // MainBackground (pausable)
-    private val player = Player(Vec2(996f, 545f))     // Player position in MainBackground.tscn
-    private val camera = CameraRig()                  // CoolCamera, process mode ALWAYS
+    private val mainBackground = SceneNode()
+    private val player = Player(Vec2(996f, 545f))
+    private val camera = CameraRig()
     private var room: RoomDef? = null
     private var world = StaticWorld(emptyList())
 
     var currentLevel = 0; private set
     private var isInTransition = false
-    private var blackAlpha = 1.0                     // Overlay/BlackScreen modulate:a (starts opaque)
+    private var blackAlpha = 1.0
 
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
     private val blackScreen = Image(game.ui.color(Color.BLACK)).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) }
@@ -83,7 +77,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         }
         circle = Texture(Pixmap(128, 128, Pixmap.Format.RGBA8888).apply { setColor(Color.WHITE); fillCircle(64, 64, 63) })
 
-        stage.addActor(blackScreen)      // CanvasLayer order: Overlay before the HUD layers
+        stage.addActor(blackScreen)
         stage.addActor(hud)
         pauseView.isVisible = false
         settingsView.isVisible = false
@@ -98,13 +92,11 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         hud.setInventory(PlayerDefs.INITIAL_INVENTORY, selected = 0)
         updateHealthUi()
 
-        // Camera enters the tree with the player, then MainBackground._ready() starts level 1.
         camera.enterTree()
         camera.update(player.position, TICK)
         finishLevel()
     }
 
-    /** main_background.gd finishLevel(): black fade-in, build the level, fade out. */
     private fun finishLevel() {
         currentLevel++
         val tween = runtime.createTween(mainBackground)
@@ -112,17 +104,15 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         tween.onFinished { generateLevel() }
     }
 
-    /** main_background.gd generateLevel() for D1: the spawn room only (generation is Phase 10). */
     private fun generateLevel() {
         isInTransition = true
         val spawn = RoomCatalog.room(RoomCatalog.SPAWN_ROOM)
-        // add_child.call_deferred(activeRoom); await activeRoom.ready
         runtime.callDeferred {
             room = spawn
             world = RoomCollision.world(spawn)
-            camera.setLimitsFromModuleBox(spawn.moduleBox)       // updateCameraAnchor
+            camera.setLimitsFromModuleBox(spawn.moduleBox)
             camera.resetSmoothing(player.position, TICK)
-            player.body.position = spawn.moduleBox.center        // getRoomCenter()
+            player.body.position = spawn.moduleBox.center
             isInTransition = false
             val fadeOut = runtime.createTween(mainBackground)
             fadeOut.tweenProperty({ blackAlpha }, { blackAlpha = it }, 0.0, 0.25)
@@ -130,7 +120,6 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         }
     }
 
-    /** InventoryComponent.selected_slot_index setter (equip/unequip has no effect in D1: no weapons yet). */
     private fun selectSlot(index: Int) {
         if (runtime.paused) return
         selectedSlot = index
@@ -139,12 +128,9 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private fun updateHealthUi() {
         hud.setStats(player.hp, player.maxHp, player.shield)
-        // information_ui.gd: tween ProgressBar.value to hp over 0.2 s, sine, ease out.
         runtime.createTween(mainBackground).setTrans(TransitionType.SINE).setEase(EaseType.OUT)
             .tweenProperty({ hud.hpBarValue }, { hud.hpBarValue = it }, player.hp, 0.2)
     }
-
-    // ------------------------------------------------------------------ pause (intended pause_menu.gd, D-B1)
 
     private fun togglePause() {
         if (isInTransition) return
@@ -159,7 +145,6 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private var pauseRequested = false
 
-    /** Development option: open the pause menu as soon as the level-start transition is over. */
     fun pauseWhenReady() {
         pauseRequested = true
     }
@@ -179,10 +164,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         game.showMainMenu()
     }
 
-    // ------------------------------------------------------------------ frame hooks
-
     override fun physicsProcess(delta: Double) {
-        // MainBackground._physics_process (parent, runs before the player): clamp to camera limits ± 40.
         if (!runtime.paused) {
             val p = player.body.position
             player.body.position = Vec2(
@@ -191,7 +173,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             )
             player.physicsProcess(actions, world, delta)
         }
-        camera.update(player.position, delta.toFloat())   // ALWAYS: keeps smoothing while paused
+        camera.update(player.position, delta.toFloat())
     }
 
     override fun process(delta: Double) {
@@ -226,7 +208,6 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         actions.releaseAll()
     }
 
-    /** Android backgrounding (D3): open the pause menu so the game does not run on unattended. */
     override fun pause() {
         stick.releaseAll()
         actions.releaseAll()

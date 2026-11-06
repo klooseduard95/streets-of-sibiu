@@ -1,6 +1,4 @@
 #!/usr/bin/env bash
-# Runs one probe against the project copy and stores its JSON in results/.
-# Usage: tools/godot-reference/run_probe.sh v1_runtime [--windowed]
 set -euo pipefail
 HERE="$(cd "$(dirname "$0")" && pwd)"
 GODOT="$HERE/engine/Godot.app/Contents/MacOS/Godot"

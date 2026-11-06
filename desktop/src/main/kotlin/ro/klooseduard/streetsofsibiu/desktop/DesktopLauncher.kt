@@ -5,13 +5,6 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
 import ro.klooseduard.streetsofsibiu.core.StreetsOfSibiuGame
 import ro.klooseduard.streetsofsibiu.logic.GodotProjectSettings
 
-/**
- * Optional system properties (development only), passed as Gradle properties to `:desktop:run`:
- *  - `sos.screen=menu|rooms` start screen; `sos.room=<ROOM_ID>` start room for the room viewer.
- *  - `sos.window=WIDTHxHEIGHT` window size (default: half of 1920x1080).
- *  - `sos.screenshot=/path/out.png` save a screenshot after `sos.screenshotFrame` frames (default 30), then exit.
- *  - `sos.captureRooms=/dir` render every room (centre and top-left views) to PNG files, then exit.
- */
 fun main() {
     val (width, height) = System.getProperty("sos.window")
         ?.split('x')?.map { it.trim().toInt() }

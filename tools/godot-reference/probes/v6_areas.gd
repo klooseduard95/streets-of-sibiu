@@ -1,5 +1,3 @@
-## V6: does re-enabling a disabled CollisionShape2D re-emit body_entered for an overlapping body?
-## V7: order of body_entered when a player bullet appears overlapping an enemy body AND its hitbox.
 extends "res://probes/probe_base.gd"
 
 var log_rows := []
@@ -15,10 +13,10 @@ func _circle(r: float) -> CollisionShape2D:
 func _v6() -> Dictionary:
 	var world := Node2D.new()
 	root.add_child(world)
-	var body := CharacterBody2D.new()  # stands in for the Player (layer 1)
+	var body := CharacterBody2D.new()
 	body.add_child(_circle(30))
 	world.add_child(body)
-	var area := Area2D.new()          # stands in for the enemy HitRange (mask 1)
+	var area := Area2D.new()
 	var shape := _circle(50)
 	area.add_child(shape)
 	area.position = Vector2(20, 0)
@@ -30,9 +28,9 @@ func _v6() -> Dictionary:
 		await physics_frame
 		tick = t
 		if t == 5:
-			shape.set_deferred("disabled", true)   # as BasicEnemy.attack()
+			shape.set_deferred("disabled", true)
 		if t == 15:
-			shape.set_deferred("disabled", false)  # after the cooldown
+			shape.set_deferred("disabled", false)
 	world.queue_free()
 	await physics_frames(2)
 	return {"events_[name,tick]": events, "note": "disable at tick 5 (deferred), re-enable at tick 15 (deferred)"}
@@ -40,10 +38,10 @@ func _v6() -> Dictionary:
 func _v7_trial(enemy_first: bool, hitbox_child_first: bool, bullet_offset: Vector2) -> Array:
 	var world := Node2D.new()
 	root.add_child(world)
-	var enemy := CharacterBody2D.new()      # Enemy body: layer 1, circle r10
+	var enemy := CharacterBody2D.new()
 	enemy.name = "EnemyBody"
 	var body_shape := _circle(10)
-	var hitbox := StaticBody2D.new()         # EnemyHitbox: layer/mask 4, circle r27
+	var hitbox := StaticBody2D.new()
 	hitbox.name = "EnemyHitbox"
 	hitbox.collision_layer = 4
 	hitbox.collision_mask = 4
@@ -52,7 +50,7 @@ func _v7_trial(enemy_first: bool, hitbox_child_first: bool, bullet_offset: Vecto
 		enemy.add_child(hitbox); enemy.add_child(body_shape)
 	else:
 		enemy.add_child(body_shape); enemy.add_child(hitbox)
-	var bullet := Area2D.new()               # player bullet: layer/mask 5, capsule r11 h32 rotated 90°
+	var bullet := Area2D.new()
 	bullet.collision_layer = 5
 	bullet.collision_mask = 5
 	var cs := CollisionShape2D.new()
