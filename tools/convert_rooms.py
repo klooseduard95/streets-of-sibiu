@@ -162,7 +162,8 @@ def convert(room, geo):
             radius = int(props.get("spawnRadius", "100"))
             spawns.append((attrs["name"], vec(props["position"]), radius))
     assert module_box is not None
-    return dict(id=room, min_x=min_x, min_y=min_y, width=width, height=height, rows=rows,
+    order = ",".join("%d,%d" % c for c in cells)
+    return dict(id=room, order=order, min_x=min_x, min_y=min_y, width=width, height=height, rows=rows,
                 doors=doors, module_box=module_box, spawns=spawns, cell_count=len(cells))
 
 
@@ -195,6 +196,7 @@ def emit(rooms):
         for row in r["rows"]:
             out.append('                "%s",' % row)
         out.append("            ),")
+        out.append('            order = "%s",' % r["order"])
         out.append("        ),")
         out.append("        doors = listOf(")
         for name, orient, pos, rot, scl, tele, prev, arr in r["doors"]:

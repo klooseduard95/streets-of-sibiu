@@ -400,3 +400,17 @@ Related documents:
 - Core: ground item sprites at native size, label 42 px below the player (default font 16), E key and an E button on Android, dev switch `-Psos.ground="primary_sniper@120,0;consumable_health@-300,0"` (desktop) / `-e ground ...` (Android), offsets from the spawn-room centre. Ground items are cleared when a level is generated (B12), dev items are spawned after that.
 - Tests: 17 new (interaction range and label, nearest first, pick up, swap rules, every consumable). Screenshots checked on desktop: label "Pick up Sniper Rifle", pick-up puts the sniper in slot 1 with "Ammo: 1 / 1".
 - Still open in D3: enemies (Phase 8) and enemy hitboxes as bullet targets.
+
+## 2026-11-06 — Session 17: Delivery 3, milestone 3: navigation (enemy pathfinding)
+
+**User:** start on the enemies. Enemies need `NavigationAgent2D`, which was not ported yet (plan E4), so navigation came first.
+
+- Fetched the missing Godot 4.6.1 sources (MIT) into `tools/godot-reference/engine-source/`: `servers/nav_heap.h`, `modules/navigation_2d/2d/nav_map_builder_2d.cpp`, `nav_region_builder_2d.cpp`, `nav_mesh_queries_2d.h`, `nav_base_iteration_2d.h`, `nav_utils_2d.h`, `triangle2.cpp`, `nav_agent_2d.cpp`, `nav_region_2d.cpp`.
+- `logic/nav`:
+  - `NavMesh`: one square polygon per walkable cell (tile nav polygon is the full tile, vertex order (+,+), (−,+), (−,−), (+,−)); neighbours linked through shared edges in the order Godot's map builder inserts them.
+  - `NavQuery`: Godot's A* with its heap (`nav_heap.h`), f/h-cost tie-break, `path_search_max_polygons` / `path_search_max_distance` (partial path to the closest reachable polygon), corridor funnel and `_query_task_clip_path` (this is why paths contain a point at every portal crossing). Costs are rounded to float32, which Godot uses.
+  - `NavAgent`: `NavigationAgent2D` target/waypoint logic (path_desired 20, target_desired 10, path_max_distance 100).
+  - `RoomNav.mesh(room)`.
+- **The A* tie-breaks depend on the order of the regions** (one region per tile). The order that reproduces Godot is the order of the cells in the `.tscn` `tile_map_data`, not row-major. `tools/convert_rooms.py` now also emits `order = "x,y,…"` for each room (`TileGrid.cellOrder`); regenerating changed only those 20 lines of `GeneratedRooms.kt`.
+- Results against Godot: **120 of 120** recorded paths (limited to 500 px and unlimited, 5 rooms) identical, worst deviation 0.001 px; walkable tile counts equal; both recorded chase traces (agent + floating `move_and_slide`) match within 0.0002 px, including the `is_navigation_finished` flag.
+- Next: enemy data (stats, scaling, size roll), `BasicEnemy` AI (agro tick, line of sight, attack loop, projectiles), health bar, death, hitboxes as bullet targets, spawning from the room spawn nodes, rendering and sounds.

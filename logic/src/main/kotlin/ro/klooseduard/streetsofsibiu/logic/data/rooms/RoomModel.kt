@@ -28,7 +28,7 @@ object RoomTileSet {
     fun isWalkable(c: AtlasCoord): Boolean = !isSolid(c)
 }
 
-class TileGrid(val minX: Int, val minY: Int, val width: Int, val height: Int, private val rows: List<String>) {
+class TileGrid(val minX: Int, val minY: Int, val width: Int, val height: Int, private val rows: List<String>, order: String = "") {
     init {
         require(rows.size == height && rows.all { it.length == width * 2 }) { "malformed tile rows" }
     }
@@ -41,6 +41,8 @@ class TileGrid(val minX: Int, val minY: Int, val width: Int, val height: Int, pr
         val b = rows[row][col * 2 + 1]
         return if (a == '.') null else AtlasCoord(a - '0', b - '0')
     }
+
+    val cellOrder: List<Pair<Int, Int>> = if (order.isEmpty()) emptyList() else order.split(',').map { it.toInt() }.chunked(2).map { it[0] to it[1] }
 
     val cells: List<Pair<Pair<Int, Int>, AtlasCoord>> by lazy {
         buildList {
