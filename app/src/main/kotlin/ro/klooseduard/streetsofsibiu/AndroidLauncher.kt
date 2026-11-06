@@ -13,6 +13,6 @@ class AndroidLauncher : AndroidApplication() {
             useAccelerometer = false
             useCompass = false
         }
-        initialize(StreetsOfSibiuGame(intent.getStringExtra("screen") ?: "menu", intent.getStringExtra("room"), intent.getStringExtra("dash"), intent.getStringExtra("parry")), config)
+        initialize(StreetsOfSibiuGame(intent.getStringExtra("screen") ?: "menu", intent.getStringExtra("room"), intent.getStringExtra("dash"), intent.getStringExtra("parry"), intent.getStringExtra("items"), intent.getStringExtra("ground"), intent.getStringExtra("enemies")), config)
     }
 }

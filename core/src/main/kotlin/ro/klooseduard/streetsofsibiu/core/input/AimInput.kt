@@ -27,6 +27,7 @@ class AimInput(private val actions: ActionInput<Action>, private val viewport: V
         if (this.pointer < 0 && (p.x > VIEW_W / 2 || isMouse())) {
             this.pointer = pointer
             aim.set(p)
+            actions.press(Action.SHOOT)
             return true
         }
         return false
@@ -45,12 +46,14 @@ class AimInput(private val actions: ActionInput<Action>, private val viewport: V
         }
         if (pointer != this.pointer) return false
         this.pointer = -1
+        actions.release(Action.SHOOT)
         return true
     }
 
     fun releaseAll() {
         pointer = -1
         actions.release(Action.PARRY)
+        actions.release(Action.SHOOT)
     }
 
     private fun isMouse() = com.badlogic.gdx.Gdx.app.type != com.badlogic.gdx.Application.ApplicationType.Android

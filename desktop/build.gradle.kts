@@ -30,7 +30,7 @@ application {
 tasks.named<JavaExec>("run") {
     workingDir = rootDir.resolve("assets")
     javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(21) }
-    listOf("sos.window", "sos.screenshot", "sos.screenshotFrame", "sos.screen", "sos.room", "sos.captureRooms", "sos.dash", "sos.parry", "sos.keys").forEach { key ->
+    listOf("sos.window", "sos.screenshot", "sos.screenshotFrame", "sos.screen", "sos.room", "sos.captureRooms", "sos.dash", "sos.parry", "sos.keys", "sos.items", "sos.ground", "sos.enemies").forEach { key ->
         providers.gradleProperty(key).orNull?.let { systemProperty(key, it) }
     }
     if (System.getProperty("os.name").lowercase().contains("mac")) {

@@ -375,3 +375,66 @@ Related documents:
 - On request, rewrote all branches: removed the co-author and session trailers from every commit message and the artifact link from `MIGRATION_LOG.md` (all revisions). All commit hashes changed; content is otherwise identical.
 - Re-checked messages and file contents of every revision: no match. Authors and committers are only `klooseduard95`.
 - From now on commits and pull requests carry no attribution lines.
+
+## 2026-11-06 — Session 15: Delivery 3 started (branch `d3-weapons-inventory-enemies`), milestone 1: weapons
+
+**User:** start Delivery 3 on a new branch; never write any co-author or tool reference (saved to memory).
+
+- Branch from `main`. Plan §10 D3 = Phases 7 and 8 (weapons, bullets, inventory, interaction, HUD; enemies with navigation).
+- Done in `:logic`: `HeldWeapon` (shoot, ammo, reload, crit, damage formula, chainsaw ramp with real-time decay, sniper empties the magazine), `Bullet` + `BulletSystem` (movement, range, wall/hitbox/enemy-body rules from `bullet.gd`, hit detection at the start of the next physics tick like Godot's Area2D signals; capsule r11/h32 along travel, r36/h92 perpendicular for melee), `Inventory` (slots, equip/unequip modifiers, `add_item`, `swap_item`; B11 fix: fresh instances; B10 preserved), `Player` hooks (shoot while held, reload on press, aim at the cursor).
+- Done in `:core`: left mouse / right-half touch hold = shoot, bullet drawing (melee shows the weapon icon), HUD inventory icons and ammo label states ("Ammo: a / b", "∞", "Reloading..."), R button on Android, weapon sounds. Dev switch `-Psos.items=primary_medium,Knife` (desktop) / `-e items ...` (Android) since pickups do not exist yet; the screenshot harness can script touches (`100:touch:800:270,111:untouch:800:270`).
+- Tests: 17 new weapon/inventory/bullet tests; crit rate measured 20.1 % for the sniper (expected 20 %).
+- Not done yet in D3: ground items and interaction (E), consumables activation, enemies (stats, AI, navigation, projectiles, health bars), enemy hitboxes as `BulletTarget`.
+
+## 2026-11-06 — Session 16: Delivery 3, milestone 2: ground items, interaction, consumables
+
+**User:** continue with ground items and interaction.
+
+- Ported `interactable.gd`, `interacting_component.gd` and `item_placeholder.gd` (GameItem) to `:logic` (`Interaction.kt`):
+  - the interact range is a circle of r 45 (30 × 1.5) against the item's Interactable circle of r 95, so an item is offered up to 140 px away;
+  - overlaps are evaluated at the start of the physics tick (area signals); the list keeps entry order and is sorted by distance every idle frame;
+  - E acts on the first entry; the label keeps its previous text if the first entry is not interactable;
+  - picking up: `add_item` into the first free matching slot (the ground item is freed), otherwise `swap_item` with the selected slot: the old item stays on the ground as "Switch with X". B11: fresh instances.
+- Consumables (`consumable_item.gd`): used on the press, Health only below max HP (capped by the `max_hp` stat), negative HP applies directly (stun grenade), shield, timed buffs and the Adrenaline after-effect; potion sound; the slot empties. `slown_enemy` is tracked on the player (`slownEnemy`) for the enemies.
+- `ItemDef` interface for weapons and consumables.
+- Core: ground item sprites at native size, label 42 px below the player (default font 16), E key and an E button on Android, dev switch `-Psos.ground="primary_sniper@120,0;consumable_health@-300,0"` (desktop) / `-e ground ...` (Android), offsets from the spawn-room centre. Ground items are cleared when a level is generated (B12), dev items are spawned after that.
+- Tests: 17 new (interaction range and label, nearest first, pick up, swap rules, every consumable). Screenshots checked on desktop: label "Pick up Sniper Rifle", pick-up puts the sniper in slot 1 with "Ammo: 1 / 1".
+- Still open in D3: enemies (Phase 8) and enemy hitboxes as bullet targets.
+
+## 2026-11-06 — Session 17: Delivery 3, milestone 3: navigation (enemy pathfinding)
+
+**User:** start on the enemies. Enemies need `NavigationAgent2D`, which was not ported yet (plan E4), so navigation came first.
+
+- Fetched the missing Godot 4.6.1 sources (MIT) into `tools/godot-reference/engine-source/`: `servers/nav_heap.h`, `modules/navigation_2d/2d/nav_map_builder_2d.cpp`, `nav_region_builder_2d.cpp`, `nav_mesh_queries_2d.h`, `nav_base_iteration_2d.h`, `nav_utils_2d.h`, `triangle2.cpp`, `nav_agent_2d.cpp`, `nav_region_2d.cpp`.
+- `logic/nav`:
+  - `NavMesh`: one square polygon per walkable cell (tile nav polygon is the full tile, vertex order (+,+), (−,+), (−,−), (+,−)); neighbours linked through shared edges in the order Godot's map builder inserts them.
+  - `NavQuery`: Godot's A* with its heap (`nav_heap.h`), f/h-cost tie-break, `path_search_max_polygons` / `path_search_max_distance` (partial path to the closest reachable polygon), corridor funnel and `_query_task_clip_path` (this is why paths contain a point at every portal crossing). Costs are rounded to float32, which Godot uses.
+  - `NavAgent`: `NavigationAgent2D` target/waypoint logic (path_desired 20, target_desired 10, path_max_distance 100).
+  - `RoomNav.mesh(room)`.
+- **The A* tie-breaks depend on the order of the regions** (one region per tile). The order that reproduces Godot is the order of the cells in the `.tscn` `tile_map_data`, not row-major. `tools/convert_rooms.py` now also emits `order = "x,y,…"` for each room (`TileGrid.cellOrder`); regenerating changed only those 20 lines of `GeneratedRooms.kt`.
+- Results against Godot: **120 of 120** recorded paths (limited to 500 px and unlimited, 5 rooms) identical, worst deviation 0.001 px; walkable tile counts equal; both recorded chase traces (agent + floating `move_and_slide`) match within 0.0002 px, including the `is_navigation_finished` flag.
+- Next: enemy data (stats, scaling, size roll), `BasicEnemy` AI (agro tick, line of sight, attack loop, projectiles), health bar, death, hitboxes as bullet targets, spawning from the room spawn nodes, rendering and sounds.
+
+## 2026-11-06 — Session 18: Delivery 3, milestone 4: basic enemies
+
+**User:** continue with the enemies (after navigation).
+
+- `:logic` `Enemy` + `EnemySystem` (`Enemy.kt`, `EnemySystem.kt`), from `IEnemy.gd`, `enemy.gd`, `EnemyHitbox.gd`, `enemy_projectile.gd`, `EnemySpawnNode.gd`:
+  - Stats with per-level scaling (rat hp +3 dmg +1, pigeon +2/+1, thief and criminal +3/+1.5) and the size roll (10 % stay, 75 % → 1.25, 15 % → 1.5; a 1.25 then has a 15 % chance of 1.5; hp and damage bonuses as in the script). The random calls are made in the original order.
+  - AI: 1 s tick, aggro circle (vision × 10, scaled), line of sight as a ray that walls, other enemies and the player block; `agro += (11 − agro) / 3` gives 0 → 3 → 5 → 7 → 8 → 9, −1 per tick without sight, idle at 0; path target is set while agro > 0; velocity = direction to the next path point × walkSpeed × `slownEnemy`; floating `move_and_slide` with a circle collider of r 10 × size.
+  - Attack loop: the hit range is an area (r = reach × size) that fires when the player enters; it is disabled (deferred) during windup and cooldown and re-enabled afterwards, so attacks repeat while the player stays in reach (V6). The projectile is spawned after the windup at the player's position at that moment.
+  - Projectiles: speed in px per tick, life timer, piercing rules, damage to the player with a 0.1 s flicker, walls free non-piercing ones; the rectangle shape is shared, so every live projectile uses the size of the latest spawned one (E12).
+  - Sprite animation: the 15-tick frame logic per type, including the `!row` quirk for thief and criminal.
+  - Health bar hidden until the first damage, tween 0.4 s; death: count −1, damage and speed 0, 0.3 s fade, removal. Hitbox (circle r 27) is hit first by bullets, the body (circle r 10) blocks ranged bullets and not melee ones.
+  - `EnemySystem.spawnFromNode` follows the level spawn tables (ghost and marshmallow are skipped until Phase 9).
+- `StaticWorld` now supports dynamic round obstacles (the player capsule and enemy circles) so enemies and the player collide with each other; boxes gained an inflate radius for rounded shapes.
+- `:core`: enemies, health bars and projectiles are drawn; enemy sounds (Rat, Pigeon, Grunt, 30 % CeTelefonAi) play non-positionally; dev switch `-Psos.enemies="rat@300,0;pigeon@-300,100"` (desktop) / `-e enemies ...` (Android), offsets from the spawn-room centre.
+- Tests: 17 new enemy tests (scaling, χ² of the size roll over 20 000 spawns: 0.48 against a critical value of 13.8, agro sequence, line of sight, chase, attack loop, projectile rules, death, collision with the player, spawn tables). Screenshot on desktop shows all four types chasing and hurting the player.
+- Not done in D3: enemy hitbox/body hits for chainsaw ramp are wired through `BulletTarget`; the spawn of enemies from rooms during level generation belongs to Phase 10 (D4).
+
+## 2026-11-06 — Session 19: Delivery 3 wrap-up and merge
+
+- Emulator pass (API 37, `-no-snapshot-load -no-snapshot-save`): weapons, enemies and the four action buttons work, no crash. A first launch with `;` inside an `adb shell` extra failed because the device shell split the command; escape it as `\;`. A tap near the bottom edge had earlier opened the system assistant (D16).
+- Wrote `DELIVERY_D3.md`, updated `MIGRATION_STATUS.md` (phases 7 and 8 done; D21, D22).
+- Merged `d3-weapons-inventory-enemies` into `main`.
+- Next: D4 (due 2026-12-03): ghost, manhole spawner, King Rotta; level generation, warps, barricades, exits.

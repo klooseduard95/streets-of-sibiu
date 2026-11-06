@@ -3,6 +3,10 @@ package ro.klooseduard.streetsofsibiu.logic.runtime
 class GameRuntime(val random: GameRandom = GameRandom()) {
     var paused = false
 
+    var clockMs: () -> Long = { System.nanoTime() / 1_000_000 }
+
+    fun ticksMsec(): Long = clockMs()
+
     var physicsFrames = 0L
         private set
 

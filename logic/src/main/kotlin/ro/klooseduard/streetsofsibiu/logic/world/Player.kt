@@ -27,7 +27,13 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
     var onSound: (PlayerSound) -> Unit = {}
     var onStatsChanged: () -> Unit = {}
     var onDeathAnimationFinished: () -> Unit = {}
-    var heldItem: PlayerItem? = null
+    var onWeaponSound: (String) -> Unit = {}
+    var bullets = BulletSystem(runtime)
+    val inventory = Inventory(this)
+    val interaction = InteractionSystem(this)
+    var heldItem: PlayerItem?
+        get() = inventory.items[inventory.selected]
+        set(value) { inventory.items[inventory.selected] = value }
 
     var speed = PlayerDefs.BASE_SPEED
     var maxHp = PlayerDefs.MAX_HP
@@ -38,6 +44,7 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
         }
     var shield = 0.0
     var dmgReductionRaw = 0.0
+    var slownEnemy = 1.0
 
     var canTakeDmg = true
     var isSliding = false; private set
@@ -78,6 +85,7 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
             if (input.isPressed(Action.MOVE_LEFTWARD)) dx -= 1
             if (input.isPressed(Action.MOVE_RIGHTWARD)) dx += 1
             val len = sqrt(dx * dx + dy * dy)
+            handleItem(input)
             if (len > 0) {
                 dx /= len
                 dy /= len
@@ -98,6 +106,27 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
     }
 
     fun process(delta: Double) = animator.process(delta)
+
+    private fun handleItem(input: ActionInput<Action>) {
+        when (val item = heldItem) {
+            is HeldWeapon -> {
+                if (input.isPressed(Action.SHOOT)) item.shoot(this, runtime, runtime.random, mousePosition(), bullets)
+                if (input.isJustPressed(Action.RELOAD)) item.reload(this, runtime)
+            }
+            is HeldConsumable -> if (input.isJustPressed(Action.SHOOT) && item.activate(this, runtime)) {
+                onSound(PlayerSound.POTION)
+                inventory.removeSelected()
+            }
+            null -> {}
+        }
+    }
+
+    fun applyWeaponModifiers(modifiers: Map<ro.klooseduard.streetsofsibiu.logic.data.Stat, Double>) {
+        weaponModifiers.clear()
+        modifiers.forEach { (stat, value) -> weaponModifiers[stat.godotName] = value }
+    }
+
+    fun clearWeaponModifiers() = weaponModifiers.clear()
 
     private fun startDash(dx: Double, dy: Double): Boolean {
         onSound(PlayerSound.DASH)
@@ -278,11 +307,19 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
     }
 
     fun addTemporaryBuff(modifiers: Map<String, Double>, duration: Double) {
-        modifiers.forEach { (stat, value) -> consumableModifiers[stat] = (consumableModifiers[stat] ?: 0.0) + value }
+        modifiers.forEach { (stat, value) ->
+            consumableModifiers[stat] = (consumableModifiers[stat] ?: 0.0) + value
+            if (stat == "slown_enemy") slownEnemy += value
+        }
         onStatsChanged()
         runtime.createTimer(duration, processAlways = false).onTimeout {
             if (isFreed) return@onTimeout
-            modifiers.forEach { (stat, value) -> consumableModifiers[stat]?.let { consumableModifiers[stat] = it - value } }
+            modifiers.forEach { (stat, value) ->
+                consumableModifiers[stat]?.let {
+                    consumableModifiers[stat] = it - value
+                    if (stat == "slown_enemy") slownEnemy -= value
+                }
+            }
             onStatsChanged()
         }
     }
@@ -294,6 +331,7 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
                 continue
             }
             buffModifiers[stat] = (buffModifiers[stat] ?: 0.0) + value
+            if (stat == "slown_enemy") slownEnemy += value
             if (stat == "max_hp") hp += value
         }
         onStatsChanged()

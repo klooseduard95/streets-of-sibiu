@@ -2,14 +2,22 @@ package ro.klooseduard.streetsofsibiu.logic.data
 
 enum class ItemType { PRIMARY, SECONDARY, CONSUMABLE }
 
+interface ItemDef {
+    val id: String
+    val name: String
+    val description: String
+    val icon: String
+    val type: ItemType
+}
+
 enum class ProjectileKind(val scene: String) { RANGED("player/bullet.tscn"), MELEE("player/bullet_melee.tscn") }
 
 data class WeaponDef(
-    val id: String,
-    val name: String,
-    val description: String,
-    val icon: String,
-    val type: ItemType,
+    override val id: String,
+    override val name: String,
+    override val description: String,
+    override val icon: String,
+    override val type: ItemType,
     val projectile: ProjectileKind,
     val modifiers: Modifiers = emptyMap(),
     val dmg: Double,
@@ -25,21 +33,21 @@ data class WeaponDef(
     val isRamping: Boolean = false,
     val rampGainPerHit: Double = 1.0,
     val rampDecayPerSec: Double = 2.0,
-)
+) : ItemDef
 
 data class ConsumableDef(
-    val id: String,
-    val name: String,
-    val description: String,
-    val icon: String,
+    override val id: String,
+    override val name: String,
+    override val description: String,
+    override val icon: String,
     val hp: Int = 0,
     val shield: Int = 0,
     val buffDuration: Double = 0.0,
     val modifiers: Modifiers = emptyMap(),
     val afterEffectDuration: Double = 0.0,
     val afterEffectModifiers: Modifiers = emptyMap(),
-) {
-    val type: ItemType get() = ItemType.CONSUMABLE
+) : ItemDef {
+    override val type: ItemType get() = ItemType.CONSUMABLE
 }
 
 private const val ICONS = "item/item_assets/item icons/"
