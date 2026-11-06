@@ -27,7 +27,12 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
     var onSound: (PlayerSound) -> Unit = {}
     var onStatsChanged: () -> Unit = {}
     var onDeathAnimationFinished: () -> Unit = {}
-    var heldItem: PlayerItem? = null
+    var onWeaponSound: (String) -> Unit = {}
+    var bullets = BulletSystem(runtime)
+    val inventory = Inventory(this)
+    var heldItem: PlayerItem?
+        get() = inventory.items[inventory.selected]
+        set(value) { inventory.items[inventory.selected] = value }
 
     var speed = PlayerDefs.BASE_SPEED
     var maxHp = PlayerDefs.MAX_HP
@@ -78,6 +83,7 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
             if (input.isPressed(Action.MOVE_LEFTWARD)) dx -= 1
             if (input.isPressed(Action.MOVE_RIGHTWARD)) dx += 1
             val len = sqrt(dx * dx + dy * dy)
+            handleItem(input)
             if (len > 0) {
                 dx /= len
                 dy /= len
@@ -98,6 +104,19 @@ class Player(start: Vec2, private val runtime: GameRuntime, parent: SceneNode? =
     }
 
     fun process(delta: Double) = animator.process(delta)
+
+    private fun handleItem(input: ActionInput<Action>) {
+        val item = heldItem as? HeldWeapon ?: return
+        if (input.isPressed(Action.SHOOT)) item.shoot(this, runtime, runtime.random, mousePosition(), bullets)
+        if (input.isJustPressed(Action.RELOAD)) item.reload(this, runtime)
+    }
+
+    fun applyWeaponModifiers(modifiers: Map<ro.klooseduard.streetsofsibiu.logic.data.Stat, Double>) {
+        weaponModifiers.clear()
+        modifiers.forEach { (stat, value) -> weaponModifiers[stat.godotName] = value }
+    }
+
+    fun clearWeaponModifiers() = weaponModifiers.clear()
 
     private fun startDash(dx: Double, dy: Double): Boolean {
         onSound(PlayerSound.DASH)

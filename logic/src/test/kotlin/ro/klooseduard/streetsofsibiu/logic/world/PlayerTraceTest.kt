@@ -49,7 +49,7 @@ class PlayerTraceTest {
         val player = Player(Vec2(start[0].toFloat(), start[1].toFloat()), runtime)
         player.selectedDash = DashType.valueOf(sc["dash"] as String)
         player.selectedParry = (sc["parry"] as Double).toInt().let { ParryType.entries.getOrNull(it) }
-        if (sc["setup"] == "consumable") player.heldItem = HeldConsumable
+        if (sc["setup"] == "consumable") player.heldItem = HeldConsumable()
         val world = RoomCollision.world(RoomCatalog.room("SpawnRoom"))
         var tick = 0
         val result = Result()

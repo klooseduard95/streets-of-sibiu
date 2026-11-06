@@ -375,3 +375,13 @@ Related documents:
 - On request, rewrote all branches: removed the co-author and session trailers from every commit message and the artifact link from `MIGRATION_LOG.md` (all revisions). All commit hashes changed; content is otherwise identical.
 - Re-checked messages and file contents of every revision: no match. Authors and committers are only `klooseduard95`.
 - From now on commits and pull requests carry no attribution lines.
+
+## 2026-11-06 — Session 15: Delivery 3 started (branch `d3-weapons-inventory-enemies`), milestone 1: weapons
+
+**User:** start Delivery 3 on a new branch; never write any co-author or tool reference (saved to memory).
+
+- Branch from `main`. Plan §10 D3 = Phases 7 and 8 (weapons, bullets, inventory, interaction, HUD; enemies with navigation).
+- Done in `:logic`: `HeldWeapon` (shoot, ammo, reload, crit, damage formula, chainsaw ramp with real-time decay, sniper empties the magazine), `Bullet` + `BulletSystem` (movement, range, wall/hitbox/enemy-body rules from `bullet.gd`, hit detection at the start of the next physics tick like Godot's Area2D signals; capsule r11/h32 along travel, r36/h92 perpendicular for melee), `Inventory` (slots, equip/unequip modifiers, `add_item`, `swap_item`; B11 fix: fresh instances; B10 preserved), `Player` hooks (shoot while held, reload on press, aim at the cursor).
+- Done in `:core`: left mouse / right-half touch hold = shoot, bullet drawing (melee shows the weapon icon), HUD inventory icons and ammo label states ("Ammo: a / b", "∞", "Reloading..."), R button on Android, weapon sounds. Dev switch `-Psos.items=primary_medium,Knife` (desktop) / `-e items ...` (Android) since pickups do not exist yet; the screenshot harness can script touches (`100:touch:800:270,111:untouch:800:270`).
+- Tests: 17 new weapon/inventory/bullet tests; crit rate measured 20.1 % for the sniper (expected 20 %).
+- Not done yet in D3: ground items and interaction (E), consumables activation, enemies (stats, AI, navigation, projectiles, health bars), enemy hitboxes as `BulletTarget`.

@@ -8,7 +8,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.utils.Align
 import com.badlogic.gdx.utils.Scaling
-import ro.klooseduard.streetsofsibiu.logic.data.WeaponDef
 
 class HudView(private val ui: UiKit, textures: (String) -> Texture, private val onSlotTapped: (Int) -> Unit = {}) : Group() {
     private val hpLabel: Label
@@ -73,11 +72,16 @@ class HudView(private val ui: UiKit, textures: (String) -> Texture, private val 
         shieldLabel.setText("Shield: %d".format(java.util.Locale.ROOT, shield.toInt()))
     }
 
-    fun setInventory(items: List<WeaponDef?>, selected: Int) {
-        items.forEachIndexed { i, item ->
+    fun setAmmo(text: String?) {
+        ammoLabel.isVisible = text != null
+        if (text != null && ammoLabel.text.toString() != text) ammoLabel.setText(text)
+    }
+
+    fun setInventory(icons: List<String?>, selected: Int) {
+        icons.forEachIndexed { i, icon ->
             val img = slotImages[i]
-            if (item != null) {
-                img.drawable = com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(iconFor(item.icon))
+            if (icon != null) {
+                img.drawable = com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(iconFor(icon))
                 img.color = Color(1f, 1f, 1f, 1f)
             } else {
                 img.drawable = com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable(emptySlot)

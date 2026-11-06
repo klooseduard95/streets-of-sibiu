@@ -41,6 +41,10 @@ import ro.klooseduard.streetsofsibiu.logic.runtime.SceneNode
 import ro.klooseduard.streetsofsibiu.logic.runtime.TransitionType
 import ro.klooseduard.streetsofsibiu.logic.world.Action
 import ro.klooseduard.streetsofsibiu.logic.world.CameraRig
+import ro.klooseduard.streetsofsibiu.logic.data.Weapons
+import ro.klooseduard.streetsofsibiu.logic.world.Bullet
+import ro.klooseduard.streetsofsibiu.logic.world.HeldConsumable
+import ro.klooseduard.streetsofsibiu.logic.world.HeldWeapon
 import ro.klooseduard.streetsofsibiu.logic.world.Player
 import ro.klooseduard.streetsofsibiu.logic.world.PlayerSound
 import ro.klooseduard.streetsofsibiu.logic.world.Rgba
@@ -53,6 +57,8 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val roomRenderer = RoomRenderer(atlas)
     private val playerFrames: Array<TextureRegion>
     private val circle: Texture
+    private val rangedRegion: TextureRegion
+    private val meleeRegions = HashMap<String, TextureRegion>()
 
     private val actions = ActionInput<Action>(runtime)
     private val mainBackground = SceneNode()
@@ -68,9 +74,9 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
     private val blackScreen = Image(game.ui.color(Color.BLACK)).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) }
     private val hud = HudView(game.ui, game::texture, ::selectSlot)
-    private var selectedSlot = 0
     private var dashButton: Actor? = null
     private var parryButton: Actor? = null
+    private var reloadButton: Actor? = null
     private val settingsView: SettingsView = SettingsView(game.ui, game.texture("menu.png"), game.buses, game.music::applyVolumes) { hideSettings() }
     private val pauseView: PauseView = PauseView(game.ui, onResume = ::resumeFromPause, onSettings = { settingsView.isVisible = true }, onMainMenu = ::toMainMenu)
     private val stick = TouchStick(actions, stage.viewport)
@@ -85,6 +91,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         playerFrames = Array(PlayerDefs.SPRITE_HFRAMES * PlayerDefs.SPRITE_VFRAMES) { i ->
             TextureRegion(sheet, (i % PlayerDefs.SPRITE_HFRAMES) * fw, (i / PlayerDefs.SPRITE_HFRAMES) * fh, fw, fh).apply { flip(false, true) }
         }
+        rangedRegion = flipped(game.texture(RANGED_TEXTURE))
         circle = Texture(Pixmap(128, 128, Pixmap.Format.RGBA8888).apply { setColor(Color.WHITE); fillCircle(64, 64, 63) })
 
         stage.addActor(blackScreen)
@@ -105,7 +112,12 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         player.mousePosition = ::aimWorldPosition
         player.onSound = ::playPlayerSound
         player.onStatsChanged = ::updateHealthUi
-        hud.setInventory(PlayerDefs.INITIAL_INVENTORY, selected = 0)
+        player.onWeaponSound = game::playSfx
+        player.inventory.onChanged = ::refreshInventory
+        game.devItems?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }?.forEach { id ->
+            Weapons.all.firstOrNull { it.id == id || it.name.equals(id, ignoreCase = true) }?.let(player.inventory::addItem)
+        }
+        refreshInventory()
         updateHealthUi()
 
         camera.enterTree()
@@ -116,6 +128,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private fun addActionButtons() {
         dashButton = actionButton("DASH", Action.BLINK, 1700f, 740f, 180f)
         parryButton = actionButton("PARRY", Action.PARRY, 1500f, 820f, 150f)
+        reloadButton = actionButton("R", Action.RELOAD, 1320f, 840f, 120f)
     }
 
     private fun actionButton(text: String, action: Action, x: Float, y: Float, size: Float): Actor =
@@ -158,6 +171,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         runtime.callDeferred {
             room = spawn
             world = RoomCollision.world(spawn)
+            player.bullets.world = world
             camera.setLimitsFromModuleBox(spawn.moduleBox)
             camera.resetSmoothing(player.position, TICK)
             player.body.position = spawn.moduleBox.center
@@ -170,8 +184,29 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private fun selectSlot(index: Int) {
         if (runtime.paused) return
-        selectedSlot = index
-        hud.setInventory(PlayerDefs.INITIAL_INVENTORY, selectedSlot)
+        player.inventory.selected = index
+    }
+
+    private fun refreshInventory() {
+        hud.setInventory(
+            player.inventory.items.map { item ->
+                when (item) {
+                    is HeldWeapon -> item.def?.icon
+                    is HeldConsumable -> item.def?.icon
+                    null -> null
+                }
+            },
+            player.inventory.selected,
+        )
+    }
+
+    private fun ammoText(): String? {
+        val item = player.heldItem as? HeldWeapon ?: return null
+        return when {
+            item.ammoCapacity == -1 -> "Ammo: ∞"
+            item.isReloading -> "Reloading..."
+            else -> "Ammo: %d / %d".format(java.util.Locale.ROOT, item.currentAmmo, item.totalCapacity(player))
+        }
     }
 
     private fun updateHealthUi() {
@@ -212,6 +247,10 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         game.showMainMenu()
     }
 
+    override fun flushPhysicsQueries() {
+        if (!runtime.paused) player.bullets.flushPhysicsQueries()
+    }
+
     override fun physicsProcess(delta: Double) {
         if (!runtime.paused) {
             val p = player.body.position
@@ -220,6 +259,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
                 p.y.coerceIn(camera.limitTop + 40f, camera.limitBottom - 40f),
             )
             player.physicsProcess(actions, world, delta)
+            player.bullets.physicsProcess(delta)
         }
         camera.update(player.position, delta.toFloat())
     }
@@ -234,6 +274,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         batch.projectionMatrix = view.camera.combined
         batch.begin()
         room?.let { roomRenderer.draw(batch, it, Vec2.ZERO, camera.screenTopLeft, view.width, view.height) }
+        for (bullet in player.bullets.bullets) drawBullet(bullet)
         for (ghost in player.ghosts) {
             val c = Rgba.GHOST_GREY
             drawPlayerSprite(ghost.frame, ghost.position, ghost.scale, c.r, c.g, c.b, ghost.alpha)
@@ -243,8 +284,10 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         batch.end()
 
         blackScreen.color.a = blackAlpha.toFloat()
+        hud.setAmmo(ammoText())
         dashButton?.isVisible = !runtime.paused
         parryButton?.isVisible = !runtime.paused
+        reloadButton?.isVisible = !runtime.paused
         stage.act(Gdx.graphics.deltaTime)
         stage.viewport.apply()
         stage.draw()
@@ -252,6 +295,18 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         stick.draw(stage.batch, circle)
         stage.batch.end()
     }
+
+    private fun drawBullet(bullet: Bullet) {
+        val region = if (bullet.isMelee) {
+            meleeRegions.getOrPut(bullet.weaponIcon ?: MELEE_TEXTURE) { flipped(game.texture(bullet.weaponIcon ?: MELEE_TEXTURE)) }
+        } else rangedRegion
+        val w = region.regionWidth.toFloat()
+        val h = region.regionHeight.toFloat()
+        val extra = if (bullet.isMelee) 90f else 0f
+        batch.draw(region, bullet.x.toFloat() - w / 2, bullet.y.toFloat() - h / 2, w / 2, h / 2, w, h, 1f, 1f, Math.toDegrees(bullet.rotation).toFloat() + extra)
+    }
+
+    private fun flipped(texture: Texture) = TextureRegion(texture).apply { flip(false, true) }
 
     private fun drawPlayerSprite(frameIndex: Int, at: Vec2, scale: Double, r: Double, g: Double, b: Double, a: Double) {
         val frame = playerFrames[frameIndex]
@@ -294,5 +349,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     companion object {
         private const val TICK = (1.0 / 60).toFloat()
+        private const val RANGED_TEXTURE = "item/item_assets/bullet_player.png"
+        private const val MELEE_TEXTURE = "item/item_assets/lines.png"
     }
 }
