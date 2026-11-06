@@ -9,11 +9,14 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.scenes.scene2d.Actor
+import com.badlogic.gdx.scenes.scene2d.InputEvent
+import com.badlogic.gdx.scenes.scene2d.InputListener
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener
 import com.badlogic.gdx.utils.viewport.FitViewport
 import ro.klooseduard.streetsofsibiu.core.StreetsOfSibiuGame
+import ro.klooseduard.streetsofsibiu.core.input.AimInput
 import ro.klooseduard.streetsofsibiu.core.input.KeyboardInput
 import ro.klooseduard.streetsofsibiu.core.input.TouchStick
 import ro.klooseduard.streetsofsibiu.core.render.GodotView
@@ -24,6 +27,8 @@ import ro.klooseduard.streetsofsibiu.core.ui.PauseView
 import ro.klooseduard.streetsofsibiu.core.ui.SettingsView
 import ro.klooseduard.streetsofsibiu.core.ui.UiKit
 import ro.klooseduard.streetsofsibiu.core.ui.godotBounds
+import ro.klooseduard.streetsofsibiu.logic.data.DashType
+import ro.klooseduard.streetsofsibiu.logic.data.ParryType
 import ro.klooseduard.streetsofsibiu.logic.data.PlayerDefs
 import ro.klooseduard.streetsofsibiu.logic.data.rooms.RoomCatalog
 import ro.klooseduard.streetsofsibiu.logic.data.rooms.RoomDef
@@ -37,6 +42,8 @@ import ro.klooseduard.streetsofsibiu.logic.runtime.TransitionType
 import ro.klooseduard.streetsofsibiu.logic.world.Action
 import ro.klooseduard.streetsofsibiu.logic.world.CameraRig
 import ro.klooseduard.streetsofsibiu.logic.world.Player
+import ro.klooseduard.streetsofsibiu.logic.world.PlayerSound
+import ro.klooseduard.streetsofsibiu.logic.world.Rgba
 import ro.klooseduard.streetsofsibiu.logic.world.RoomCollision
 
 class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
@@ -49,7 +56,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private val actions = ActionInput<Action>(runtime)
     private val mainBackground = SceneNode()
-    private val player = Player(Vec2(996f, 545f))
+    private val player = Player(Vec2(996f, 545f), runtime, mainBackground)
     private val camera = CameraRig()
     private var room: RoomDef? = null
     private var world = StaticWorld(emptyList())
@@ -62,9 +69,12 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val blackScreen = Image(game.ui.color(Color.BLACK)).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) }
     private val hud = HudView(game.ui, game::texture, ::selectSlot)
     private var selectedSlot = 0
+    private var dashButton: Actor? = null
+    private var parryButton: Actor? = null
     private val settingsView: SettingsView = SettingsView(game.ui, game.texture("menu.png"), game.buses, game.music::applyVolumes) { hideSettings() }
     private val pauseView: PauseView = PauseView(game.ui, onResume = ::resumeFromPause, onSettings = { settingsView.isVisible = true }, onMainMenu = ::toMainMenu)
     private val stick = TouchStick(actions, stage.viewport)
+    private val aimInput = AimInput(actions, stage.viewport)
 
     val isTreePaused: Boolean get() = runtime.paused
 
@@ -89,6 +99,12 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
                 addListener(object : ChangeListener() { override fun changed(event: ChangeEvent?, actor: Actor?) = togglePause() })
             })
         }
+        if (Gdx.app.type == Application.ApplicationType.Android) addActionButtons()
+        game.devDash?.let { player.selectedDash = DashType.valueOf(it.uppercase()) }
+        game.devParry?.let { player.selectedParry = ParryType.entries.firstOrNull { p -> p.name.equals(it, ignoreCase = true) } }
+        player.mousePosition = ::aimWorldPosition
+        player.onSound = ::playPlayerSound
+        player.onStatsChanged = ::updateHealthUi
         hud.setInventory(PlayerDefs.INITIAL_INVENTORY, selected = 0)
         updateHealthUi()
 
@@ -96,6 +112,38 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         camera.update(player.position, TICK)
         finishLevel()
     }
+
+    private fun addActionButtons() {
+        dashButton = actionButton("DASH", Action.BLINK, 1700f, 740f, 180f)
+        parryButton = actionButton("PARRY", Action.PARRY, 1500f, 820f, 150f)
+    }
+
+    private fun actionButton(text: String, action: Action, x: Float, y: Float, size: Float): Actor =
+        game.ui.godotDefaultButton(text, 30).also { button ->
+            button.godotBounds(x, y, size, size)
+            button.addListener(object : InputListener() {
+                override fun touchDown(event: InputEvent?, bx: Float, by: Float, pointer: Int, buttonCode: Int): Boolean {
+                    actions.press(action)
+                    return true
+                }
+
+                override fun touchUp(event: InputEvent?, bx: Float, by: Float, pointer: Int, buttonCode: Int) = actions.release(action)
+            })
+            stage.addActor(button)
+        }
+
+    private fun aimWorldPosition(): Vec2 {
+        val topLeft = camera.screenTopLeft
+        return Vec2(topLeft.x + aimInput.aim.x, topLeft.y + aimInput.aim.y)
+    }
+
+    private fun playPlayerSound(sound: PlayerSound) = game.playSfx(
+        when (sound) {
+            PlayerSound.DASH -> "Music/Dash.mp3"
+            PlayerSound.PARRY -> "Music/Parry.mp3"
+            PlayerSound.DEATH -> "Music/PlayerDeath.mp3"
+        },
+    )
 
     private fun finishLevel() {
         currentLevel++
@@ -186,11 +234,17 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         batch.projectionMatrix = view.camera.combined
         batch.begin()
         room?.let { roomRenderer.draw(batch, it, Vec2.ZERO, camera.screenTopLeft, view.width, view.height) }
-        val frame = playerFrames[player.animator.frame]
-        batch.draw(frame, player.position.x - frame.regionWidth / 2f, player.position.y - frame.regionHeight / 2f)
+        for (ghost in player.ghosts) {
+            val c = Rgba.GHOST_GREY
+            drawPlayerSprite(ghost.frame, ghost.position, ghost.scale, c.r, c.g, c.b, ghost.alpha)
+        }
+        val m = player.modulate
+        drawPlayerSprite(player.animator.frame, player.position, player.spriteScale, m.r, m.g, m.b, m.a)
         batch.end()
 
         blackScreen.color.a = blackAlpha.toFloat()
+        dashButton?.isVisible = !runtime.paused
+        parryButton?.isVisible = !runtime.paused
         stage.act(Gdx.graphics.deltaTime)
         stage.viewport.apply()
         stage.draw()
@@ -199,17 +253,28 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         stage.batch.end()
     }
 
+    private fun drawPlayerSprite(frameIndex: Int, at: Vec2, scale: Double, r: Double, g: Double, b: Double, a: Double) {
+        val frame = playerFrames[frameIndex]
+        val w = frame.regionWidth * scale.toFloat()
+        val h = frame.regionHeight * scale.toFloat()
+        batch.setColor(r.toFloat().coerceIn(0f, 1f), g.toFloat().coerceIn(0f, 1f), b.toFloat().coerceIn(0f, 1f), a.toFloat().coerceIn(0f, 1f))
+        batch.draw(frame, at.x - w / 2f, at.y - h / 2f, w, h)
+        batch.setColor(1f, 1f, 1f, 1f)
+    }
+
     override fun show() {
-        Gdx.input.inputProcessor = InputMultiplexer(stage, KeyboardInput(actions, ::togglePause, ::selectSlot), stick)
+        Gdx.input.inputProcessor = InputMultiplexer(stage, KeyboardInput(actions, ::togglePause, ::selectSlot), stick, aimInput)
     }
 
     override fun hide() {
         stick.releaseAll()
+        aimInput.releaseAll()
         actions.releaseAll()
     }
 
     override fun pause() {
         stick.releaseAll()
+        aimInput.releaseAll()
         actions.releaseAll()
         if (!runtime.paused && !isInTransition) togglePause()
     }

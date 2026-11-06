@@ -38,6 +38,11 @@ data class DVec(val x: Double, val y: Double) {
     fun length() = sqrt(x * x + y * y)
     fun normalized(): DVec = length().let { if (it == 0.0) ZERO else DVec(x / it, y / it) }
     fun slide(n: DVec) = this - n * dot(n)
+    fun moveToward(to: DVec, delta: Double): DVec {
+        val d = to - this
+        val len = d.length()
+        return if (len <= delta || len < CMP_EPSILON) to else this + d * (delta / len)
+    }
     fun isZeroApprox() = abs(x) < CMP_EPSILON && abs(y) < CMP_EPSILON
     fun toVec2() = Vec2(x.toFloat(), y.toFloat())
 
@@ -53,7 +58,7 @@ object Kinematics {
     private const val MIN_CONTACT_DEPTH_FACTOR = 0.05
     private const val MARGIN_MIN = 0.0001
 
-    private class Contact(val signedDistance: Double, val normal: DVec)
+    private class Contact(val signedDistance: Double, val normal: DVec, val points: Int = 1)
 
     private fun contact(shape: BodyShape, c: DVec, b: DoubleArray): Contact {
         val h = shape.halfSegment
@@ -74,7 +79,7 @@ object Kinematics {
             val d = sqrt(dx * dx + dy * dy)
             val nx = if (c.x < b[0]) -dx else if (c.x > b[2]) dx else 0.0
             val ny = if (s1 < b[1]) -dy else if (s0 > b[3]) dy else 0.0
-            return Contact(d - r, DVec(nx / d, ny / d))
+            return Contact(d - r, DVec(nx / d, ny / d), if (dy == 0.0) 2 else 1)
         }
         val pushLeft = (c.x + r) - b[0]
         val pushRight = b[2] - (c.x - r)
@@ -87,7 +92,7 @@ object Kinematics {
             pushUp -> DVec(0.0, -1.0)
             else -> DVec(0.0, 1.0)
         }
-        return Contact(-m, n)
+        return Contact(-m, n, if (n.y == 0.0) 2 else 1)
     }
 
     private fun timeOfImpact(shape: BodyShape, c: DVec, m: DVec, b: DoubleArray): Double? {
@@ -153,8 +158,10 @@ object Kinematics {
             var recover = DVec.ZERO
             for (ct in contacts) {
                 val into = ct.normal * -1.0
-                val depth = (margin - ct.signedDistance) + into.dot(recover)
-                if (depth > minContactDepth + CMP_EPSILON) recover -= into * ((depth - minContactDepth) * 0.4)
+                repeat(ct.points) {
+                    val depth = (margin - ct.signedDistance) + into.dot(recover)
+                    if (depth > minContactDepth + CMP_EPSILON) recover -= into * ((depth - minContactDepth) * 0.4)
+                }
             }
             if (recover == DVec.ZERO) return@repeat
             pos += recover

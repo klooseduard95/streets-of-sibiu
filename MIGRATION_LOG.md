@@ -356,3 +356,16 @@ Related documents:
 - Clean build `:logic:test :core:test :app:assembleDebug :desktop:installDist --warning-mode all`: OK, **74 tests, 0 failures**. Original project untouched.
 
 **Note for future sessions:** the code has no comments now, by the user's choice. The explanations (Godot source references, why a behaviour is ported a certain way) remain in this log, `MIGRATION_PLAN.md`, `MIGRATION_STATUS.md`, `tools/godot-reference/README.md` and the git history (`main` before this branch). Do not add comments to new code unless the user asks.
+
+## 2026-11-06 — Session 13: Delivery 2 (branch `d2-dash-parry-ghost-trail`)
+
+**User:** continue with the next implementation, new branch from main, follow the plan.
+
+- Asked about the unmerged `remove-code-comments` branch; user chose "merge first". Merged it into `main` (`782d5cb`), branched `d2-dash-parry-ghost-trail`, no comments in new code.
+- Plan §10: D2 = rest of Phase 5 + Phase 6 (dash, parry, ghost trail, touch controls). Implemented `Player` per `player.gd` (see `DELIVERY_D2.md`).
+- Found by the dash traces: Godot's SAT gives **two contacts** for horizontal-normal face contacts (edge–edge `_generate_contacts_edge_edge`); ported. Fetched `godot_collision_solver_2d_sat.cpp` (4.6.1-stable, MIT) into `tools/godot-reference/engine-source/modules/godot_physics_2d/`.
+- Trace test details: the probe applies the clamp *before* the snapshot; edge-triggered timer states (`can_take_dmg` after the 0.2 s parry timer) are compared with ±1 tick because Godot's idle deltas jitter.
+- Open: D18 (dash teleported into a 2-tile wall next to a Preventer ends up to 30 px from Godot's position; cause unconfirmed).
+- Emulator: started with `-no-snapshot-load -no-snapshot-save`, stopped with `adb emu kill`. A "System UI isn't responding" dialog appeared (software rendering, not the game); dismissed with Wait.
+- Results: `:logic:test :core:test :app:assembleDebug :desktop:installDist` OK, 101 tests, 0 failures; original project untouched.
+- Next: D3 (weapons, bullets, inventory, interaction, HUD ammo; basic enemies with navigation), due 2026-11-19.

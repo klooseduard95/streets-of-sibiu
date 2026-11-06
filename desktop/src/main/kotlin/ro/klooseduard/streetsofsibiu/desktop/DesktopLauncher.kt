@@ -20,10 +20,10 @@ fun main() {
         Lwjgl3Application(RoomCaptureHarness(captureDir), config)
         return
     }
-    val game = StreetsOfSibiuGame(System.getProperty("sos.screen") ?: "menu", System.getProperty("sos.room"))
+    val game = StreetsOfSibiuGame(System.getProperty("sos.screen") ?: "menu", System.getProperty("sos.room"), System.getProperty("sos.dash"), System.getProperty("sos.parry"))
     val screenshotPath = System.getProperty("sos.screenshot")
     val listener = if (screenshotPath == null) game else ScreenshotHarness(
-        game, screenshotPath, System.getProperty("sos.screenshotFrame")?.toInt() ?: 30,
+        game, screenshotPath, System.getProperty("sos.screenshotFrame")?.toInt() ?: 30, System.getProperty("sos.keys"),
     )
     Lwjgl3Application(listener, config)
 }
