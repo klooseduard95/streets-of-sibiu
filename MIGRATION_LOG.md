@@ -369,3 +369,9 @@ Related documents:
 - Emulator: started with `-no-snapshot-load -no-snapshot-save`, stopped with `adb emu kill`. A "System UI isn't responding" dialog appeared (software rendering, not the game); dismissed with Wait.
 - Results: `:logic:test :core:test :app:assembleDebug :desktop:installDist` OK, 101 tests, 0 failures; original project untouched.
 - Next: D3 (weapons, bullets, inventory, interaction, HUD ammo; basic enemies with navigation), due 2026-11-19.
+
+## 2026-11-06 — Session 14: history rewritten to remove tool attribution
+
+- On request, rewrote all branches: removed the co-author and session trailers from every commit message and the artifact link from `MIGRATION_LOG.md` (all revisions). All commit hashes changed; content is otherwise identical.
+- Re-checked messages and file contents of every revision: no match. Authors and committers are only `klooseduard95`.
+- From now on commits and pull requests carry no attribution lines.
