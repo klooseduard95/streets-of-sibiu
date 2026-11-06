@@ -431,3 +431,10 @@ Related documents:
 - `:core`: enemies, health bars and projectiles are drawn; enemy sounds (Rat, Pigeon, Grunt, 30 % CeTelefonAi) play non-positionally; dev switch `-Psos.enemies="rat@300,0;pigeon@-300,100"` (desktop) / `-e enemies ...` (Android), offsets from the spawn-room centre.
 - Tests: 17 new enemy tests (scaling, χ² of the size roll over 20 000 spawns: 0.48 against a critical value of 13.8, agro sequence, line of sight, chase, attack loop, projectile rules, death, collision with the player, spawn tables). Screenshot on desktop shows all four types chasing and hurting the player.
 - Not done in D3: enemy hitbox/body hits for chainsaw ramp are wired through `BulletTarget`; the spawn of enemies from rooms during level generation belongs to Phase 10 (D4).
+
+## 2026-11-06 — Session 19: Delivery 3 wrap-up and merge
+
+- Emulator pass (API 37, `-no-snapshot-load -no-snapshot-save`): weapons, enemies and the four action buttons work, no crash. A first launch with `;` inside an `adb shell` extra failed because the device shell split the command; escape it as `\;`. A tap near the bottom edge had earlier opened the system assistant (D16).
+- Wrote `DELIVERY_D3.md`, updated `MIGRATION_STATUS.md` (phases 7 and 8 done; D21, D22).
+- Merged `d3-weapons-inventory-enemies` into `main`.
+- Next: D4 (due 2026-12-03): ghost, manhole spawner, King Rotta; level generation, warps, barricades, exits.

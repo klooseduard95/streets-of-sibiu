@@ -2,7 +2,7 @@
 
 Plan: `MIGRATION_PLAN.md` (audit approved 2026-10-15; all §9 recommendations accepted).
 
-**Update 2026-11-06: Delivery 2 (dash, parry, ghost trail, damage; branch `d2-dash-parry-ghost-trail`) is implemented — see `DELIVERY_D2.md`. 101 tests, 0 failures.**
+**Update 2026-11-06: Delivery 3 (weapons, bullets, inventory, interaction, consumables, navigation, basic enemies; branch `d3-weapons-inventory-enemies`) is implemented — see `DELIVERY_D3.md`. 152 tests, 0 failures.** Delivery 2 (dash, parry, ghost trail, damage; branch `d2-dash-parry-ghost-trail`) is implemented — see `DELIVERY_D2.md`. 101 tests, 0 failures.**
 
 **Overall state (2026-10-15): Phases 0–4 are done, and Delivery 1 (menu + start of the game) is ready (see `DELIVERY_D1.md`). Physical-device testing is deferred (no Android phone available; the emulator and desktop are used instead). The migration is NOT complete.** No gameplay has been ported yet.
 
@@ -16,7 +16,9 @@ Next delivery: **D1 on Wednesday 2026-10-21, morning** (your deadline): the main
 | 3 — Data and rooms | **Done** (2026-10-15): 20 rooms converted, all game data transcribed, 24 parity tests passing |
 | 4 — Room rendering and camera | **Done** (2026-10-15): 34/40 reference views pixel-identical to Godot, the other 6 differ only by sub-pixel texel selection (D14); runs on desktop and emulator |
 | D1 (Phase 5 walking subset + Phase 12 menu subset) | **Ready** (2026-10-15): menu, tutorial, options, centred music, level-1 start, walking verified against Godot, HUD, pause |
-| 5 (rest), 6–14 | Not started |
+| 5 (rest), 6 | **Done** (D2) |
+| 7, 8 | **Done** (D3): weapons, bullets, inventory, interaction, consumables, HUD ammo; navigation and basic enemies. Ghost/marshmallow are Phase 9 |
+| 9–14 | Not started |
 
 ---
 
@@ -279,6 +281,8 @@ Environment: macOS, Gradle JVM = Android Studio JBR 25.0.3 (`JAVA_HOME="/Applica
 | D18 | Dash teleport deep into a 2-tile wall next to a door Preventer (`short_dash_into_east_wall`): depenetration ends up to ~20–30 px from Godot's (x agrees within 1 px). Cause not confirmed; probably the order Godot's broadphase visits the overlapping shapes, which feeds the cumulative 40 % recovery. Every other dash/parry/walk trace matches (≤ 0.01 px). The room clamp keeps the player in the room | Godot broadphase order not reproducible | accepted; test tolerance 30 px |
 | D19 | Parry CHARGE tint `(2, 0.5, 0.5)` is overbright in Godot; libGDX's `SpriteBatch` colour clamps to 1, so red is capped (R8) | SpriteBatch limitation | accepted (shader if wanted later) |
 | D20 | Player sounds (dash, parry, death) play non-positionally at the SFX volume; the original uses `AudioStreamPlayer2D` centred on the player | Listener is at the player anyway | accepted |
+| D21 | Enemy and weapon sounds play non-positionally at the SFX volume | Same as D20 | accepted |
+| D22 | Enemy/player/projectile overlaps use exact geometry (circles, capsules, rotated rectangles) but are evaluated at the start of each physics tick like Godot's area signals; the order of simultaneous `body_entered` events between hitbox and body follows V7 only for the usual case | Not all V7 trials reproduced | accepted |
 | D17 | Level start: the fade-in is not delayed by level generation frames (the original generates behind the black screen for a few frames) | D1 has no level generation yet | temporary (Phase 10) |
 | D14 | When the camera's x position is exactly on a half pixel, some texels are picked one pixel to the side compared with Godot's Forward+ renderer (34/40 static reference views identical; the rest differ by 1-px texel shifts, layout identical) | Renderer rasterisation detail; in-game the camera moves through sub-pixel positions continuously | accepted (Phase 4) |
 | D12 | Godot's `MainTimerSync` jitter-fix smoothing is not replicated: a tick may land one rendered frame earlier or later; tick rate and per-tick logic are identical. Idle-frame order: Timer nodes are processed after all entities' `_process`, not interleaved by tree order | Simplicity; no gameplay effect | **implemented** (Phase 2) |
