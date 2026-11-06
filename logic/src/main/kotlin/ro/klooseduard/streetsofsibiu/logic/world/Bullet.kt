@@ -80,7 +80,7 @@ class BulletSystem(private val runtime: GameRuntime) {
             if (bullet.isFreed) continue
             val seg = bullet.segment()
             val r = bullet.radius
-            val nearWalls = world.query(
+            val nearWalls = world.queryStatic(
                 min(seg[0], seg[2]) - r, min(seg[1], seg[3]) - r, max(seg[0], seg[2]) + r, max(seg[1], seg[3]) + r,
             )
             val wallsNow = mutableSetOf<Int>()

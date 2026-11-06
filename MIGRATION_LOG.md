@@ -414,3 +414,20 @@ Related documents:
 - **The A* tie-breaks depend on the order of the regions** (one region per tile). The order that reproduces Godot is the order of the cells in the `.tscn` `tile_map_data`, not row-major. `tools/convert_rooms.py` now also emits `order = "x,y,…"` for each room (`TileGrid.cellOrder`); regenerating changed only those 20 lines of `GeneratedRooms.kt`.
 - Results against Godot: **120 of 120** recorded paths (limited to 500 px and unlimited, 5 rooms) identical, worst deviation 0.001 px; walkable tile counts equal; both recorded chase traces (agent + floating `move_and_slide`) match within 0.0002 px, including the `is_navigation_finished` flag.
 - Next: enemy data (stats, scaling, size roll), `BasicEnemy` AI (agro tick, line of sight, attack loop, projectiles), health bar, death, hitboxes as bullet targets, spawning from the room spawn nodes, rendering and sounds.
+
+## 2026-11-06 — Session 18: Delivery 3, milestone 4: basic enemies
+
+**User:** continue with the enemies (after navigation).
+
+- `:logic` `Enemy` + `EnemySystem` (`Enemy.kt`, `EnemySystem.kt`), from `IEnemy.gd`, `enemy.gd`, `EnemyHitbox.gd`, `enemy_projectile.gd`, `EnemySpawnNode.gd`:
+  - Stats with per-level scaling (rat hp +3 dmg +1, pigeon +2/+1, thief and criminal +3/+1.5) and the size roll (10 % stay, 75 % → 1.25, 15 % → 1.5; a 1.25 then has a 15 % chance of 1.5; hp and damage bonuses as in the script). The random calls are made in the original order.
+  - AI: 1 s tick, aggro circle (vision × 10, scaled), line of sight as a ray that walls, other enemies and the player block; `agro += (11 − agro) / 3` gives 0 → 3 → 5 → 7 → 8 → 9, −1 per tick without sight, idle at 0; path target is set while agro > 0; velocity = direction to the next path point × walkSpeed × `slownEnemy`; floating `move_and_slide` with a circle collider of r 10 × size.
+  - Attack loop: the hit range is an area (r = reach × size) that fires when the player enters; it is disabled (deferred) during windup and cooldown and re-enabled afterwards, so attacks repeat while the player stays in reach (V6). The projectile is spawned after the windup at the player's position at that moment.
+  - Projectiles: speed in px per tick, life timer, piercing rules, damage to the player with a 0.1 s flicker, walls free non-piercing ones; the rectangle shape is shared, so every live projectile uses the size of the latest spawned one (E12).
+  - Sprite animation: the 15-tick frame logic per type, including the `!row` quirk for thief and criminal.
+  - Health bar hidden until the first damage, tween 0.4 s; death: count −1, damage and speed 0, 0.3 s fade, removal. Hitbox (circle r 27) is hit first by bullets, the body (circle r 10) blocks ranged bullets and not melee ones.
+  - `EnemySystem.spawnFromNode` follows the level spawn tables (ghost and marshmallow are skipped until Phase 9).
+- `StaticWorld` now supports dynamic round obstacles (the player capsule and enemy circles) so enemies and the player collide with each other; boxes gained an inflate radius for rounded shapes.
+- `:core`: enemies, health bars and projectiles are drawn; enemy sounds (Rat, Pigeon, Grunt, 30 % CeTelefonAi) play non-positionally; dev switch `-Psos.enemies="rat@300,0;pigeon@-300,100"` (desktop) / `-e enemies ...` (Android), offsets from the spawn-room centre.
+- Tests: 17 new enemy tests (scaling, χ² of the size roll over 20 000 spawns: 0.48 against a critical value of 13.8, agro sequence, line of sight, chase, attack loop, projectile rules, death, collision with the player, spawn tables). Screenshot on desktop shows all four types chasing and hurting the player.
+- Not done in D3: enemy hitbox/body hits for chainsaw ramp are wired through `BulletTarget`; the spawn of enemies from rooms during level generation belongs to Phase 10 (D4).

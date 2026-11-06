@@ -12,6 +12,7 @@ class KinematicBody(
     var motionMode: MotionMode = MotionMode.GROUNDED,
 ) {
     var velocity = DVec.ZERO
+    var owner: Any? = null
     var safeMargin = 0.08
     var maxSlides = 4
     var floorSnapLength = 1.0
@@ -36,7 +37,7 @@ class KinematicBody(
     private fun angle(n: DVec, ref: DVec): Double = acos(n.dot(ref).coerceIn(-1.0, 1.0))
 
     private fun moveAndCollide(motion: DVec, testOnly: Boolean, cancelSliding: Boolean, margin: Double = safeMargin): MotionResult {
-        var r = Kinematics.testBodyMotion(world, shape, pos, motion, margin)
+        var r = Kinematics.testBodyMotion(world, shape, pos, motion, margin, exclude = owner)
         if (cancelSliding) {
             val motionLength = motion.length()
             var precision = 0.001

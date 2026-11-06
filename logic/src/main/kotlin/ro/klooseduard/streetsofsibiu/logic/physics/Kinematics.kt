@@ -11,11 +11,30 @@ data class BodyShape(val radius: Double, val height: Double = radius * 2) {
     val halfSegment: Double get() = max(0.0, height / 2 - radius)
 }
 
+class DynamicCollider(val owner: Any, val position: () -> Vec2, var radius: Double, var halfSegment: Double = 0.0)
+
 class StaticWorld(solids: List<Rect>) {
     private val rects = solids.map { doubleArrayOf(it.x.toDouble(), it.y.toDouble(), it.right.toDouble(), it.bottom.toDouble()) }
+    val dynamicBodies = mutableListOf<DynamicCollider>()
 
-    fun query(x0: Double, y0: Double, x1: Double, y1: Double): List<DoubleArray> =
+    fun queryStatic(x0: Double, y0: Double, x1: Double, y1: Double): List<DoubleArray> =
         rects.filter { it[0] <= x1 && it[2] >= x0 && it[1] <= y1 && it[3] >= y0 }
+
+    fun query(x0: Double, y0: Double, x1: Double, y1: Double, exclude: Any? = null): List<DoubleArray> {
+        val result = queryStatic(x0, y0, x1, y1)
+        if (dynamicBodies.isEmpty()) return result
+        val all = ArrayList<DoubleArray>(result)
+        for (d in dynamicBodies) {
+            if (d.owner === exclude) continue
+            val p = d.position()
+            val dx = p.x.toDouble()
+            val dy = p.y.toDouble()
+            if (dx - d.radius <= x1 && dx + d.radius >= x0 && dy - d.halfSegment - d.radius <= y1 && dy + d.halfSegment + d.radius >= y0) {
+                all += doubleArrayOf(dx, dy - d.halfSegment, dx, dy + d.halfSegment, d.radius)
+            }
+        }
+        return all
+    }
 
     val size: Int get() = rects.size
 }
@@ -62,6 +81,7 @@ object Kinematics {
 
     private fun contact(shape: BodyShape, c: DVec, b: DoubleArray): Contact {
         val h = shape.halfSegment
+        val infl = if (b.size > 4) b[4] else 0.0
         val r = shape.radius
         val s0 = c.y - h
         val s1 = c.y + h
@@ -79,12 +99,12 @@ object Kinematics {
             val d = sqrt(dx * dx + dy * dy)
             val nx = if (c.x < b[0]) -dx else if (c.x > b[2]) dx else 0.0
             val ny = if (s1 < b[1]) -dy else if (s0 > b[3]) dy else 0.0
-            return Contact(d - r, DVec(nx / d, ny / d), if (dy == 0.0) 2 else 1)
+            return Contact(d - r - infl, DVec(nx / d, ny / d), if (dy == 0.0) 2 else 1)
         }
-        val pushLeft = (c.x + r) - b[0]
-        val pushRight = b[2] - (c.x - r)
-        val pushUp = (s1 + r) - b[1]
-        val pushDown = b[3] - (s0 - r)
+        val pushLeft = (c.x + r + infl) - b[0]
+        val pushRight = b[2] - (c.x - r - infl)
+        val pushUp = (s1 + r + infl) - b[1]
+        val pushDown = b[3] - (s0 - r - infl)
         val m = min(min(pushLeft, pushRight), min(pushUp, pushDown))
         val n = when (m) {
             pushLeft -> DVec(-1.0, 0.0)
@@ -97,7 +117,7 @@ object Kinematics {
 
     private fun timeOfImpact(shape: BodyShape, c: DVec, m: DVec, b: DoubleArray): Double? {
         val h = shape.halfSegment
-        val r = shape.radius
+        val r = shape.radius + (if (b.size > 4) b[4] else 0.0)
         val ey0 = b[1] - h
         val ey1 = b[3] + h
         var best: Double? = null
@@ -142,7 +162,7 @@ object Kinematics {
         return if (t in 0.0..1.0) t else null
     }
 
-    fun testBodyMotion(world: StaticWorld, shape: BodyShape, from: DVec, motion: DVec, marginIn: Double, recoveryAsCollision: Boolean = true): MotionResult {
+    fun testBodyMotion(world: StaticWorld, shape: BodyShape, from: DVec, motion: DVec, marginIn: Double, recoveryAsCollision: Boolean = true, exclude: Any? = null): MotionResult {
         val margin = max(marginIn, MARGIN_MIN)
         val minContactDepth = margin * MIN_CONTACT_DEPTH_FACTOR
         val ext = shape.radius + margin
@@ -151,7 +171,7 @@ object Kinematics {
         var recovered = false
 
         repeat(4) {
-            val nearby = world.query(pos.x - ext, pos.y - extY, pos.x + ext, pos.y + extY)
+            val nearby = world.query(pos.x - ext, pos.y - extY, pos.x + ext, pos.y + extY, exclude)
             val contacts = nearby.map { contact(shape, pos, it) }.filter { it.signedDistance < margin }
             if (contacts.isEmpty()) return@repeat
             recovered = true
@@ -172,7 +192,7 @@ object Kinematics {
         var unsafe = 1.0
         val candidates = world.query(
             min(pos.x, pos.x + motion.x) - ext, min(pos.y, pos.y + motion.y) - extY,
-            max(pos.x, pos.x + motion.x) + ext, max(pos.y, pos.y + motion.y) + extY,
+            max(pos.x, pos.x + motion.x) + ext, max(pos.y, pos.y + motion.y) + extY, exclude,
         )
         for (b in candidates) {
             val toi = timeOfImpact(shape, pos, motion, b) ?: continue
@@ -204,7 +224,7 @@ object Kinematics {
             val minAllowed = min(motionLength, minContactDepth)
             var bestLen = 0.0
             var bestNormal = DVec.ZERO
-            for (b in world.query(ugt.x - ext, ugt.y - extY, ugt.x + ext, ugt.y + extY)) {
+            for (b in world.query(ugt.x - ext, ugt.y - extY, ugt.x + ext, ugt.y + extY, exclude)) {
                 val ct = contact(shape, ugt, b)
                 val len = margin - ct.signedDistance
                 if (ct.signedDistance >= margin || len < minAllowed || len <= bestLen) continue

@@ -72,12 +72,12 @@ object EnemyTypes {
     }
 }
 
-enum class AttackKind(val godotName: String, val texture: String, val spriteRotationDeg: Double) {
-    BASIC_SLASH("BASIC_SLASH", "enemy/enemy_projectile/enemy_projectile_assets/claw.png", 45.0),
-    BASIC_BULLET("BASIC_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/bullet.png", 0.0),
-    KING_ROTTA_BULLET("KING_ROTTA_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/the_orb.png", 0.0),
-    GHOST_BULLET("GHOST_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/the_orb_GHOST.png", 0.0),
-    CRIMINAL_SLASH("CRIMINAL_SLASH", "item/item_assets/item icons/knife.png", 90.0),
+enum class AttackKind(val godotName: String, val texture: String, val spriteRotationDeg: Double, val width: Double, val height: Double) {
+    BASIC_SLASH("BASIC_SLASH", "enemy/enemy_projectile/enemy_projectile_assets/claw.png", 45.0, 128.0, 120.0),
+    BASIC_BULLET("BASIC_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/bullet.png", 0.0, 70.0, 30.0),
+    KING_ROTTA_BULLET("KING_ROTTA_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/the_orb.png", 0.0, 100.0, 100.0),
+    GHOST_BULLET("GHOST_BULLET", "enemy/enemy_projectile/enemy_projectile_assets/the_orb_GHOST.png", 0.0, 100.0, 100.0),
+    CRIMINAL_SLASH("CRIMINAL_SLASH", "item/item_assets/item icons/knife.png", 90.0, 100.0, 100.0),
 }
 
 data class AttackParams(val kind: AttackKind, val travelTime: Double, val speedPerTick: Double, val piercing: Boolean, val isSupport: Boolean)

@@ -45,6 +45,12 @@ import ro.klooseduard.streetsofsibiu.logic.data.Consumables
 import ro.klooseduard.streetsofsibiu.logic.data.ItemDef
 import ro.klooseduard.streetsofsibiu.logic.data.Weapons
 import ro.klooseduard.streetsofsibiu.logic.world.GameItem
+import ro.klooseduard.streetsofsibiu.logic.world.Enemy
+import ro.klooseduard.streetsofsibiu.logic.world.EnemyProjectile
+import ro.klooseduard.streetsofsibiu.logic.world.EnemySystem
+import ro.klooseduard.streetsofsibiu.logic.data.EnemyTypes
+import ro.klooseduard.streetsofsibiu.logic.data.EnemyType
+import ro.klooseduard.streetsofsibiu.logic.nav.RoomNav
 import ro.klooseduard.streetsofsibiu.logic.world.Bullet
 import ro.klooseduard.streetsofsibiu.logic.world.HeldConsumable
 import ro.klooseduard.streetsofsibiu.logic.world.HeldWeapon
@@ -68,6 +74,9 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val mainBackground = SceneNode()
     private val player = Player(Vec2(996f, 545f), runtime, mainBackground)
     private val camera = CameraRig()
+    private val enemies = EnemySystem(runtime, player)
+    private val enemyRegions = HashMap<EnemyType, Array<TextureRegion>>()
+    private val projectileRegions = HashMap<String, TextureRegion>()
     private var room: RoomDef? = null
     private var world = StaticWorld(emptyList())
 
@@ -120,6 +129,8 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         player.onSound = ::playPlayerSound
         player.onStatsChanged = ::updateHealthUi
         player.onWeaponSound = game::playSfx
+        player.bullets.targets = { enemies.bulletTargets }
+        enemies.onEnemySound = ::playEnemySound
         player.inventory.onChanged = ::refreshInventory
         game.devItems?.split(',')?.map { it.trim() }?.filter { it.isNotEmpty() }?.forEach { id ->
             Weapons.all.firstOrNull { it.id == id || it.name.equals(id, ignoreCase = true) }?.let(player.inventory::addItem)
@@ -181,6 +192,8 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             room = spawn
             world = RoomCollision.world(spawn)
             player.bullets.world = world
+            enemies.attach(world, RoomNav.mesh(spawn))
+            spawnDevEnemies(spawn.moduleBox.center)
             camera.setLimitsFromModuleBox(spawn.moduleBox)
             camera.resetSmoothing(player.position, TICK)
             player.body.position = spawn.moduleBox.center
@@ -190,6 +203,59 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             fadeOut.tweenProperty({ blackAlpha }, { blackAlpha = it }, 0.0, 0.25)
             fadeOut.onFinished { if (pauseRequested) togglePause() }
         }
+    }
+
+    private fun spawnDevEnemies(center: Vec2) {
+        game.devEnemies?.split(';')?.map { it.trim() }?.filter { it.isNotEmpty() }?.forEach { entry ->
+            val parts = entry.split('@')
+            val type = EnemyType.entries.firstOrNull { it.godotName == parts[0] } ?: return@forEach
+            val (dx, dy) = (parts.getOrNull(1) ?: "0,0").split(',').map { it.trim().toFloat() }
+            enemies.spawn(type, currentLevel, Vec2(center.x + dx, center.y + dy))
+        }
+    }
+
+    private fun playEnemySound(type: EnemyType, roll: Long) = game.playSfx(
+        when (type) {
+            EnemyType.RAT -> "Music/Rat.mp3"
+            EnemyType.PIGEON -> "Music/Pigeon.mp3"
+            else -> if (roll in 0..2) "Music/CeTelefonAi.mp3" else "Music/Grunt.mp3"
+        },
+    )
+
+    private fun enemyFrames(type: EnemyType): Array<TextureRegion>? {
+        val looks = EnemyTypes.looks(type) ?: return null
+        return enemyRegions.getOrPut(type) {
+            val texture = game.texture(looks.texture)
+            val fw = texture.width / looks.hframes
+            val fh = texture.height / looks.vframes
+            Array(looks.hframes * looks.vframes) { i ->
+                TextureRegion(texture, (i % looks.hframes) * fw, (i / looks.hframes) * fh, fw, fh).apply { flip(false, true) }
+            }
+        }
+    }
+
+    private fun drawEnemy(enemy: Enemy) {
+        val frames = enemyFrames(enemy.type) ?: return
+        val region = frames[enemy.frame.coerceIn(0, frames.size - 1)]
+        val s = enemy.sizeModifier.toFloat()
+        val w = region.regionWidth * s
+        val h = region.regionHeight * s
+        batch.setColor(1f, 1f, 1f, enemy.alpha.toFloat())
+        batch.draw(region, enemy.position.x - w / 2, enemy.position.y - h / 2, w, h)
+        if (enemy.healthBarAlpha > 0 && enemy.maxHp > 0) {
+            val fill = (enemy.healthBarValue / enemy.maxHp).coerceIn(0.0, 1.0).toFloat()
+            batch.setColor(1f, 0f, 0f, (enemy.healthBarAlpha * enemy.alpha).toFloat())
+            batch.draw(game.ui.white, enemy.position.x + HEALTH_BAR_X * s, enemy.position.y + HEALTH_BAR_Y * s, HEALTH_BAR_W * s * fill, HEALTH_BAR_H * s)
+        }
+        batch.setColor(1f, 1f, 1f, 1f)
+    }
+
+    private fun drawEnemyProjectile(p: EnemyProjectile) {
+        val kind = p.params.kind
+        val region = projectileRegions.getOrPut(kind.texture) { flipped(game.texture(kind.texture)) }
+        val w = region.regionWidth.toFloat()
+        val h = region.regionHeight.toFloat()
+        batch.draw(region, p.x.toFloat() - w / 2, p.y.toFloat() - h / 2, w / 2, h / 2, w, h, 1f, 1f, Math.toDegrees(p.angle).toFloat() + kind.spriteRotationDeg.toFloat())
     }
 
     private fun spawnDevGround(center: Vec2) {
@@ -272,6 +338,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         if (runtime.paused) return
         player.bullets.flushPhysicsQueries()
         player.interaction.flushPhysicsQueries()
+        enemies.flushPhysicsQueries()
     }
 
     override fun physicsProcess(delta: Double) {
@@ -283,6 +350,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             )
             player.physicsProcess(actions, world, delta)
             player.bullets.physicsProcess(delta)
+            enemies.physicsProcess(delta)
         }
         camera.update(player.position, delta.toFloat())
     }
@@ -290,6 +358,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     override fun process(delta: Double) {
         if (runtime.paused) return
         player.process(delta)
+        enemies.process(delta)
         if (actions.isJustPressed(Action.INTERACT)) player.interaction.interactPressed()
         player.interaction.process()
     }
@@ -300,6 +369,8 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         batch.projectionMatrix = view.camera.combined
         batch.begin()
         room?.let { roomRenderer.draw(batch, it, Vec2.ZERO, camera.screenTopLeft, view.width, view.height) }
+        for (enemy in enemies.enemies) drawEnemy(enemy)
+        for (p in enemies.projectiles) drawEnemyProjectile(p)
         for (item in player.interaction.items) {
             val region = itemRegions.getOrPut(item.def.icon) { flipped(game.texture(item.def.icon)) }
             batch.draw(region, item.x - region.regionWidth / 2f, item.y - region.regionHeight / 2f)
@@ -387,6 +458,10 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     companion object {
         private const val TICK = (1.0 / 60).toFloat()
+        private const val HEALTH_BAR_X = -38f
+        private const val HEALTH_BAR_Y = 19f
+        private const val HEALTH_BAR_W = 76.5f
+        private const val HEALTH_BAR_H = 8.5f
         private const val RANGED_TEXTURE = "item/item_assets/bullet_player.png"
         private const val MELEE_TEXTURE = "item/item_assets/lines.png"
     }
