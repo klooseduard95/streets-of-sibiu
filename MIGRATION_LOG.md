@@ -385,3 +385,18 @@ Related documents:
 - Done in `:core`: left mouse / right-half touch hold = shoot, bullet drawing (melee shows the weapon icon), HUD inventory icons and ammo label states ("Ammo: a / b", "∞", "Reloading..."), R button on Android, weapon sounds. Dev switch `-Psos.items=primary_medium,Knife` (desktop) / `-e items ...` (Android) since pickups do not exist yet; the screenshot harness can script touches (`100:touch:800:270,111:untouch:800:270`).
 - Tests: 17 new weapon/inventory/bullet tests; crit rate measured 20.1 % for the sniper (expected 20 %).
 - Not done yet in D3: ground items and interaction (E), consumables activation, enemies (stats, AI, navigation, projectiles, health bars), enemy hitboxes as `BulletTarget`.
+
+## 2026-11-06 — Session 16: Delivery 3, milestone 2: ground items, interaction, consumables
+
+**User:** continue with ground items and interaction.
+
+- Ported `interactable.gd`, `interacting_component.gd` and `item_placeholder.gd` (GameItem) to `:logic` (`Interaction.kt`):
+  - the interact range is a circle of r 45 (30 × 1.5) against the item's Interactable circle of r 95, so an item is offered up to 140 px away;
+  - overlaps are evaluated at the start of the physics tick (area signals); the list keeps entry order and is sorted by distance every idle frame;
+  - E acts on the first entry; the label keeps its previous text if the first entry is not interactable;
+  - picking up: `add_item` into the first free matching slot (the ground item is freed), otherwise `swap_item` with the selected slot: the old item stays on the ground as "Switch with X". B11: fresh instances.
+- Consumables (`consumable_item.gd`): used on the press, Health only below max HP (capped by the `max_hp` stat), negative HP applies directly (stun grenade), shield, timed buffs and the Adrenaline after-effect; potion sound; the slot empties. `slown_enemy` is tracked on the player (`slownEnemy`) for the enemies.
+- `ItemDef` interface for weapons and consumables.
+- Core: ground item sprites at native size, label 42 px below the player (default font 16), E key and an E button on Android, dev switch `-Psos.ground="primary_sniper@120,0;consumable_health@-300,0"` (desktop) / `-e ground ...` (Android), offsets from the spawn-room centre. Ground items are cleared when a level is generated (B12), dev items are spawned after that.
+- Tests: 17 new (interaction range and label, nearest first, pick up, swap rules, every consumable). Screenshots checked on desktop: label "Pick up Sniper Rifle", pick-up puts the sniper in slot 1 with "Ammo: 1 / 1".
+- Still open in D3: enemies (Phase 8) and enemy hitboxes as bullet targets.

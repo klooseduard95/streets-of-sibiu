@@ -22,6 +22,7 @@ class StreetsOfSibiuGame(
     val devDash: String? = null,
     val devParry: String? = null,
     val devItems: String? = null,
+    val devGround: String? = null,
 ) : Game() {
     lateinit var fonts: Fonts; private set
     lateinit var ui: UiKit; private set

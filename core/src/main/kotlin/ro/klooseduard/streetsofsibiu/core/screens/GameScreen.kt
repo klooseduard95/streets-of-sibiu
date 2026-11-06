@@ -41,7 +41,10 @@ import ro.klooseduard.streetsofsibiu.logic.runtime.SceneNode
 import ro.klooseduard.streetsofsibiu.logic.runtime.TransitionType
 import ro.klooseduard.streetsofsibiu.logic.world.Action
 import ro.klooseduard.streetsofsibiu.logic.world.CameraRig
+import ro.klooseduard.streetsofsibiu.logic.data.Consumables
+import ro.klooseduard.streetsofsibiu.logic.data.ItemDef
 import ro.klooseduard.streetsofsibiu.logic.data.Weapons
+import ro.klooseduard.streetsofsibiu.logic.world.GameItem
 import ro.klooseduard.streetsofsibiu.logic.world.Bullet
 import ro.klooseduard.streetsofsibiu.logic.world.HeldConsumable
 import ro.klooseduard.streetsofsibiu.logic.world.HeldWeapon
@@ -59,6 +62,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     private val circle: Texture
     private val rangedRegion: TextureRegion
     private val meleeRegions = HashMap<String, TextureRegion>()
+    private val itemRegions = HashMap<String, TextureRegion>()
 
     private val actions = ActionInput<Action>(runtime)
     private val mainBackground = SceneNode()
@@ -73,10 +77,12 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
     private val stage = Stage(FitViewport(UiKit.VIEW_W, UiKit.VIEW_H))
     private val blackScreen = Image(game.ui.color(Color.BLACK)).apply { setSize(UiKit.VIEW_W, UiKit.VIEW_H) }
+    private val interactLabel = game.ui.label("", 16).apply { setAlignment(com.badlogic.gdx.utils.Align.center); isVisible = false }
     private val hud = HudView(game.ui, game::texture, ::selectSlot)
     private var dashButton: Actor? = null
     private var parryButton: Actor? = null
     private var reloadButton: Actor? = null
+    private var interactButton: Actor? = null
     private val settingsView: SettingsView = SettingsView(game.ui, game.texture("menu.png"), game.buses, game.music::applyVolumes) { hideSettings() }
     private val pauseView: PauseView = PauseView(game.ui, onResume = ::resumeFromPause, onSettings = { settingsView.isVisible = true }, onMainMenu = ::toMainMenu)
     private val stick = TouchStick(actions, stage.viewport)
@@ -96,6 +102,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
         stage.addActor(blackScreen)
         stage.addActor(hud)
+        stage.addActor(interactLabel)
         pauseView.isVisible = false
         settingsView.isVisible = false
         stage.addActor(pauseView)
@@ -129,6 +136,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         dashButton = actionButton("DASH", Action.BLINK, 1700f, 740f, 180f)
         parryButton = actionButton("PARRY", Action.PARRY, 1500f, 820f, 150f)
         reloadButton = actionButton("R", Action.RELOAD, 1320f, 840f, 120f)
+        interactButton = actionButton("E", Action.INTERACT, 1180f, 840f, 120f)
     }
 
     private fun actionButton(text: String, action: Action, x: Float, y: Float, size: Float): Actor =
@@ -155,6 +163,7 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             PlayerSound.DASH -> "Music/Dash.mp3"
             PlayerSound.PARRY -> "Music/Parry.mp3"
             PlayerSound.DEATH -> "Music/PlayerDeath.mp3"
+            PlayerSound.POTION -> "Music/PotionGulp.mp3"
         },
     )
 
@@ -175,10 +184,22 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
             camera.setLimitsFromModuleBox(spawn.moduleBox)
             camera.resetSmoothing(player.position, TICK)
             player.body.position = spawn.moduleBox.center
+            spawnDevGround(spawn.moduleBox.center)
             isInTransition = false
             val fadeOut = runtime.createTween(mainBackground)
             fadeOut.tweenProperty({ blackAlpha }, { blackAlpha = it }, 0.0, 0.25)
             fadeOut.onFinished { if (pauseRequested) togglePause() }
+        }
+    }
+
+    private fun spawnDevGround(center: Vec2) {
+        player.interaction.clearItems()
+        val all: List<ItemDef> = Weapons.all + Consumables.all
+        game.devGround?.split(';')?.map { it.trim() }?.filter { it.isNotEmpty() }?.forEach { entry ->
+            val (id, offset) = entry.split('@').let { it[0] to it.getOrElse(1) { "0,0" } }
+            val (dx, dy) = offset.split(',').map { it.trim().toFloat() }
+            all.firstOrNull { it.id == id || it.name.equals(id, ignoreCase = true) }
+                ?.let { player.interaction.spawn(GameItem(Vec2(center.x + dx, center.y + dy), it)) }
         }
     }
 
@@ -248,7 +269,9 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     }
 
     override fun flushPhysicsQueries() {
-        if (!runtime.paused) player.bullets.flushPhysicsQueries()
+        if (runtime.paused) return
+        player.bullets.flushPhysicsQueries()
+        player.interaction.flushPhysicsQueries()
     }
 
     override fun physicsProcess(delta: Double) {
@@ -265,7 +288,10 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
     }
 
     override fun process(delta: Double) {
-        if (!runtime.paused) player.process(delta)
+        if (runtime.paused) return
+        player.process(delta)
+        if (actions.isJustPressed(Action.INTERACT)) player.interaction.interactPressed()
+        player.interaction.process()
     }
 
     override fun draw() {
@@ -274,6 +300,10 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
         batch.projectionMatrix = view.camera.combined
         batch.begin()
         room?.let { roomRenderer.draw(batch, it, Vec2.ZERO, camera.screenTopLeft, view.width, view.height) }
+        for (item in player.interaction.items) {
+            val region = itemRegions.getOrPut(item.def.icon) { flipped(game.texture(item.def.icon)) }
+            batch.draw(region, item.x - region.regionWidth / 2f, item.y - region.regionHeight / 2f)
+        }
         for (bullet in player.bullets.bullets) drawBullet(bullet)
         for (ghost in player.ghosts) {
             val c = Rgba.GHOST_GREY
@@ -285,9 +315,17 @@ class GameScreen(private val game: StreetsOfSibiuGame) : LoopScreen() {
 
         blackScreen.color.a = blackAlpha.toFloat()
         hud.setAmmo(ammoText())
+        val inter = player.interaction
+        interactLabel.isVisible = inter.labelVisible && !runtime.paused
+        if (interactLabel.isVisible) {
+            if (interactLabel.text.toString() != inter.labelText) interactLabel.setText(inter.labelText)
+            val topLeft = camera.screenTopLeft
+            interactLabel.godotBounds(player.position.x - topLeft.x - 150f, player.position.y - topLeft.y + 42f, 300f, 24.7f)
+        }
         dashButton?.isVisible = !runtime.paused
         parryButton?.isVisible = !runtime.paused
         reloadButton?.isVisible = !runtime.paused
+        interactButton?.isVisible = !runtime.paused
         stage.act(Gdx.graphics.deltaTime)
         stage.viewport.apply()
         stage.draw()

@@ -1,6 +1,7 @@
 package ro.klooseduard.streetsofsibiu.logic.world
 
 import ro.klooseduard.streetsofsibiu.logic.data.ConsumableDef
+import ro.klooseduard.streetsofsibiu.logic.data.ItemDef
 import ro.klooseduard.streetsofsibiu.logic.data.ItemType
 import ro.klooseduard.streetsofsibiu.logic.data.PlayerDefs
 import ro.klooseduard.streetsofsibiu.logic.data.WeaponDef
@@ -34,8 +35,8 @@ class Inventory(private val player: Player) {
         null -> null
     }
 
-    fun addItem(def: Any): Boolean {
-        val type = typeOfDef(def)
+    fun addItem(def: ItemDef): Boolean {
+        val type = def.type
         for (i in PlayerDefs.validSlots(type)) {
             if (items[i] == null) {
                 items[i] = fresh(def)
@@ -47,8 +48,8 @@ class Inventory(private val player: Player) {
         return false
     }
 
-    fun swapItem(def: Any): PlayerItem? {
-        val type = typeOfDef(def)
+    fun swapItem(def: ItemDef): PlayerItem? {
+        val type = def.type
         if (selected in PlayerDefs.validSlots(type)) {
             val old = items[selected]
             items[selected] = fresh(def)
@@ -58,15 +59,20 @@ class Inventory(private val player: Player) {
         return null
     }
 
-    private fun typeOfDef(def: Any): ItemType = when (def) {
-        is WeaponDef -> def.type
-        is ConsumableDef -> ItemType.CONSUMABLE
-        else -> error("Unknown item $def")
-    }
-
-    private fun fresh(def: Any): PlayerItem = when (def) {
+    private fun fresh(def: ItemDef): PlayerItem = when (def) {
         is WeaponDef -> HeldWeapon.of(def)
         is ConsumableDef -> HeldConsumable(def)
         else -> error("Unknown item $def")
+    }
+
+    fun defOf(item: PlayerItem?): ItemDef? = when (item) {
+        is HeldWeapon -> item.def
+        is HeldConsumable -> item.def
+        null -> null
+    }
+
+    fun removeSelected() {
+        items[selected] = null
+        onChanged()
     }
 }

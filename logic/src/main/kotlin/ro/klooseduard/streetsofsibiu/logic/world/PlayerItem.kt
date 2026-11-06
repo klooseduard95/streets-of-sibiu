@@ -87,6 +87,35 @@ class HeldWeapon(
     }
 }
 
-class HeldConsumable(val def: ConsumableDef? = null) : PlayerItem
+class HeldConsumable(val def: ConsumableDef? = null) : PlayerItem {
+    fun activate(player: Player, runtime: GameRuntime): Boolean {
+        val def = def ?: return false
+        var used = false
+        if (def.hp != 0) {
+            if (player.hp < player.maxHp && def.hp > 0) {
+                player.hp = minOf(player.hp + def.hp, player.stat(Stat.MAX_HP.godotName, player.maxHp))
+                used = true
+            } else if (def.hp < 0) {
+                player.hp += def.hp
+                used = true
+            }
+        }
+        if (def.shield > 0) {
+            player.shield += def.shield
+            used = true
+        }
+        if (def.buffDuration > 0 && def.modifiers.isNotEmpty()) {
+            player.addTemporaryBuff(def.modifiers.mapKeys { it.key.godotName }, def.buffDuration)
+            used = true
+            if (def.afterEffectModifiers.isNotEmpty() && def.afterEffectDuration > 0) {
+                runtime.createTimer(def.buffDuration, processAlways = false).onTimeout {
+                    if (!player.isFreed) player.addTemporaryBuff(def.afterEffectModifiers.mapKeys { it.key.godotName }, def.afterEffectDuration)
+                }
+            }
+        }
+        if (used) player.onStatsChanged()
+        return used
+    }
+}
 
-enum class PlayerSound { DASH, PARRY, DEATH }
+enum class PlayerSound { DASH, PARRY, DEATH, POTION }
